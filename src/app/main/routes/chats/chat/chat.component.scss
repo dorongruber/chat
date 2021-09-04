@@ -1,0 +1,67 @@
+.chat-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  background-color: hsl(199, 70%, 35%);
+  @media (min-width: 640px) {
+    width: 75% ;
+  }
+}
+
+.main-background-img {
+  background-image: url('../../../assets/images/doodles.png');
+  background-position: center;
+  background-size: 50%;
+}
+
+.form-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 5px;
+}
+
+.input-container {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  margin: auto;
+  align-items: center;
+}
+
+.message-input {
+  width: 90%;
+  border-radius: 5px;
+}
+
+.send-message-btn {
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  padding: 8px;
+  border: 1px solid gray;
+  box-sizing: border-box;
+}
+
+.btn-flex {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.send-icon {
+  font-size: .9em;
+}
+
+// @media screen and (min-width: 640px) {
+//   .chat-container {
+//     width: 50%;
+//   }
+// }
+
+

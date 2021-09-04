@@ -1,0 +1,8 @@
+<header>
+  <h4>{{ title }}</h4>
+  <ng-container *ngIf="isChatOpen">
+    <div class="back-btn">
+      <button (click)="OnBackClick()">go Back</button>
+    </div>
+  </ng-container>
+</header>

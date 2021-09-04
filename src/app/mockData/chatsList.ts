@@ -1,0 +1,18 @@
+export const mockChatsList = [
+  {name: 'chat1', id: '1'},
+  {name: 'chat2', id: '2'},
+  {name: 'chat3', id: '3'},
+  {name: 'chat4', id: '4'},
+  {name: 'chat5', id: '5'},
+  {name: 'chat6', id: '6'},
+  {name: 'chat7', id: '7'},
+  {name: 'chat8', id: '8'},
+  {name: 'chat9', id: '9'},
+  {name: 'chat10', id: '10'},
+  {name: 'chat11', id: '11'},
+  {name: 'chat12', id: '12'},
+  {name: 'chat13', id: '13'},
+  {name: 'chat14', id: '14'},
+  {name: 'chat15', id: '15'},
+  {name: 'chat16', id: '16'},
+];
