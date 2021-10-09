@@ -5,7 +5,9 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
 import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
 
 import {MatIconModule} from '@angular/material/icon';
-
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AlertComponent,
@@ -14,13 +16,23 @@ import {MatIconModule} from '@angular/material/icon';
   ],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     MatIconModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   exports: [
+    CommonModule,
     AlertComponent,
     LoadingSpinnerComponent,
     DynamicFormComponent,
-    MatIconModule
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    ReactiveFormsModule,
   ]
 })
 export class SharedModule { }

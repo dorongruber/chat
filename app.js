@@ -1,16 +1,23 @@
 const express = require('express');
-const socketIO = require('socket.io');
 const path = require('path');
+const cors = require('cors');
 const http = require('http');
+
+const userRouter = require('./server/api/users');
 const app = express();
 
 app.use(express.json());
+app.use(cors());
+
+app.use('/api/user',userRouter);
+
 const server = http.createServer(app);
-const io = socketIO(server);
-const chatSocket = require('./server/socketio/socketio')(io)
 
-
-
+const io = require('./server/config/socketio').init(server);
+// init socketio
+require('./server/api/socketio')(io);
+//init mongodb
+require('./server/config/mongodb');
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log('listening at port ' + PORT));

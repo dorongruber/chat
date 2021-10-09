@@ -1,11 +1,11 @@
-<div class="chats-list-container">
-  <ng-container *ngFor="let chat of chats">
-    <div class="chat-contaienr" [routerLink]="['./', chat.id]">
+<div class="chats-list-container" [ngClass]="{'remove-overflow-y': isMenuOpen}">
+  <ng-container *ngFor="let chat of chats"  >
+    <div class="chat-contaienr" [routerLink]="['./', chat.id]" (click)="OnChatSelect(chat.id)">
       <h3 class="chat-name">{{chat.name}}</h3>
     </div>
   </ng-container>
+  <div class="sidenav-menu-container" [ngClass]="{'show': isMenuOpen}">
+    <app-menu></app-menu>
+  </div>
 </div>
-<!-- <div [@routeAnimations]="prepareRoute(outlet)">
-  <router-outlet #outlet="outlet"></router-outlet>
-</div> -->
 <router-outlet></router-outlet>

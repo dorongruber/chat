@@ -1,5 +1,5 @@
-import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { BaseService } from "./base/base.service";
 
 import { SocketService } from "./socket.service";
 
@@ -8,7 +8,7 @@ import { SocketService } from "./socket.service";
 })
 export class ChatsService {
 
-  constructor(private http: HttpClient,
+  constructor(private baseService: BaseService,
      private socketService: SocketService)
   {}
 

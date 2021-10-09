@@ -15,16 +15,17 @@
 </div> -->
 
 <body class="chat-container main-background-img">
-  <app-header [title]="chatId"></app-header>
+  <app-header [relatedToRoute]="baseRoute" [title]="chatId"></app-header>
   <section>
     <ng-container *ngFor="let message of messages">
-      <app-message [message]="message"></app-message>
+      <app-message [msgFromat]="message"></app-message>
     </ng-container>
   </section>
   <footer class="form-footer">
     <form #messageForm="ngForm" (ngSubmit)="onMessageSubmit(messageForm)">
       <div class="input-container">
-        <input [(ngModel)]="message" required name="message" class="message-input" type="text" placeholder="send message">
+        <!-- <input [(ngModel)]="message" required name="message" class="message-input" type="text" placeholder="send message"> -->
+        <textarea [(ngModel)]="msgContent" required name="message" id="message" cols="5" rows="10" placeholder="send message" class="message-input"></textarea>
         <button class="send-message-btn btn-flex" type="submit">
           <mat-icon class="send-icon">send</mat-icon>
         </button>

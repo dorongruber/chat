@@ -10,6 +10,8 @@ import { HeaderComponent } from './components/header/header.component';
 import { MessageComponent } from './components/message/message.component';
 import { SharedModule } from '../shared/shared.module';
 import { FormsModule } from '@angular/forms';
+import { LandingpageComponent } from './routes/landingpage/landingpage.component';
+import { MenuComponent } from './components/menu/menu.component';
 
 
 @NgModule({
@@ -18,12 +20,11 @@ import { FormsModule } from '@angular/forms';
     ChatsComponent,
     ChatComponent,
     HeaderComponent,
-    MessageComponent
+    MessageComponent,
+    LandingpageComponent,
+    MenuComponent
   ],
   imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
     MainRoutingModule,
     SharedModule
   ]

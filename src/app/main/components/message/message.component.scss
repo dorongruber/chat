@@ -6,24 +6,23 @@
 
 .triangle {
   position: absolute;
-  left: 1px;
-  top: 0;
+  left: 0px;
+  top: 1px;
   width: 0;
   height: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 9px solid transparent;
-
-  border-right: 9px solid hsl(194, 6%, 54%);
-  border-radius: 5px;
+  border-top: 0px solid transparent;
+  border-bottom: 23px solid transparent;
+  border-right: 30px solid hsl(42, 57%, 58%);
+  border-left: 1px solid transparent;
 }
 
 .message-container {
   position: absolute;
-  left: 7px;
+  left: 12px;
   top: 1px;
   display: flex;
   flex-direction: column;
-  background-color: hsl(194, 6%, 54%);
+  background-color: hsl(42, 57%, 58%);
   border-radius: 5px;
   box-sizing: border-box;
   min-width: 90px;

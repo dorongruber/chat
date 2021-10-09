@@ -1,21 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { observable, Observable } from 'rxjs';
+import { observable, Observable, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { Message } from 'src/app/main/models/message';
+import { ChatService } from 'src/app/services/chat.service';
+import { ChatsService } from 'src/app/services/chats.service';
+import { SocketService } from 'src/app/services/socket.service';
+import { UserService } from 'src/app/services/user.service';
+
+const COMPONENT_BASE_ROUTE = '/main/chats/chat';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit {
-  message: string = '';
-  messages: string[] = [];
+export class ChatComponent implements OnInit, OnDestroy {
+  private subscription = new Subscription();
+  private subscriptions = new Subscription();
+  msgContent: string = '';
+  messageFormat: Message = {};
+  messages: Message[] = [];
   chatId$: Observable<string>;
   chatId: string = '';
-  constructor(private route: ActivatedRoute) {
+  chatUsers: {userId: string, userName: string, chatId: string}[] ;
+  baseRoute = COMPONENT_BASE_ROUTE;
+  constructor(
+    private route: ActivatedRoute,
+    private chatService: ChatService,
+    private socketService: SocketService,
+    private userService: UserService,
+    ) {
     this.chatId$ = new Observable<string>();
+    this.chatUsers = []
    }
 
   ngOnInit(): void {
@@ -23,16 +41,48 @@ export class ChatComponent implements OnInit {
      return params.getAll('id');
    }))
 
-   this.chatId$.subscribe(res => {
+   this.subscription = this.chatId$.subscribe(res => {
      this.chatId = res;
+     console.log('current open chat -> ', this.chatId);
+   });
+   this.subscriptions.add(this.subscription);
+
+   this.subscription = this.chatService.usersInChat.subscribe(resUsers => {
+    this.chatUsers = [...resUsers];
+    console.log('users in chat -> ', this.chatUsers);
+   })
+   this.subscriptions.add(this.subscription);
+   this.subscriptions = this.chatService.messages.subscribe(resMsg => {
+     console.log('chat new msg -> ', resMsg);
+     this.messages.push(resMsg);
    })
   }
 
   onMessageSubmit(form: NgForm) {
     if (form.invalid) return;
-    this.messages.push(form.value.message);
+    this.messageFormat = this.createMessage(form.value.message);
+    this.socketService.sendMessage(this.messageFormat);
+    this.messages.push(this.messageFormat);
     console.log('messgaes => ', this.messages);
-    this.message = '';
+    this.msgContent = '';
+  }
+
+  createMessage(msg: string): Message {
+    const userId = this.userService.get().id;
+    const userName = this.userService.get().name;
+    const date = new Date();
+    return  {
+      message: msg,
+      userId: userId,
+      chatId: this.chatId,
+      userName: userName,
+      date: date
+    };
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+    this.subscriptions.unsubscribe();
   }
 
 }

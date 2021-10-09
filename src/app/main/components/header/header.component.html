@@ -1,8 +1,13 @@
 <header>
   <h4>{{ title }}</h4>
-  <ng-container *ngIf="isChatOpen">
-    <div class="back-btn">
-      <button (click)="OnBackClick()">go Back</button>
+  <ng-container *ngIf="isChatOpen else Menu">
+    <div class="back-btn" (click)="OnBackClick()">
+      <mat-icon>keyboard_arrow_right</mat-icon>
     </div>
   </ng-container>
+  <ng-template #Menu>
+    <div class="menu-options">
+      <mat-icon (click)="onMenuChange()">{{isMobile? 'more_vert': 'menu'}}</mat-icon>
+    </div>
+  </ng-template>
 </header>

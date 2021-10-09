@@ -1,1 +1,33 @@
-<p>login works!</p>
+<form [formGroup]="authForm"
+  (ngSubmit)="onSubmit(authForm)" class="form-container">
+
+  <mat-form-field class="form-content"  appearance="outline">
+    <mat-label>Email </mat-label>
+    <input
+    matInput
+    type="email"
+    formControlName="email"
+    placeholder="Email"
+    name="email">
+  </mat-form-field>
+  <br>
+
+  <mat-form-field class="form-content"  appearance="outline">
+    <mat-label>Password </mat-label>
+    <input
+    matInput
+    type="password"
+    formControlName="password"
+    placeholder="password"
+    name="password"
+    matTooltip="password needs to have at lest one Uppercase, Lowercase, number">
+  </mat-form-field>
+
+  <div class='btn-container'>
+    <button
+    type="submit"
+    [disabled]="!authForm.valid"
+    mat-raised-button> Login </button>
+  </div>
+
+</form>

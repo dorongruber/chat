@@ -1,1 +1,24 @@
-<router-outlet></router-outlet>
+
+
+<div class="auth-page">
+  <div class="spinner-container" *ngIf="isLoading">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  <div class="auth-component-container" >
+    <div class="header-container" *ngIf="!isLoading">
+      <h3 class="header"> {{ loadState? 'Enter Cradentials To LogIn': 'Fill Feilds To Register' }}</h3>
+    </div>
+    <div class="router-container">
+      <router-outlet></router-outlet>
+    </div>
+    <div class="btn-container" *ngIf="!isLoading">
+      <button
+      class="btn main-btn"
+      type="button"
+      (click)="onSelectForm()"
+      mat-raised-button>
+        {{ loadState? 'Register' : 'LogIn'}}
+      </button>
+    </div>
+  </div>
+</div>

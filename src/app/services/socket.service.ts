@@ -1,14 +1,15 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { io } from 'socket.io-client';
+import { Message } from "../main/models/message";
 
-const SOCKET_ENDPOINT = 'http://localhost:8080/';
+const SOCKET_ENDPOINT = 'http://localhost:3000/';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketService {
-  socket: any;
+  socket;
   constructor() {
     this.socket = io(SOCKET_ENDPOINT)
   }
@@ -38,16 +39,19 @@ export class SocketService {
   }
 
 
-  sendMessage(message: string, userId: string, chatId: string) {
-    this.socket.emit('sendMessage', ({userId, chatId, message}));
+  sendMessage(msgFormat: Message) {
+    const { message, userId, chatId, userName, date} = msgFormat;
+    console.log('send smh -> ',message, userId, chatId);
+    this.socket.emit('sendMessage', ({userId, chatId, message, date, userName}));
   }
 
   addToChatRequest(userId: string, chatId: string) {}
 
   getNewMessage() {
     const observable = new Observable(observer => {
-      this.socket.on('newMessage', (messageObj: {userId: string,message: string}) => {
-        observer.next(messageObj.message);
+      this.socket.on('newMessage', (messageObj:Message) => {
+        console.log('observable new msg -> ', messageObj);
+        observer.next(messageObj);
       })
     })
     return observable;
@@ -55,7 +59,8 @@ export class SocketService {
 
   getUsersinChat() {
     const observable = new Observable(observer => {
-      this.socket.on('inChat', (chatUserObj:{userId: string, userName: string, chatId: string}) => {
+      this.socket.on('inChat', (chatUserObj:[{userId: string, userName: string, chatId: string}]) => {
+        console.log('observer => ', chatUserObj);
         observer.next(chatUserObj);
       })
     })

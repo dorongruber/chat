@@ -1,6 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router, Event as NavigationEvent  } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ControllerService } from 'src/app/services/base/controller.service';
+import { DeviceTypeService } from 'src/app/services/devicetype.service';
+import { RouterService } from 'src/app/services/router.service';
+
+const ROUTE_TO_SHOW_BUTTON = '/main/chats/chat';
 
 @Component({
   selector: 'app-header',
@@ -9,33 +13,39 @@ import { filter } from 'rxjs/operators';
 })
 export class HeaderComponent implements OnInit {
   isChatOpen = false;
+  isMobile = false;
   @Input() title: string = '';
+  @Input() relatedToRoute = '';
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private routerService: RouterService,
+    private deviceTypeService: DeviceTypeService,
+    private controllerService: ControllerService,
   ) { }
 
   ngOnInit(): void {
 
-    this.isChatOpen = this.checkRoute(this.router.url);
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe((event: NavigationEvent) => {
-      const navEventCast = event as NavigationEnd;
-      console.log('navigation avent -> ', event)
-      const url = navEventCast.url;
-      this.isChatOpen = this.checkRoute(navEventCast.url);
-    });
+    this.checkRoute(this.router.url);
+    this.routerService.onRouteChange.subscribe(currentURL => {
+      this.checkRoute(currentURL);
+    })
+    this.isMobile = this.deviceTypeService.isMobile;
     console.log('check res => ', this.isChatOpen);
   }
 
-  checkRoute(url: string): boolean {
-    const checkIfNum = parseInt(url.slice(-1), 10);
-    console.log('last route -> ', url.slice(-1), checkIfNum);
+  checkRoute(url: string) {
+    const checkIfNum = Number(url.slice(-1));
+    console.log('last route -> ', url.slice(-1), checkIfNum,this.relatedToRoute);
 
-    if (typeof checkIfNum === 'number' && !isNaN(checkIfNum)) {
-      return true;
+    if (typeof checkIfNum === 'number' && !isNaN(checkIfNum) && this.relatedToRoute === ROUTE_TO_SHOW_BUTTON) {
+      this.isChatOpen = true;
     }
-    return false;
+
+  }
+
+  onMenuChange() {
+    this.controllerService.onStateChange();
   }
 
   OnBackClick() {
