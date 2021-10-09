@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-module.exports = mongoose.connect('mongodb+srv://doron:QAWSed123321@dgcluster.xqngn.mongodb.net/chatProject',
+module.exports = mongoose.connect(process.env.DEV_DB_CONNECTION,
 {useNewUrlParser: true, useUnifiedTopology: true}).then(() => {
   console.log('connected to db');
 }).catch((err) => {
