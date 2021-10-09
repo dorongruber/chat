@@ -25,6 +25,7 @@ import { MenuComponent } from './components/menu/menu.component';
     MenuComponent
   ],
   imports: [
+    CommonModule,
     MainRoutingModule,
     SharedModule
   ]

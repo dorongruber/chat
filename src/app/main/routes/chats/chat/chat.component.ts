@@ -36,7 +36,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.chatUsers = []
    }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
    this.chatId$ = this.route.paramMap.pipe(switchMap(params => {
      return params.getAll('id');
    }))
@@ -49,13 +49,15 @@ export class ChatComponent implements OnInit, OnDestroy {
 
    this.subscription = this.chatService.usersInChat.subscribe(resUsers => {
     this.chatUsers = [...resUsers];
-    console.log('users in chat -> ', this.chatUsers);
    })
    this.subscriptions.add(this.subscription);
    this.subscriptions = this.chatService.messages.subscribe(resMsg => {
-     console.log('chat new msg -> ', resMsg);
      this.messages.push(resMsg);
-   })
+   });
+
+   const formDb = await this.chatService.getChatMessages(this.chatId);
+   console.log('messages from db => ', formDb);
+   this.messages = formDb;
   }
 
   onMessageSubmit(form: NgForm) {
@@ -76,7 +78,8 @@ export class ChatComponent implements OnInit, OnDestroy {
       userId: userId,
       chatId: this.chatId,
       userName: userName,
-      date: date
+      date: date,
+      fromCurrentUser: true,
     };
   }
 

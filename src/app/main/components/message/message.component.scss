@@ -1,6 +1,6 @@
 .message-style-container {
   position: relative;
-  margin-top: 10px;
+  margin-top: 15px;
   min-height: 35px;
 }
 
@@ -16,6 +16,15 @@
   border-left: 1px solid transparent;
 }
 
+.currentUser-triangle {
+  left: unset;
+  right: 0px;
+  border-top: 30px solid hsl(198, 57%, 58%);
+  border-bottom: 0 solid transparent;
+  border-right: 23px solid transparent;
+  border-left: 11px solid transparent;
+}
+
 .message-container {
   position: absolute;
   left: 12px;
@@ -25,7 +34,16 @@
   background-color: hsl(42, 57%, 58%);
   border-radius: 5px;
   box-sizing: border-box;
-  min-width: 90px;
+  min-width: 20%;
+  @media (max-width: 640px) {
+    min-width: 35%;
+  }
+}
+
+.currentUser {
+  left: unset;
+  right: 12px;
+  background-color: hsl(198, 57%, 58%);
 }
 
 .message-header {
@@ -33,13 +51,24 @@
   justify-content: space-between;
   align-items: center;
   font-size: 7px;
-  height: 10px;
   margin: 2px 4px;
+}
+
+.currentUser-message-header {
+  flex-direction: row-reverse;
 }
 
 .message-content {
   display: flex;
   justify-content: flex-start;
-  font-size: 10px;
+  font-size: 80%;
   margin: 0 10px 0 5px;
+}
+
+.currentUser-message-content {
+  direction: ltr;
+}
+
+.header-content {
+  font-size: 150%;
 }

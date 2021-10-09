@@ -14,7 +14,7 @@ class MessageService {
     }
   }
 
-  async save(msg,id,fid,tid,cid,date) {
+  async save(msg,id,fid,tid,cid,date,fname) {
     console.log('save message -> ', msg,id,fid,tid,cid,date);
     try {
       const checkMsg = await Messages.findOne({id});
@@ -26,7 +26,8 @@ class MessageService {
         Tid: tid,
         Cid: cid,
         message: msg,
-        date
+        date,
+        Fname: fname,
       });
       console.log('new message -> ', newMsg);
       const saveState = await newMsg.save();
@@ -34,6 +35,19 @@ class MessageService {
     }catch(err) {
       throw err;
     }
+  }
+  requestMsgFormat(msgs) {
+    const formatedMsgs = [];
+    for(let i=0; i< msgs.length; i++) {
+      formatedMsgs.push({
+        userName: msgs[i].Fname,
+        chatId: msgs[i].Cid,
+        date: msgs[i].date,
+        userId: msgs[i].Fid,
+        message: msgs[i].message,
+      });
+    }
+    return formatedMsgs;
   }
 }
 

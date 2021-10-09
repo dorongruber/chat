@@ -1,5 +1,5 @@
 
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { Message } from '../../models/message';
 
 @Component({
@@ -7,16 +7,29 @@ import { Message } from '../../models/message';
   templateUrl: './message.component.html',
   styleUrls: ['./message.component.scss']
 })
-export class MessageComponent implements OnInit, OnChanges {
+export class MessageComponent implements OnChanges {
   @Input() msgFromat: Message = {};
+  @Input() index: number = 0;
+  @Input() maxLength: number = 0;
   constructor() { }
 
-  ngOnInit(): void {
-    console.log('on int message => ', this.msgFromat);
+  ngOnChanges() {
+    // console.group('compare dates in message');
+    // console.log('nsg date from input element -> ',this.msgFromat.date);
+    // console.log('create msg date with new Date => ', new Date(this.msgFromat.date as Date));
+    // console.groupEnd();
   }
 
-  ngOnChanges() {
-    console.log('on change message => ', this.msgFromat);
+  ShowUserName() {
+    return this.msgFromat.fromCurrentUser? 'ME': this.msgFromat.userName;
+  }
+
+  showDate() {
+    const date = new Date(this.msgFromat.date as Date);
+    const day = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   }
 
 }

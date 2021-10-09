@@ -41,7 +41,6 @@ export class SocketService {
 
   sendMessage(msgFormat: Message) {
     const { message, userId, chatId, userName, date} = msgFormat;
-    console.log('send smh -> ',message, userId, chatId);
     this.socket.emit('sendMessage', ({userId, chatId, message, date, userName}));
   }
 
@@ -50,7 +49,6 @@ export class SocketService {
   getNewMessage() {
     const observable = new Observable(observer => {
       this.socket.on('newMessage', (messageObj:Message) => {
-        console.log('observable new msg -> ', messageObj);
         observer.next(messageObj);
       })
     })
@@ -60,7 +58,6 @@ export class SocketService {
   getUsersinChat() {
     const observable = new Observable(observer => {
       this.socket.on('inChat', (chatUserObj:[{userId: string, userName: string, chatId: string}]) => {
-        console.log('observer => ', chatUserObj);
         observer.next(chatUserObj);
       })
     })

@@ -15,7 +15,6 @@ export class RouterService implements OnDestroy {
   ) {
     this.subscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        console.log('last route => ', event.urlAfterRedirects);
         this.currentRoute = event.urlAfterRedirects;
         this.onRouteChange.next(this.currentRoute);
       }

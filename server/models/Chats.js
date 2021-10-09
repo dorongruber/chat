@@ -8,10 +8,10 @@ const ChatSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  messages: {
+  messages: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Chats',
-  },
+    ref: 'Messages',
+  }],
   users: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Users',

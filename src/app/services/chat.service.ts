@@ -5,8 +5,9 @@ import { Message } from "../main/models/message";
 import { User } from "../main/models/user";
 import { BaseService } from "./base/base.service";
 import { SocketService } from "./socket.service";
+import { UserService } from "./user.service";
 
-const URI = 'http"//localhost:3000/api/chat/';
+const URI = 'http://localhost:3000/api/chat/';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,8 @@ export class ChatService {
   messages = new Subject<Message>();
   constructor(
     private baseService: BaseService,
-    socketService: SocketService
+    private socketService: SocketService,
+    private userService: UserService,
     )
      {
        this.usersInChat = socketService.getUsersinChat()
@@ -40,4 +42,32 @@ export class ChatService {
        .catch(err => err);
      }
 
+     getChatMessages(id: string) {
+       const url = `${URI}messages/`;
+       return this.baseService
+       .get<{userName: string,
+        chatId: string,
+        date: Date,
+        userId: string,
+        message: string}[]>(url,id)
+       .then(res => {
+        const user = this.userService.get();
+        const msgFormat: Message[] = [];
+        res.forEach(msg => {
+          msgFormat.push({
+            message: msg.message,
+            userId: msg.userId,
+            chatId: msg.chatId,
+            userName: msg.userName,
+            date: msg.date,
+            fromCurrentUser: user.id === msg.userId? true: false,
+          });
+        })
+         console.log('get messages form db res => ', res);
+         return msgFormat;
+       })
+       .catch(err => {throw err});
+     }
+
 }
+

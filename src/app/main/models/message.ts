@@ -4,4 +4,5 @@ export interface Message {
    chatId?: string;
    userName?: string;
    date?: Date;
+   fromCurrentUser?: boolean;
 }

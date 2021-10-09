@@ -1,7 +1,8 @@
 
 
 const { newUser, getUser, removeUser, updateUser, getChatUsers } = require('../socketio/utils/users');
-const {msgService} = require('../services/message');
+const { msgService } = require('../services/message');
+const { chatService } = require('../services/chat');
 class SocketServerService {
 
   constructor() {}
@@ -25,18 +26,22 @@ class SocketServerService {
   }
 
   async SendMessage(userId, chatId, message, socket,date,userName) {
-    console.log('socket service -> ',userId, chatId, message,date,userName);
-    const msgId = `${userId}${chatId}${date}`;
-    const msgState = await msgService.save(message,msgId,userId,chatId,chatId,date);
-    console.log('msg after save -> ', msgState);
-    const newMesg = {
-      message: msgState.message,
-      userId: msgState.Fid,
-      chatId: msgState.Cid,
-      userName: userName,
-      date: msgState.date
-    };
-    socket.to(chatId).emit('newMessage', (newMesg));
+    try {
+      console.log('socket service -> ',userId, chatId, message,date,userName);
+      const msgId = `${userId}${chatId}${date}`;
+      const msgState = await msgService.save(message,msgId,userId,chatId,chatId,date,userName);
+      const chatState = await chatService.addMessageToChat(msgState)
+      const newMesg = {
+        message: msgState.message,
+        userId: msgState.Fid,
+        chatId: msgState.Cid,
+        userName: userName,
+        date: msgState.date
+      };
+      socket.to(chatId).emit('newMessage', (newMesg));
+    }catch(err) {
+      throw err;
+    }
   }
 
   getUsers(chatId) {
