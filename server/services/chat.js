@@ -1,18 +1,17 @@
 const Chats = require('../models/Chats');
 const { msgService } = require('../services/message');
+const { userService } = require('./user');
 class ChatService {
 
   constructor() {}
 
-  getById = async function(req,res,next) {
-    const { id } = req.params;
+  getById = async function(id) {
     const chat = await Chats.findOne({id});
-    if (!chat) return res.status(404).end();
-    return res.status(201).json(chat);
+    if (!chat) return new Error('404');
+    return chat;
   }
 
-  createChat = async function(req,res,next) {
-    const { id, name } = req.params;
+  createChat = async function(id,name) {
     const chat = await Chats.findOne({id});
     if (chat) return res.status(200).end();
     const newChat = new Chats({
@@ -23,15 +22,28 @@ class ChatService {
     return saved;
   }
 
-  getChatMessages = async function(req,res,next) {
+  getChatMessages = async function(id) {
     try {
-      const { id } = req.params;
       return Chats.findOne({id})
       .populate('messages')
       .exec((err, chat) => {
-        if (err) return res.status(400).jeson(err);
+        if (err) throw err;
         const formatedMessages = msgService.requestMsgFormat(chat.messages);
-        return res.status(200).json(formatedMessages);
+        return formatedMessages;
+      })
+    }catch(err) {
+      throw err;
+    }
+  }
+
+  getChatUsers = function(id) {
+    try {
+      return Chats.findOne({id})
+      .populate('Users')
+      .exec((err,chat) => {
+        if (err) throw err;
+        const formatedUsers = userService.responseUsersFormat(chat.users);
+        return formatedUsers;
       })
     }catch(err) {
       throw err;
@@ -51,7 +63,16 @@ class ChatService {
     }
   }
 
-
+  async addUserToChat(userState) {
+    try{
+      const chat = await Chats({id: userState.chatId});
+      if (!chat) throw new Error('chat not found');
+      chat.users.push(userState);
+      return chat.save();
+    }catch(err) {
+      throw err;
+    }
+  }
 
 }
 

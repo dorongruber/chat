@@ -7,8 +7,8 @@ class MessageService {
   async get(id,cb) {
     try {
       const message = await Messages.findOne({id});
-      if (!message) return 404;
-      return message;
+      if (!message) throw 404;
+      return this.responseMsgFormat(message);
     }catch(err) {
       throw err;
     }
@@ -36,18 +36,23 @@ class MessageService {
       throw err;
     }
   }
+
   requestMsgFormat(msgs) {
     const formatedMsgs = [];
     for(let i=0; i< msgs.length; i++) {
-      formatedMsgs.push({
-        userName: msgs[i].Fname,
-        chatId: msgs[i].Cid,
-        date: msgs[i].date,
-        userId: msgs[i].Fid,
-        message: msgs[i].message,
-      });
+      formatedMsgs.push(this.responseMsgFormat(msgs[i]));
     }
     return formatedMsgs;
+  }
+
+  responseMsgFormat(msg) {
+    return {
+      userName: msg.Fname,
+      chatId: msg.Cid,
+      date: msg.date,
+      userId: msg.Fid,
+      message: msg.message,
+    }
   }
 }
 

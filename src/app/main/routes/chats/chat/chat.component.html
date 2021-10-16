@@ -18,7 +18,7 @@
   <app-header [relatedToRoute]="baseRoute" [title]="chatId"></app-header>
   <section class="messages-container">
     <ng-container *ngFor="let message of messages; let i=index;">
-      <app-message [appFocus]="i" [Length]="messages.length -1" [msgFromat]="message"></app-message>
+      <app-message [msgFromat]="message"></app-message>
     </ng-container>
   </section>
   <footer class="form-footer">
