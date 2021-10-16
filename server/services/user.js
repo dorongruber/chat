@@ -16,6 +16,24 @@ class userService {
     }
   }
 
+  save = async function (id,name,phone,email,password) {
+    try {
+      const user = await Users.find({ id });
+      if (user)
+        throw new Error('404');
+      const newUser = new Users({
+        id,
+        name,
+        phone,
+        email,
+        password,
+      });
+      return newUser.save();
+    }catch(err) {
+      throw err;
+    }
+  }
+
   update = async function (newUserInfo) {
     try {
       const user = await Users.findOne({ id: newUserInfo.id });

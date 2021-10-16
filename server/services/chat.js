@@ -24,13 +24,11 @@ class ChatService {
 
   getChatMessages = async function(id) {
     try {
-      return Chats.findOne({id})
+      const chat = await Chats.findOne({id})
       .populate('messages')
-      .exec((err, chat) => {
-        if (err) throw err;
-        const formatedMessages = msgService.requestMsgFormat(chat.messages);
-        return formatedMessages;
-      })
+      .exec()
+      const formatedMessages = msgService.requestMsgFormat(chat.messages);
+      return formatedMessages;
     }catch(err) {
       throw err;
     }
@@ -39,7 +37,7 @@ class ChatService {
   getChatUsers = function(id) {
     try {
       return Chats.findOne({id})
-      .populate('Users')
+      .populate('users')
       .exec((err,chat) => {
         if (err) throw err;
         const formatedUsers = userService.responseUsersFormat(chat.users);

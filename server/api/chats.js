@@ -1,6 +1,6 @@
 const express = require('express');
 
-const {chatService} = require('../services/chat');
+const { chatService } = require('../services/chat');
 const router = express.Router();
 
 router.get('/messages/:id', getMessagesByChatId);
@@ -14,7 +14,7 @@ function getChatById(req,res,next) {
   const { id } = req.params;
   chatService.getById(id)
   .then(chat => {
-    return res.status(201).json(chat);
+    res.status(201).json(chat);
   })
   .catch(err => {
     res.status(404).json(err);
