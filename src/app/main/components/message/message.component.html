@@ -1,11 +1,17 @@
 <div class="message-style-container">
-  <div class="triangle "></div>
-  <div class="message-container">
-    <header class="message-header">
-      <div>{{ msgFromat.userName }}</div>
-      <div>{{ msgFromat.date }}</div>
+  <div [ngClass]="{'currentUser-triangle': msgFromat.fromCurrentUser}"
+   class="triangle "></div>
+  <div [ngClass]="{'currentUser': msgFromat.fromCurrentUser}"
+   class="message-container">
+    <header
+    [ngClass]="{'currentUser-message-header': msgFromat.fromCurrentUser}"
+    class="message-header">
+      <div class="header-content">{{ ShowUserName() }}</div>
+      <div class="header-content">{{ showDate() }}</div>
     </header>
-    <div class="message-content">
+    <div
+    [ngClass]="{'currentUser-message-content': msgFromat.fromCurrentUser}"
+    class="message-content">
       {{ msgFromat.message }}
     </div>
   </div>

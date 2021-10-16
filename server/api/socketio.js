@@ -20,7 +20,7 @@ exports = module.exports = function(io){
     socket.on('sendMessage', (msgObg) => {
       //todo save mesage in db
       const {userId, chatId, message, date,userName} = msgObg;
-      console.log('socket send message --> ',userId, chatId, message, date,userName);
+      //console.log('socket send message --> ',userId, chatId, message, date,userName);
       SocketServerService.SendMessage(userId, chatId, message,socket,date,userName);
     })
 

@@ -9,6 +9,10 @@ const MessageSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  Fname: {
+    type: String,
+    required: true,
+  },
   Tid: {
     type: String,
     required: true,

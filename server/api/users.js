@@ -5,20 +5,26 @@ const path = require('path');
 
 const router = express.Router();
 
-router.post('')
+router.post('/', updateUserInfo);
 
-router.get('/:id', async (req,res) => {
-  const { id } = req.params;
-  const user = await userService.get(id);
-  console.log('router user -> ', user);
+router.get('/:id', getUserById);
 
-  res.json({
-    id: user.id,
-    name: user.name,
-    phone: user.phone,
-    password: user.password,
-    email: user.email
-  });
-})
+
 
 module.exports = router;
+
+function getUserById(req,res,next) {
+  const { id } = req.params;
+  userService.get(id)
+  .then(user => {
+    res.status(200).json(user);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(401).json(err);
+  });
+}
+
+function updateUserInfo(req,res,next) {
+ console.log('updateUserInfo -> ', req.body);
+}

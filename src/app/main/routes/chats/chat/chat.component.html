@@ -16,8 +16,8 @@
 
 <body class="chat-container main-background-img">
   <app-header [relatedToRoute]="baseRoute" [title]="chatId"></app-header>
-  <section>
-    <ng-container *ngFor="let message of messages">
+  <section class="messages-container">
+    <ng-container *ngFor="let message of messages; let i=index;">
       <app-message [msgFromat]="message"></app-message>
     </ng-container>
   </section>
