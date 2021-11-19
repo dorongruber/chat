@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ChatsService } from '../services/chats.service';
+import { SocketService } from '../services/socket.service';
 import { UserService } from '../services/user.service';
 import { slideInAnimation } from './animation';
 import { User } from './models/user';
@@ -15,7 +17,9 @@ export class MainComponent implements OnInit {
   title = "chats list page"
   baseRoute = COMPONENT_BASE_ROUTE;
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private socketService: SocketService,
+    private chatService: ChatsService,
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -25,6 +29,9 @@ export class MainComponent implements OnInit {
     let user;
     user = await this.userService.getUserById(id);
     console.log('main component user => ', user);
+    this.socketService
+    .enterPool(user._id, user.name,this.chatService.GenerateId(),'generalPool');
+
   }
 
 }

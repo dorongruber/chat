@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { mockChatsList } from 'src/app/mockData/chatsList';
@@ -12,11 +12,11 @@ import { UserService } from 'src/app/services/user.service';
 const COMPONENT_BASE_ROUTE = '/main/chats';
 
 @Component({
-  selector: 'app-chats',
-  templateUrl: './chats.component.html',
-  styleUrls: ['./chats.component.scss']
+  selector: 'app-chatsmenu',
+  templateUrl: './chatsmenu.component.html',
+  styleUrls: ['./chatsmenu.component.scss']
 })
-export class ChatsComponent implements OnInit, OnDestroy {
+export class ChatsmenuComponent implements OnInit {
   isMenuOpen = false;
   //mock data
   chats = mockChatsList;

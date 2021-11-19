@@ -3,17 +3,17 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { MainComponent } from './main.component';
-import { ChatComponent } from './routes/chats/chat/chat.component';
-import { ChatsComponent } from './routes/chats/chats.component';
+import { ChatComponent } from './routes/chat/chat.component';
+
 import { LandingpageComponent } from './routes/landingpage/landingpage.component';
+import { NewchatComponent } from './routes/newchat/newchat.component';
 
 const routes: Routes = [
-  {path: '', redirectTo: 'chats', pathMatch: 'full'},
+  {path: '', redirectTo: 'landingpage', pathMatch: 'full'},
   {path: '', component: MainComponent, children: [
-    {path: 'chats', component: ChatsComponent ,data: {animation: 'Chats'} , children: [
-      {path: 'landingpage', component: LandingpageComponent},
-      {path: ':id', component: ChatComponent, data: {animation: 'Chat'}},
-    ]}
+    {path: 'landingpage', component: LandingpageComponent},
+    {path: 'newchat', component: NewchatComponent, data: {animation: 'Chat'}},
+    {path: ':id', component: ChatComponent, data: {animation: 'Chat'}},
   ]}
 ];
 

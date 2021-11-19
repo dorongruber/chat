@@ -11,12 +11,13 @@ class ChatService {
     return chat;
   }
 
-  createChat = async function(id,name) {
+  createChat = async function(id,name,users) {
     const chat = await Chats.findOne({id});
     if (chat) return res.status(200).end();
     const newChat = new Chats({
       id,
-      name
+      name,
+      users: [users.map(u => u._id)]
     });
     const saved = await newChat.save();
     return saved;

@@ -37,3 +37,30 @@ h4 {
     cursor: pointer;
   }
 }
+
+.chatMenuBackground {
+  background-color: hsl(223, 49%, 19%);
+}
+
+.mainMenuBackground {
+  background-color: hsl(184, 70%, 34%);
+}
+
+::ng-deep .mat-menu-content {
+  padding: 0 !important;
+
+  .mat-menu-item {
+    line-height: 34px;
+    height: 34px;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+
+  span {
+    font-size: 12px;
+  }
+}

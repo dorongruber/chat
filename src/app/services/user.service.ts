@@ -36,7 +36,24 @@ export class UserService {
     .catch(err => err);
   }
 
+  getAllUsers() {
+    const newURI = `${URI}allUsers`;
+    return this.baseService
+    .get<{id: string, name: string, phone: string,
+      password: string, email: string}[]
+    >(newURI,'')
+    .then(users => {
+      //console.log('then all users -> ', users);
+      const formatUsers: User[] = [];
+      users.forEach(u => {
+        formatUsers.push(new User(u.id,u.name,u.phone,u.password,u.email))
+      })
+      return formatUsers;
+    })
+  }
+
   set(selectedUser: User) {
+    console.log('set user => ', selectedUser);
     this.user = selectedUser;
   }
 

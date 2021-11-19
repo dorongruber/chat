@@ -9,7 +9,11 @@ router.post('/save', saveUser);
 
 router.post('/update', updateUserInfo);
 
+router.get('/allUsers', getAllUsers);
+
 router.get('/:id', getUserById);
+
+
 
 module.exports = router;
 
@@ -41,4 +45,15 @@ function saveUser(req,res,next) {
 
 function updateUserInfo(req,res,next) {
  console.log('updateUserInfo -> ', req.body);
+}
+
+function getAllUsers(req,res,next) {
+  userService.getAll()
+  .then(users => {
+    console.log('server all user -> ', users);
+    res.status(200).json(users);
+  })
+  .catch(err => {
+    res.status(401).json(err);
+  })
 }

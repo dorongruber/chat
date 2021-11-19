@@ -3,9 +3,49 @@
 const { newUser, getUser, removeUser, updateUser, getChatUsers } = require('../socketio/utils/users');
 const { msgService } = require('../services/message');
 const { chatService } = require('../services/chat');
+const { userService } = require('../services/user');
+const Chats = require('../models/Chats');
+const Users = require('../models/Users');
+const io = require('../config/socketio').getIO();
 class SocketServerService {
 
   constructor() {}
+
+  EnterToPool(userId,userName,chatId,chatName,socket) {
+    try{
+      const checkUser = getUser(userId);
+      if(!checkUser) {
+        socket.join(chatName);
+        const user = newUser(userId,userName,chatId,socket.id);
+        if (!user) throw false;
+        console.log('pool');
+        return true;
+      }
+    }catch(err) {
+      throw err;
+    }
+  }
+
+  CreateChat(chatId, chatName, chatUsers,userId,socket) {
+    const user = userService.get(userId);
+    const ids = chatUsers.map(u => u._id);
+    const newChat = new Chats({
+      id: chatId,
+      name: chatName,
+      messages: [],
+      users: [...ids],
+    });
+
+    newChat.save(function(err) {
+      if (err) throw new Error(err);
+      socket.join(chatId);
+    });
+    const users = this.getUsers(chatId);
+    users.forEach(u => {
+      io.to(u.socket.id).emit('JoinChat',({chatName,chatId}));
+    });
+
+  }
 
   async ConnectToChat(newuser, socket) {
     try {
@@ -17,7 +57,7 @@ class SocketServerService {
         socket.join(savedUser.chatId);
       }
       const chatUsers = await this.getUsers(chatId);
-      let io = require('../config/socketio').getIO();
+
       io.in(chatId).emit('inChat', (chatUsers));
 
     }catch(err) {

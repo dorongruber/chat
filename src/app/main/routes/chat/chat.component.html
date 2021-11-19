@@ -1,22 +1,6 @@
-<!-- <div class="chat-container main-background-img">
-  <app-header></app-header>
-  <p>chat works!</p>
-
-  <footer>
-    <form #message="ngForm" (ngSubmit)="onMessageSubmit(message)">
-      <div class="input-container">
-        <input type="text" placeholder="send message">
-        <button type="submit">
-          <mat-icon>send</mat-icon>
-        </button>
-      </div>
-    </form>
-  </footer>
-</div> -->
-
 <body class="chat-container main-background-img">
   <app-header [relatedToRoute]="baseRoute" [title]="chatId"></app-header>
-  <section class="messages-container">
+  <section class="messages-container msgs">
     <ng-container *ngFor="let message of messages; let i=index;">
       <app-message [msgFromat]="message"></app-message>
     </ng-container>

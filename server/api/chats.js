@@ -5,10 +5,23 @@ const router = express.Router();
 
 router.get('/messages/:id', getMessagesByChatId);
 
+router.post('/newchat', addChat)
+
 router.get('/:id', getChatById);
 
 
 module.exports = router;
+
+function addChat(req,res,next) {
+  const {id,name,users} = req.body;
+  chatService.createChat(id,name)
+  .then(newChat => {
+    res.status(200).json(newChat);
+  })
+  .catch(err => {
+    res.status(401).json(err);
+  })
+}
 
 function getChatById(req,res,next) {
   const { id } = req.params;

@@ -70,6 +70,14 @@ class userService {
     };
   }
 
+  async getAll() {
+    try{
+      return await Users.find({});
+    } catch(err) {
+      throw err;
+    }
+  }
+
 }
 
 module.exports = {

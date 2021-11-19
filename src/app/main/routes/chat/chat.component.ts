@@ -1,11 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { observable, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Message } from 'src/app/main/models/message';
 import { ChatService } from 'src/app/services/chat.service';
-import { ChatsService } from 'src/app/services/chats.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -31,6 +30,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     private socketService: SocketService,
     private userService: UserService,
+    private el: ElementRef,
     ) {
     this.chatId$ = new Observable<string>();
     this.chatUsers = []
@@ -53,11 +53,13 @@ export class ChatComponent implements OnInit, OnDestroy {
    this.subscriptions.add(this.subscription);
    this.subscriptions = this.chatService.messages.subscribe(resMsg => {
      this.messages.push(resMsg);
+     //this.scrollToLastMsg()
    });
 
    const formDb = await this.chatService.getChatMessages(this.chatId);
-   console.log('messages from db => ', formDb);
+   //console.log('messages from db => ', formDb);
    this.messages = formDb;
+   //this.scrollToLastMsg();
   }
 
   onMessageSubmit(form: NgForm) {
@@ -65,7 +67,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.messageFormat = this.createMessage(form.value.message);
     this.socketService.sendMessage(this.messageFormat);
     this.messages.push(this.messageFormat);
-    console.log('messgaes => ', this.messages);
+    //console.log('messgaes => ', this.messages);
     this.msgContent = '';
   }
 
@@ -81,6 +83,18 @@ export class ChatComponent implements OnInit, OnDestroy {
       date: date,
       fromCurrentUser: true,
     };
+  }
+
+
+
+  scrollToLastMsg() {
+    const chatMsgsElement = document.querySelector('section') as HTMLElement;
+    console.log('scrollToLastMsg -> ', chatMsgsElement.scrollHeight, chatMsgsElement.scrollTop)
+    chatMsgsElement.scrollTop = 198;
+    console.log('scrollToLastMsg -> ', chatMsgsElement.scrollHeight, chatMsgsElement.scrollTop)
+    // chatMsgsElement.addEventListener('scroll', event => {
+    //   console.log('scrolltop ', chatMsgsElement.scrollTop);
+    // })
   }
 
   ngOnDestroy() {
