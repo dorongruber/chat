@@ -14,6 +14,7 @@ function getMessageById(req,res,next) {
   const { id } = req.params;
   msgService.getMessageById(id)
   .then(msg => {
+    console.log('getMessageById -> ', msg);
     res.status(200).json(msg);
   })
   .catch(err => {

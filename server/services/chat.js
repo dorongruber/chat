@@ -1,9 +1,12 @@
 const Chats = require('../models/Chats');
-const { msgService } = require('../services/message');
 const { userService } = require('./user');
-class ChatService {
+const { msgService } = require('./message');
 
-  constructor() {}
+
+class ChatService {
+  constructor() {
+    //this.poolChat = this.getByName('generalPool');
+  }
 
   getById = async function(id) {
     const chat = await Chats.findOne({id});
@@ -11,12 +14,17 @@ class ChatService {
     return chat;
   }
 
-  createChat = async function(id,name) {
+  getByName = async function(chatName) {
+    return Chats.findOne({name: chatName});
+  }
+
+  createChat = async function(id,name,users) {
     const chat = await Chats.findOne({id});
     if (chat) return res.status(200).end();
     const newChat = new Chats({
       id,
-      name
+      name,
+      users: [users.map(u => u._id)]
     });
     const saved = await newChat.save();
     return saved;
@@ -24,27 +32,65 @@ class ChatService {
 
   getChatMessages = async function(id) {
     try {
-      return Chats.findOne({id})
+      const chat = await Chats.findOne({id})
       .populate('messages')
-      .exec((err, chat) => {
-        if (err) throw err;
-        const formatedMessages = msgService.requestMsgFormat(chat.messages);
-        return formatedMessages;
-      })
+      .exec()
+      const formatedMessages = msgService.requestMsgFormat(chat.messages);
+      return formatedMessages;
     }catch(err) {
       throw err;
     }
   }
 
-  getChatUsers = function(id) {
+  getChatUsers = async function(id) {
     try {
-      return Chats.findOne({id})
-      .populate('Users')
-      .exec((err,chat) => {
-        if (err) throw err;
-        const formatedUsers = userService.responseUsersFormat(chat.users);
-        return formatedUsers;
-      })
+      const chat = await Chats.findOne({id})
+      .populate('users')
+      .exec();
+      // console.log('chat.users => ', userService);
+      // const formatedUsers = await userService.responseUsersFormat(chat.users);
+      return chat.users;
+    }catch(err) {
+      throw err;
+    }
+  }
+
+  getSingleChatUserById = async function(chatId,userId) {
+    const chatUsers = await this.getChatUsers(chatId);
+    return await chatUsers.find(u => u.id === userId);
+  }
+
+  getUserInPool = async function(chatName,userId) {
+    try {
+      const chat = await Chats.findOne({name: chatName})
+      .populate('users')
+      .exec();
+      console.log('chat.users => ', chat);
+      // const formatedUsers = await userService.responseUsersFormat(chat.users);
+      // return formatedUsers;
+      const user = await chat.users.find(u => u.id === userId);
+      return user;
+    }catch(err) {
+      throw err;
+    }
+  }
+
+  addUserToPool = async function(id) {
+    try{
+      const pool = await this.getByName('generalPool');
+      pool.users.push({_id: id});
+      const updatedPool = pool.save();
+      if (!updatedPool) return false;
+      return true;
+    } catch(err) {
+      throw err;
+    }
+  }
+
+  updateUserInPool(userId) {
+    try {
+      this.populaueUsersInPollChat();
+        this.poolChat.users.findOne({id: userId});
     }catch(err) {
       throw err;
     }
@@ -72,6 +118,22 @@ class ChatService {
     }catch(err) {
       throw err;
     }
+  }
+
+  async responseChatFormat(chats) {
+    const formatedChats = [];
+    chats.forEach(chat => {
+      formatedChats.push({
+        id: chat.id,
+        name: chat.name
+      })
+    });
+    return formatedChats;
+  }
+
+  populaueUsersInPollChat() {
+    this.poolChat.populate('users')
+    .exec();
   }
 
 }

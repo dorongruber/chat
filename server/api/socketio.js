@@ -5,6 +5,15 @@ exports = module.exports = function(io){
 
   io.on('connection', (socket) =>
   {
+
+    socket.on('createChat' , ({chatId, chatName, chatUsers,userId}) => {
+      SocketServerService.CreateChat(chatId, chatName, chatUsers,userId,socket);
+    })
+
+    socket.on('EnterPool', ({userId,userName,chatId,chatName}) => {
+      SocketServerService.EnterToPool(userId,userName,chatId,chatName,socket);
+    })
+
     socket.on('file1Event', function () {
       console.log('file1Event triggered');
     });

@@ -4,25 +4,27 @@ import { CommonModule } from '@angular/common';
 import { MainRoutingModule } from './main-routing.module';
 import { MainComponent } from './main.component';
 import { RouterModule } from '@angular/router';
-import { ChatsComponent } from './routes/chats/chats.component';
-import { ChatComponent } from './routes/chats/chat/chat.component';
+import { ChatComponent } from './routes/chat/chat.component';
 import { HeaderComponent } from './components/header/header.component';
 import { MessageComponent } from './components/message/message.component';
 import { SharedModule } from '../shared/shared.module';
 import { FormsModule } from '@angular/forms';
 import { LandingpageComponent } from './routes/landingpage/landingpage.component';
 import { MenuComponent } from './components/menu/menu.component';
+import { ChatsmenuComponent } from './components/chatsmenu/chatsmenu.component';
+import { NewchatComponent } from './routes/newchat/newchat.component';
 
 
 @NgModule({
   declarations: [
     MainComponent,
-    ChatsComponent,
     ChatComponent,
     HeaderComponent,
     MessageComponent,
     LandingpageComponent,
-    MenuComponent
+    MenuComponent,
+    ChatsmenuComponent,
+    NewchatComponent
   ],
   imports: [
     CommonModule,

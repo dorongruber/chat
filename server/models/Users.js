@@ -20,6 +20,14 @@ const UserSchema = mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  chats: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Chats',
+  }],
+  socketId: {
+    type: String,
+    required: false,
   }
 });
 

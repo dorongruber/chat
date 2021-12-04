@@ -4,9 +4,12 @@ import { AlertComponent } from './alert/alert.component';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
 
-import {MatIconModule} from '@angular/material/icon';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FocusDirective } from './directives/focuslastelement.directive';
 
@@ -23,7 +26,9 @@ import { FocusDirective } from './directives/focuslastelement.directive';
     MatIconModule,
     MatIconModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatMenuModule,
+    MatAutocompleteModule,
   ],
   exports: [
     AlertComponent,
@@ -35,6 +40,8 @@ import { FocusDirective } from './directives/focuslastelement.directive';
     FormsModule,
     ReactiveFormsModule,
     FocusDirective,
+    MatMenuModule,
+    MatAutocompleteModule,
   ]
 })
 export class SharedModule { }
