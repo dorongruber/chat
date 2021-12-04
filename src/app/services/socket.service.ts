@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { observable, Observable } from "rxjs";
 import { io } from 'socket.io-client';
 import { Message } from "../main/models/message";
 import { User } from "../shared/models/user";
@@ -60,9 +60,19 @@ export class SocketService {
     return observable;
   }
 
+  getNewMessageToChatMenu() {
+    const observable = new Observable(observer => {
+      this.socket.on('newMessageToChatMenu',(messageObj:Message) => {
+        observer.next(messageObj);
+      })
+    })
+    return observable;
+  }
+
   joinNewChat() {
     const observable = new Observable(observer => {
       this.socket.on('JoinChat', (newChat: {chatName: string,chatId: string}) => {
+        console.log('new chat -> ', newChat);
         observer.next(newChat);
       })
     })

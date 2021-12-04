@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { Chat, ChatInMenu } from "../main/models/chat";
 import { User } from "../shared/models/user";
 import { BaseService } from "./base/base.service";
 
@@ -49,6 +50,18 @@ export class UserService {
         formatUsers.push(new User(u.id,u.name,u.phone,u.password,u.email))
       })
       return formatUsers;
+    })
+  }
+
+  getChats(userId: string) {
+    const url =`${URI}chats/`;
+    return this.baseService.get<ChatInMenu[]>(url,userId)
+    .then(res => {
+      console.log('get chats  res -> ', res);
+      return res.map(c => new ChatInMenu(c.id,c.name));
+    })
+    .catch(err => {
+      throw err;
     })
   }
 

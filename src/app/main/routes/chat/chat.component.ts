@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
@@ -15,7 +15,7 @@ const COMPONENT_BASE_ROUTE = '/main/chats/chat';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit ,OnDestroy {
   private subscription = new Subscription();
   private subscriptions = new Subscription();
   msgContent: string = '';
@@ -25,6 +25,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   chatId: string = '';
   chatUsers: {userId: string, userName: string, chatId: string}[] ;
   baseRoute = COMPONENT_BASE_ROUTE;
+
+  isLoading = false;
   constructor(
     private route: ActivatedRoute,
     private chatService: ChatService,
@@ -41,9 +43,16 @@ export class ChatComponent implements OnInit, OnDestroy {
      return params.getAll('id');
    }))
 
-   this.subscription = this.chatId$.subscribe(res => {
+   this.subscription = this.chatId$.subscribe(async res => {
+     this.onLoadingChange();
      this.chatId = res;
-     console.log('current open chat -> ', this.chatId);
+     const formDb = await this.chatService.getChatMessages(this.chatId);
+     this.messages = formDb;
+     setTimeout(() => {
+      this.scrollToLastMsg();
+
+    }, 1000);
+    this.onLoadingChange();
    });
    this.subscriptions.add(this.subscription);
 
@@ -52,14 +61,17 @@ export class ChatComponent implements OnInit, OnDestroy {
    })
    this.subscriptions.add(this.subscription);
    this.subscriptions = this.chatService.messages.subscribe(resMsg => {
+     this.onLoadingChange();
      this.messages.push(resMsg);
-     //this.scrollToLastMsg()
+     setTimeout(() => {
+      this.scrollToLastMsg();
+    }, 1000);
+    this.onLoadingChange();
    });
+  }
 
-   const formDb = await this.chatService.getChatMessages(this.chatId);
-   //console.log('messages from db => ', formDb);
-   this.messages = formDb;
-   //this.scrollToLastMsg();
+  onLoadingChange() {
+    this.isLoading =!this.isLoading;
   }
 
   onMessageSubmit(form: NgForm) {
@@ -67,8 +79,10 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.messageFormat = this.createMessage(form.value.message);
     this.socketService.sendMessage(this.messageFormat);
     this.messages.push(this.messageFormat);
-    //console.log('messgaes => ', this.messages);
     this.msgContent = '';
+    setTimeout(() => {
+      this.scrollToLastMsg();
+    }, 1000);
   }
 
   createMessage(msg: string): Message {
@@ -85,16 +99,10 @@ export class ChatComponent implements OnInit, OnDestroy {
     };
   }
 
-
-
   scrollToLastMsg() {
-    const chatMsgsElement = document.querySelector('section') as HTMLElement;
-    console.log('scrollToLastMsg -> ', chatMsgsElement.scrollHeight, chatMsgsElement.scrollTop)
-    chatMsgsElement.scrollTop = 198;
-    console.log('scrollToLastMsg -> ', chatMsgsElement.scrollHeight, chatMsgsElement.scrollTop)
-    // chatMsgsElement.addEventListener('scroll', event => {
-    //   console.log('scrolltop ', chatMsgsElement.scrollTop);
-    // })
+    const chatMsgsElement = document.getElementById('msgs-container') as HTMLElement;
+
+    chatMsgsElement.scrollTop = chatMsgsElement.scrollHeight;
   }
 
   ngOnDestroy() {

@@ -19,9 +19,9 @@
 .currentUser-triangle {
   left: unset;
   right: 0px;
-  border-top: 30px solid hsl(198, 57%, 58%);
+  border-top: 23px solid hsl(198, 57%, 58%);
   border-bottom: 0 solid transparent;
-  border-right: 23px solid transparent;
+  border-right: 30px solid transparent;
   border-left: 11px solid transparent;
 }
 
@@ -51,11 +51,12 @@
   justify-content: space-between;
   align-items: center;
   font-size: 7px;
-  margin: 2px 4px;
+  margin: 2px 5px 2px 10px;
 }
 
 .currentUser-message-header {
   flex-direction: row-reverse;
+  margin: 2px 10px 2px 5px;
 }
 
 .message-content {

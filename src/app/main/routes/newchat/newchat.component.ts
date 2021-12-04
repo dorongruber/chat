@@ -24,6 +24,8 @@ export class NewchatComponent implements OnInit {
   chatName = '';
   UsersToAddToChat: User[] = [];
   currentUser: any;
+  allUsers: User[] = [];
+  formControlUserReset: User = new User('','','','','');
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -33,7 +35,7 @@ export class NewchatComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-   this.currentUser = this.userService.get();
+    this.currentUser = this.userService.get();
     this.setAutoOptions();
     this.InitForm();
   }
@@ -44,25 +46,19 @@ export class NewchatComponent implements OnInit {
     .then(resData => {
       console.log('current user -> ', this.currentUser);
       console.log('resData -> ', resData);
-      this.OptionUsers = [...resData.filter(u => u.id !== this.currentUser.id)];
+      this.allUsers = [...resData.filter(u => u.id !== this.currentUser.id)];
+      this.OptionUsers = [...this.allUsers];
     });
     console.log('this.OptionUsers -> ', this.OptionUsers);
   }
   //TODO add multe users to chat
   InitForm() {
-
-
-    let chatImg = '';
-    let chatUsers: User = new User('','','','','');
-    let chatPassword = '';
-    let chatConfiremPassword = '';
-
+    this.chatName = '';
     this.chatForm = new FormGroup({
       name: new FormControl(this.chatName, [Validators.required]),
-      users: new FormArray([new FormControl(chatUsers, Validators.required)]),
+      users: new FormArray([new FormControl(this.formControlUserReset, Validators.required)]),
     });
-
-    console.log('init this.chatForm => ', this.chatForm);
+    //console.log('init this.chatForm => ', this.chatForm);
   }
 
   get users() {
@@ -71,28 +67,42 @@ export class NewchatComponent implements OnInit {
   }
 
   addUser() {
-    let chatUsers: User = new User('','','','','');
-    this.users.push(new FormControl(chatUsers, Validators.required));
+    this.users.push(new FormControl(this.formControlUserReset, Validators.required));
   }
 
-  removeUser(i: number) {
-    this.UsersToAddToChat = this.UsersToAddToChat.filter( u => u.id !== this.users.value[i].id);
-    this.users.removeAt(i);
+  async removeUser(i: number) {
+    const userToRemove = this.users.value[i];
+    this.UsersToAddToChat = this.UsersToAddToChat.filter( u => u.id !== userToRemove.id);
+    await this.updateUserOptions(userToRemove);
+    this.users.setControl(i,new FormControl(this.formControlUserReset, Validators.required));
+    this.addUser();
+  }
+
+  async updateUserOptions(user: User) {
+    if (user)
+      this.OptionUsers.push(user);
+  }
+
+  filterSelectedUsers(id: string) {
+    this.OptionUsers = this.allUsers
+    .filter(userOption => userOption.id !== id);
   }
 
   selectOption(index: number) {
     this.UsersToAddToChat.push(this.OptionUsers[index]);
+    this.filterSelectedUsers(this.OptionUsers[index].id);
   }
 
   onSubmit(form: FormGroup) {
 
     if (!form.valid) {
       console.log('invalide form -> ', form);
+      return;
     }
     this.isLoading = true;
     console.log('register form -> ', form, this.UsersToAddToChat);
     let name = form.value.name;
-    let users = [...this.UsersToAddToChat];
+    let users = [...this.UsersToAddToChat,this.currentUser];
 
     this.chatsService.addChat(name,users,this.currentUser.id);
     // const newuser = new RegisterUser(Img,password,name,name,phone);
@@ -110,8 +120,8 @@ export class NewchatComponent implements OnInit {
     //     this.authService.loadingObs.next(this.isLoading);
     //   }
     // });
-
-    //form.reset();
+    form.reset();
+    this.InitForm();
     this.isLoading = false;
   }
 

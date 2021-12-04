@@ -42,7 +42,7 @@
     </div>
   </div> -->
 
-  <div class="form-array-container" formArrayName='users'>
+  <div *ngIf="users" class="form-array-container" formArrayName="users">
     <ng-container *ngFor="let user of users.controls; let i=index;">
       <mat-form-field
       class="form-content"
@@ -55,11 +55,12 @@
         type="text"
         [formControlName]="i"
         [matAutocomplete]="auto"
-        placeholder="new user"
+        placeholder="User Name"
+        [value]="user.value.name"
         >
       </mat-form-field>
       <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-        <mat-option (click)="selectOption(i)" *ngFor="let user of OptionUsers;let i=index" [value]="user.name">
+        <mat-option (click)="selectOption(i)" *ngFor="let user of OptionUsers;let i=index" [value]="user">
           {{user.name}}
         </mat-option>
       </mat-autocomplete>
@@ -74,7 +75,7 @@
     <div class="users-in-chat-list">
       <ng-container *ngFor="let user of users.controls; let i=index">
         <div *ngIf="user.value.name !== ''" class="in-chat in-chat-container">
-          {{user.value}}
+          {{user.value.name}}
           <mat-icon class="close-icon" (click)="removeUser(i)">close</mat-icon>
         </div>
       </ng-container>

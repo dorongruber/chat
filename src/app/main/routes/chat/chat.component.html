@@ -1,10 +1,15 @@
 <body class="chat-container main-background-img">
   <app-header [relatedToRoute]="baseRoute" [title]="chatId"></app-header>
-  <section class="messages-container msgs">
+  <section id="msgs-container" class="messages-container msgs" *ngIf="!isLoading else ShowSpinner">
     <ng-container *ngFor="let message of messages; let i=index;">
-      <app-message [msgFromat]="message"></app-message>
+      <app-message class="single-msg" [msgFromat]="message"></app-message>
     </ng-container>
   </section>
+  <ng-template #ShowSpinner>
+    <div class="messages-container spinner">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  </ng-template>
   <footer class="form-footer">
     <form #messageForm="ngForm" (ngSubmit)="onMessageSubmit(messageForm)">
       <div class="input-container">

@@ -15,6 +15,7 @@ const URI = 'http://localhost:3000/api/chat/';
 export class ChatService {
   usersInChat = new Subject<[{userId: string, userName: string, chatId: string}]>();
   messages = new Subject<Message>();
+  newMenuMsg = new Subject<Message>();
   constructor(
     private baseService: BaseService,
     private socketService: SocketService,
@@ -32,6 +33,11 @@ export class ChatService {
          console.log('new msgs -> ', response);
          return response;
        })) as Subject<Message>
+
+       this.newMenuMsg = socketService.getNewMessageToChatMenu()
+       .pipe(map(response => {
+         return response;
+       })) as Subject<Message>;
      }
 
      getChatData(id: string) {

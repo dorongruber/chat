@@ -6,4 +6,12 @@ export class User {
     this.Id = id;
     this.Name = name;
   }
+
+  get id() {
+    return this.Id;
+  }
+
+  get name() {
+    return this.Name;
+  }
 }
