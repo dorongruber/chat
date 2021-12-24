@@ -62,7 +62,8 @@ export class HeaderComponent implements OnInit {
   mainMenuOptions(index: number) {
     switch(index) {
       case 0:
-        this.controllerService.onStateChange(undefined);
+        if (this.isMobile)
+          this.controllerService.onStateChange(undefined);
         this.onNavigationChange('./newchat');
         break;
       case 1:

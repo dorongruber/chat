@@ -19,10 +19,8 @@ const COMPONENT_BASE_ROUTE = '/main/chats';
   styleUrls: ['./chatsmenu.component.scss']
 })
 export class ChatsmenuComponent implements OnInit,OnChanges {
-  //isMenuOpen = false;
   isMobile = false;
-  //menuOption = 0;
-  //mock data
+
   chats: ChatInMenu[] = [];
   users = mockUserList;
   ////////////

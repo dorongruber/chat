@@ -5,9 +5,12 @@
   background-size: 30%;
   height: 100vh;
   @media (max-width: 640px) {
+    position: relative;
     width: 100%;
     background-size: 70%;
     background-position: unset;
+    background-color: hsl(223, 49%, 19%);
+    z-index: 1;
   }
 }
 

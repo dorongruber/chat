@@ -1,20 +1,5 @@
 <body class="main-container">
   <app-header [relatedToRoute]="baseRoute" [title]="title"></app-header>
-  <ng-container *ngIf="!isMobile else Mobile">
-    <app-chatsmenu [user]="user"></app-chatsmenu>
-    <div class="sidenav-menu-container" [ngClass]="{'show': isMenuOpen}">
-      <app-menu [user]="user" [option]='menuOption'></app-menu>
-    </div>
-  </ng-container>
-  <ng-template #Mobile>
-    <div class="sidenav-menu-container" [ngClass]="{'show': isMenuOpen, 'add-scroll': isMobile}">
-      <ng-container *ngIf="menuOption === 3 else MenuOptions">
-        <app-chatsmenu [user]="user"></app-chatsmenu>
-      </ng-container>
-      <ng-template #MenuOptions>
-        <app-menu [user]="user" [option]='menuOption'></app-menu>
-      </ng-template>
-    </div>
-  </ng-template>
+  <app-menu [user]="user" [option]='menuOption' [ngClass]="{'show': isMenuOpen}"></app-menu>
 <router-outlet></router-outlet>
 </body>
