@@ -7,7 +7,9 @@ const router = express.Router();
 
 router.post('/save', saveUser);
 
-router.post('/update', updateUserInfo);
+router.put('/',updateUserInfo)
+
+//router.post('/update', updateUserInfo);
 
 router.get('/allUsers', getAllUsers);
 
@@ -47,6 +49,13 @@ function saveUser(req,res,next) {
 
 function updateUserInfo(req,res,next) {
  console.log('updateUserInfo -> ', req.body);
+ userService.update(req.body)
+ .then(updatedUser => {
+   res.status(200).json(updatedUser);
+ })
+ .catch(err => {
+   res.status(400).json(err);
+ })
 }
 
 function getAllUsers(req,res,next) {

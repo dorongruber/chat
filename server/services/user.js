@@ -57,9 +57,9 @@ class UserService {
       user.name =  newUserInfo.name;
       user.phone =  newUserInfo.phone;
       user.email =  newUserInfo.email;
-      user.password =  newUserInfo.password,
-      user.chats = [... newUserInfo.chats];
-      user.socketId = newUserInfo.socketId;
+      user.password = newUserInfo.password? newUserInfo.password: user.password,
+      user.chats = newUserInfo.chats? [... newUserInfo.chats]: [...user.chats];
+      user.socketId = newUserInfo.socketId? newUserInfo.socketId : user.socketId;
       return user.save();
     }catch(err) {
       throw err;

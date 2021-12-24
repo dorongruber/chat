@@ -1,9 +1,7 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { mockChatsList } from 'src/app/mockData/chatsList';
 import { mockUserList } from 'src/app/mockData/usersList';
-import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatsService } from 'src/app/services/chats.service';
 import { DeviceTypeService } from 'src/app/services/devicetype.service';
@@ -21,13 +19,14 @@ const COMPONENT_BASE_ROUTE = '/main/chats';
   styleUrls: ['./chatsmenu.component.scss']
 })
 export class ChatsmenuComponent implements OnInit,OnChanges {
-  isMenuOpen = false;
+  //isMenuOpen = false;
+  isMobile = false;
+  //menuOption = 0;
   //mock data
   chats: ChatInMenu[] = [];
   users = mockUserList;
   ////////////
   @Input() user: User | undefined;
-  randIndex = 0;
   subscription = new Subscription();
   private subscriptions = new Subscription();
   constructor(
@@ -35,7 +34,6 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
     private routerService: RouterService,
     private userService: UserService,
     private deviceTypeService: DeviceTypeService,
-    private controllerService: ControllerService,
     private router: Router,
     private route: ActivatedRoute,
     private chatsService: ChatsService,
@@ -43,6 +41,10 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
     ) {}
 
     ngOnInit() {
+      this.isMobile = this.deviceTypeService.isMobile;
+      this.user = this.userService.get();
+      this.initMenu(this.user.id);
+
       this.subscription = this.chatsService.onNewChat.subscribe(res => {
         console.log('new chat subject -> ', res);
         const newChat = new ChatInMenu(res.id,res.name);
@@ -70,8 +72,6 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
   async ngOnChanges() {
     if(this.user) {
       console.log('chats menu-> ', this.user)
-      this.randIndex = Math.floor(Math.random() * 4);
-
       const resChat = await this.userService.getChats(this.user.id);
       console.log('resChat -> ',resChat);
 
@@ -81,18 +81,28 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
           this.router.navigate(['./landingpage'], {relativeTo: this.route});
       });
       this.subscriptions.add(this.subscription);
-      this.subscription = this.controllerService.onMenuStateChange.subscribe(state => {
-        this.isMenuOpen = state;
-      })
     }
   }
 
+  async initMenu(userId: string) {
+    console.log('chats menu-> ', this.user)
+    const resChat = await this.userService.getChats(userId);
+    console.log('resChat -> ',resChat);
+
+    this.chats = [...resChat];
+    this.subscription = this.routerService.onRouteChange.subscribe(currentURL => {
+      if (this.CheckInitRoute(currentURL))
+        this.router.navigate(['./landingpage'], {relativeTo: this.route});
+    });
+    this.subscriptions.add(this.subscription);
+  }
+
   CheckInitRoute(currentURL: string) {
-    const isMobile = this.deviceTypeService.isMobile;
+
     if (
       currentURL === COMPONENT_BASE_ROUTE &&
       this.chats.length &&
-      !isMobile) return true;
+      !this.isMobile) return true;
     return false;
   }
 

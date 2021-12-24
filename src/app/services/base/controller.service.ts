@@ -6,10 +6,22 @@ import { Subject } from "rxjs";
 })
 export class ControllerService {
   isMenuOpen = false;
-  onMenuStateChange = new Subject<boolean>();
+  onMenuStateChange = new Subject<{state: boolean, option: number}>();
 
-  onStateChange() {
-    this.isMenuOpen = !this.isMenuOpen;
-    this.onMenuStateChange.next(this.isMenuOpen);
+  onStateChange(index = 0) {
+    if(!index)
+      this.setFlag(false);
+    else
+      this.setFlag(true);
+    //this.isMenuOpen = !this.isMenuOpen;
+    const obj = {
+      state: this.isMenuOpen,
+      option: index,
+    }
+    this.onMenuStateChange.next(obj);
+  }
+
+  setFlag(state: boolean) {
+    this.isMenuOpen = state;
   }
 }

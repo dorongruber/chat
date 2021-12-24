@@ -26,6 +26,18 @@ export class User {
     return this._name;
   }
 
+  get phone() {
+    return this._phone;
+  }
+
+  get email() {
+    return this._email;
+  }
+
+  get password() {
+    return this._password
+  }
+
   getUser() {
     return this;
   }

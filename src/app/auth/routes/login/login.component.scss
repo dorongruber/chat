@@ -2,3 +2,11 @@
   display: flex;
   justify-content: center;
 }
+
+.login-btn {
+  box-sizing: content-box;
+}
+
+:host ::ng-deep .mat-form-field-infix {
+  width: 100% !important;
+}

@@ -6,7 +6,11 @@
   </div>
   <div class="auth-component-container" >
     <div class="header-container" *ngIf="!isLoading">
-      <h3 class="header"> {{ loadState? 'Enter Cradentials To LogIn': 'Fill Feilds To Register' }}</h3>
+      <div class="icon-container">
+        <mat-icon class="icon">person_outline</mat-icon>
+      </div>
+      <h3 class="header"> {{ loadState? 'Log In': 'Fill Feilds To Register' }}</h3>
+
     </div>
     <div class="router-container">
       <router-outlet></router-outlet>

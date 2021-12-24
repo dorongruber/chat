@@ -9,6 +9,7 @@ router.post('/newchat', addChat)
 
 router.get('/:id', getChatById);
 
+router.delete('/:chatId/:userId', deleteUserById);
 
 module.exports = router;
 
@@ -53,4 +54,14 @@ function addUser(req,res,next) {
 
 }
 
-function deleteUserById(req,res,next) {}
+function deleteUserById(req,res,next) {
+  const { chatId,userId } = req.params;
+  chatService.removeUserFromChat(chatId,userId)
+  .then(deletedUser => {
+    res.status(200).json(deletedUser);
+  })
+  .catch(err => {
+    res.status(500).json(err);
+  })
+}
+

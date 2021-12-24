@@ -1,35 +1,38 @@
-<div class="chats-list-container" [ngClass]="{'remove-overflow-y': isMenuOpen}">
-  <ng-container *ngFor="let chat of chats"  >
-    <div class="chat-contaienr" [routerLink]="['./', chat.id]" (click)="OnChatSelect(chat.id)">
-       <!-- TODO add counter for new massages in chat and show last message preview -->
-      <h3 class="chat-name">
-        {{chat.name}}
-        <ng-container *ngIf="(chat.onCounterChange | async)">
-          <div *ngIf="chat.newmsgscounter > 0" class="new-masgs-counter-badge">
-            <div class="count">
-              {{chat.newmsgscounter}}
+<!--
+  [ngClass]="{'remove-overflow-y': isMenuOpen}"
+-->
+<div class="chats-list-container" >
+  <div id="chats" class="chats">
+    <ng-container *ngFor="let chat of chats"  >
+      <div class="chat-contaienr" [routerLink]="['./', chat.id]" (click)="OnChatSelect(chat.id)">
+         <!-- TODO add counter for new massages in chat and show last message preview -->
+        <h3 class="chat-name">
+          {{chat.name}}
+          <ng-container *ngIf="(chat.onCounterChange | async)">
+            <div *ngIf="chat.newmsgscounter > 0" class="new-masgs-counter-badge">
+              <div class="count">
+                {{chat.newmsgscounter}}
+              </div>
+            </div>
+          </ng-container>
+        </h3>
+        <!-- last message -->
+        <ng-container *ngIf="(chat.onMsgChange | async)">
+          <div *ngIf="chat.newmsgscounter > 0 && chat.lastMsg.message !== ''" class="new-msg">
+            <div class="from">
+              {{ chat.lastMsg.userName }}
+            </div>
+            <div class="time">
+              {{ chat.lastMsg.date | date: 'shortDate'}}
+            </div>
+            <div class="msg-content">
+              {{ chat.lastMsg.message }}
             </div>
           </div>
         </ng-container>
-      </h3>
-      <!-- last message -->
-      <ng-container *ngIf="(chat.onMsgChange | async)">
-        <div *ngIf="chat.newmsgscounter > 0 && chat.lastMsg.message !== ''" class="new-msg">
-          <div class="from">
-            {{ chat.lastMsg.userName }}
-          </div>
-          <div class="time">
-            {{ chat.lastMsg.date | date: 'shortDate'}}
-          </div>
-          <div class="msg-content">
-            {{ chat.lastMsg.message }}
-          </div>
-        </div>
-      </ng-container>
-    </div>
-  </ng-container>
-  <div class="sidenav-menu-container" [ngClass]="{'show': isMenuOpen}">
-    <app-menu></app-menu>
+      </div>
+    </ng-container>
   </div>
+
 </div>
 

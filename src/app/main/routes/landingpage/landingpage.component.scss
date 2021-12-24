@@ -31,6 +31,10 @@
   background-size: cover;
   box-sizing: border-box;
   margin-bottom: 20px;
+  @media (max-width: 640px) {
+    width: 250px;
+    height: 250px;
+  }
 }
 
 .title {

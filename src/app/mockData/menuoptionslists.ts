@@ -8,5 +8,6 @@ export const mainMenuOptions = [
   {title: 'create chat', icon: 'add_circle_outline'},
   {title: 'remove chat', icon: 'remove_circle_outline'},
   {title: 'user info', icon: 'info'},
+  {title: 'chats', icon: 'chat'},
   {title: 'exit app', icon: 'exit_to_app'},
 ];

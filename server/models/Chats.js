@@ -18,15 +18,4 @@ const ChatSchema = mongoose.Schema({
   }]
 });
 
-ChatSchema.methods.getChatUsers = function() {
-  return this.populate('Users')
-  .catch(err => {
-    throw err;
-  });
-}
-
-ChatSchema.methods.removeUser = function(id) {
-  console.log('remove user');
-}
-
 module.exports = mongoose.model('Chats', ChatSchema);
