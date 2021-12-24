@@ -2,6 +2,10 @@
   position: relative;
   margin-top: 15px;
   min-height: 35px;
+  @media (max-width: 640px) {
+    margin-top: 10px;
+    min-height: 45px;
+  }
 }
 
 .triangle {
@@ -36,7 +40,7 @@
   box-sizing: border-box;
   min-width: 20%;
   @media (max-width: 640px) {
-    min-width: 35%;
+    min-width: 45%;
   }
 }
 

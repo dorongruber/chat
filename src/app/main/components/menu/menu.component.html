@@ -1,12 +1,21 @@
 <section class="menu-container">
-  <ng-container *ngIf="option === 1">
-    <div class="component-container">
-      <app-deletechat [userId]="user?.id"></app-deletechat>
-    </div>
-  </ng-container>
-  <ng-container *ngIf="option === 2">
-    <div class="component-container">
-      <app-userinfo [userId]="user?.id"></app-userinfo>
-    </div>
-  </ng-container>
+  <div class="sidenav-menu-container image-background" [ngClass]="{'show': option === 1}">
+    <ng-container *ngIf="option === 1">
+      <div class="component-container">
+        <app-deletechat [userId]="user?.id"></app-deletechat>
+      </div>
+    </ng-container>
+  </div>
+  <div class="sidenav-menu-container image-background" [ngClass]="{'show': option === 2}">
+    <ng-container *ngIf="option === 2">
+      <div class="component-container">
+        <app-userinfo [userId]="user?.id"></app-userinfo>
+      </div>
+    </ng-container>
+  </div>
+  <div class="sidenav-menu-container regular-background" [ngClass]="{'show': option === 3}">
+    <ng-container *ngIf="option === 3">
+      <app-chatsmenu [user]="user"></app-chatsmenu>
+    </ng-container>
+  </div>
 </section>

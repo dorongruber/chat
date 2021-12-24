@@ -46,3 +46,24 @@ h3 {
 :host ::ng-deep ::-webkit-scrollbar {
   display: none;
 }
+
+:host ::ng-deep mat-form-field {
+
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: #193C50 !important;
+  }
+
+  .mat-form-field-outline {
+    color: #193C50 !important;
+  }
+
+  .mat-form-field-outline-thick {
+    color: cadetblue !important;
+  }
+
+  .mat-form-field-label {
+    color: #000 !important;
+    font-weight: 600;
+  }
+
+}

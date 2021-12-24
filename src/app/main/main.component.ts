@@ -21,7 +21,7 @@ export class MainComponent implements OnInit {
   user: User | undefined;
   isMobile = false;
   isMenuOpen = false;
-  menuOption = 0;
+  menuOption = 3;
   subscription = new Subscription();
   private subscriptions = new Subscription();
   constructor(
@@ -38,13 +38,15 @@ export class MainComponent implements OnInit {
     console.log('id -> ', id);
 
     this.isMobile = this.deviceTypeService.isMobile;
-
+    this.menuOption = this.isMobile? 0 : 3;
     this.user = await this.userService.getUserById(id);
     if (this.user)
       this.socketService
       .enterPool(this.user.id, this.user.name,this.chatService.GenerateId(),'generalPool');
 
       this.subscription = this.controllerService.onMenuStateChange.subscribe(obj => {
+        console.log('onMenuStateChange => ', obj);
+
         this.isMenuOpen = obj.state;
         if(this.isMenuOpen)
           this.menuOption = obj.option;
