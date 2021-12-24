@@ -2,3 +2,29 @@
 background-color: hsl(223, 49%, 19%);
 overflow-y: clip;
 }
+
+.sidenav-menu-container {
+  position: fixed;
+  width: 20%;
+  height: 100vh;
+  box-sizing: border-box;
+  top: 50px;
+  right: 0;
+  transform: translateX(100%);
+  transition: 1s ease-in-out transform;
+  background: #193C50;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px ;
+  z-index: 5;
+  @media (max-width: 640px) {
+    width: 100%;
+  }
+}
+
+.show {
+  transform: translateX(0%);
+}
+
+.add-scroll {
+  overflow-y: scroll;
+}

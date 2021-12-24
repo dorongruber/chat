@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { Subject } from "rxjs";
 import { Chat, ChatInMenu } from "../main/models/chat";
 import { User } from "../shared/models/user";
 import { BaseService } from "./base/base.service";
@@ -10,6 +11,7 @@ const URI = 'http://localhost:3000/api/user/';
 })
 export class UserService {
   private user: User;
+  onUserChange = new Subject<User>();
   constructor(
     private baseService: BaseService
     ) {
@@ -63,6 +65,15 @@ export class UserService {
     .catch(err => {
       throw err;
     })
+  }
+
+  updateUser(updateduser: User) {
+    this.baseService.put<User>(URI,updateduser)
+    .then(resUpdatedUser => {
+      this.set(resUpdatedUser);
+      this.onUserChange.next(resUpdatedUser);
+    })
+    .catch()
   }
 
   set(selectedUser: User) {

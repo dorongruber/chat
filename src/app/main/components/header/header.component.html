@@ -18,7 +18,7 @@
       <mat-icon [matMenuTriggerFor]="mainMenu">{{isMobile? 'more_vert': 'menu'}}</mat-icon>
       <mat-menu #mainMenu="matMenu">
         <ng-container *ngFor="let option of menuOptions;let i=index">
-          <button (click)="onMenuChange(i)" mat-menu-item [ngClass]="{mainMenuBackground: !isChatOpen}">
+          <button [id]="option.title" (click)="onMenuChange(i)" mat-menu-item [ngClass]="{mainMenuBackground: !isChatOpen}">
             <mat-icon>{{option.icon}}</mat-icon>
             <span>{{option.title}}</span>
           </button>

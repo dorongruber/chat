@@ -1,6 +1,7 @@
 const Chats = require('../models/Chats');
-const { userService } = require('./user');
 const { msgService } = require('./message');
+const { ObjectId } = require('mongodb');
+const Users = require('../models/Users');
 
 
 class ChatService {
@@ -96,6 +97,32 @@ class ChatService {
     }
   }
 
+  async removeUserFromChat(chatId,userId) {
+    try{
+      const chat = Chats.findOne({id: chatId})
+      .populate('users')
+      .exec(function(err,chat) {
+        if(err) return err;
+        const user = chat.users.find(u => u.id === userId);
+        chat.users = chat.users.filter(u => u.id !== userId);
+        //console.log('chat.users after => ', chat.users, userId);
+        Users.findOne({id: userId}).populate('chats')
+        .exec((err, user) => {
+          if (err) return err;
+          user.chats = user.chats.filter(c => c.id !== chatId);
+          //console.log('user chats after -> ', user.chats, chatId);
+          user.save();
+        })
+      })
+      if (chat.users.length < 1)
+        return this.deleteChat(chatId);
+      return chat.save();
+    }catch(err) {
+      console.log('err =>!!!!!', err);
+      throw err
+    }
+  }
+
   ////////////////////// inner functions
 
   async addMessageToChat(msgState) {
@@ -134,6 +161,22 @@ class ChatService {
   populaueUsersInPollChat() {
     this.poolChat.populate('users')
     .exec();
+  }
+
+  async getChat(filter) {
+    try{
+      const chat = await Chats.findOne(filter);
+      return chat
+    }catch(err) {
+      throw err;
+    }
+  }
+
+  deleteChat(id) {
+    return Chats.findOneAndDelete({id}, (err,chat) => {
+      if(err) throw new Error(err);
+      return true;
+    });
   }
 
 }

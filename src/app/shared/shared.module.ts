@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
+import {MatButtonModule} from '@angular/material/button';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FocusDirective } from './directives/focuslastelement.directive';
@@ -29,6 +30,7 @@ import { FocusDirective } from './directives/focuslastelement.directive';
     MatInputModule,
     MatMenuModule,
     MatAutocompleteModule,
+    MatButtonModule,
   ],
   exports: [
     AlertComponent,
@@ -42,6 +44,7 @@ import { FocusDirective } from './directives/focuslastelement.directive';
     FocusDirective,
     MatMenuModule,
     MatAutocompleteModule,
+    MatButtonModule,
   ]
 })
 export class SharedModule { }

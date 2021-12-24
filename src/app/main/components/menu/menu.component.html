@@ -1,1 +1,12 @@
-<p>menu works!</p>
+<section class="menu-container">
+  <ng-container *ngIf="option === 1">
+    <div class="component-container">
+      <app-deletechat [userId]="user?.id"></app-deletechat>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="option === 2">
+    <div class="component-container">
+      <app-userinfo [userId]="user?.id"></app-userinfo>
+    </div>
+  </ng-container>
+</section>

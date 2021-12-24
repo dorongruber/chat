@@ -3,15 +3,27 @@
   background-image: url('../../assets/images/doodles.png');
   background-position: center;
   background-size: 30%;
+  height: 100vh;
   @media (max-width: 640px) {
     width: 100%;
+    background-size: 70%;
+    background-position: unset;
+  }
+}
+
+.container {
+  width: 20%;
+  margin: auto;
+  padding-top: 5vh;
+  @media (max-width: 640px) {
+    width: 50%;
   }
 }
 
 .img-container {
   margin: 0 auto;
-  padding-top: 4vh;
-  width: 40%;
+  //padding-top: 4vh;
+  //width: 40%;
   box-sizing: border-box;
 }
 
@@ -31,8 +43,8 @@
 }
 
 .form-container {
-  width: fit-content;
-  margin: auto;
+  //width: fit-content;
+  //margin: auto;
   margin-top: 5vh;
 }
 
@@ -66,6 +78,12 @@
   .mat-focused {
     border-color: cadetblue !important;
   }
+
+
+}
+
+:host ::ng-deep .mat-form-field {
+  width: 100% !important;
 }
 
 :host ::ng-deep mat-icon {

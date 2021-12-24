@@ -17,7 +17,7 @@ class SocketServerService {
       if(!checkUser) {
         socket.join(chatName);
         const user = await userService.get(userId);
-        console.log('get user => ', user);
+        //console.log('get user => ', user);
         const isAdded = chatService.addUserToPool(user._id)
         if (!user) throw false;
         console.log('pool');
@@ -27,7 +27,7 @@ class SocketServerService {
         const user = await userService.get(userId);
         user.socketId = socket.id;
         const updatedUser = await userService.update(user);
-        console.log('updateed user -> ', updatedUser);
+        //console.log('updateed user -> ', updatedUser);
         if (!updatedUser) throw false;
         return true;
       }

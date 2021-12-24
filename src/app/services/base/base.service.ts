@@ -15,7 +15,15 @@ export class BaseService {
     .toPromise();
   }
 
-  post<T>(url: string, obj: Type<T>) {
-    return this.http.post(`${url}`,{obj}).toPromise();
+  post<Type>(url: string, obj: Type) {
+    return this.http.post<Type>(`${url}`,{obj}).toPromise();
+  }
+
+  put<Type>(url: string, obj: Type) {
+    return this.http.put<Type>(`${url}`,{obj}).toPromise();
+  }
+
+  delete(url: string, args: string) {
+    return this.http.delete(`${url}${args}`).toPromise();
   }
 }

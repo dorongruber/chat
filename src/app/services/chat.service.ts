@@ -75,5 +75,10 @@ export class ChatService {
        .catch(err => {throw err});
      }
 
+     deleteChat(chatId: string,userId: string) {
+      const ids = `${chatId}/${userId}`;
+      return this.baseService.delete(URI,ids)
+     }
+
 }
 

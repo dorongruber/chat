@@ -13,6 +13,8 @@ import { LandingpageComponent } from './routes/landingpage/landingpage.component
 import { MenuComponent } from './components/menu/menu.component';
 import { ChatsmenuComponent } from './components/chatsmenu/chatsmenu.component';
 import { NewchatComponent } from './routes/newchat/newchat.component';
+import { DeletechatComponent } from './components/deletechat/deletechat.component';
+import { UserinfoComponent } from './components/userinfo/userinfo.component';
 
 
 @NgModule({
@@ -24,7 +26,9 @@ import { NewchatComponent } from './routes/newchat/newchat.component';
     LandingpageComponent,
     MenuComponent,
     ChatsmenuComponent,
-    NewchatComponent
+    NewchatComponent,
+    DeletechatComponent,
+    UserinfoComponent
   ],
   imports: [
     CommonModule,

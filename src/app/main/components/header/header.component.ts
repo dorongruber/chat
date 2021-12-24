@@ -61,8 +61,22 @@ export class HeaderComponent implements OnInit {
 
   mainMenuOptions(index: number) {
     switch(index) {
+      case 0:
+        this.controllerService.onStateChange(undefined);
+        this.onNavigationChange('./newchat');
+        break;
+      case 1:
+        this.controllerService.onStateChange(index);
+        break;
+      case 2:
+        this.controllerService.onStateChange(index);
+        break;
+      case 3:
+        this.controllerService.onStateChange(index);
+        //this.onNavigationChange('./chats');
+        break;
       default:
-        this.controllerService.onStateChange();
+        this.controllerService.onStateChange(undefined);
         break;
     }
   }
@@ -73,9 +87,13 @@ export class HeaderComponent implements OnInit {
         this.OnBackClick();
         break;
       default:
-        this.controllerService.onStateChange();
+        this.controllerService.onStateChange(undefined);
         break;
     }
+  }
+
+  onNavigationChange(path: string) {
+    this.router.navigate([path], {relativeTo: this.route});
   }
 
   OnBackClick() {

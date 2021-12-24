@@ -3,6 +3,7 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { RouterAnimations } from 'src/app/app.animation';
 import { ChatsService } from 'src/app/services/chats.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/models/user';
@@ -11,7 +12,10 @@ import { ImageSnippet } from '../../models/imagesnippet.model';
 @Component({
   selector: 'app-newchat',
   templateUrl: './newchat.component.html',
-  styleUrls: ['./newchat.component.scss']
+  styleUrls: ['./newchat.component.scss'],
+  animations: [
+    RouterAnimations.routeSlide
+  ]
 })
 export class NewchatComponent implements OnInit {
   OptionUsers: User[] = [];
@@ -32,12 +36,14 @@ export class NewchatComponent implements OnInit {
     private userService: UserService,
     private chatsService: ChatsService,
     private sanitizer: DomSanitizer,
-  ) { }
+  ) {
+    this.InitForm();
+   }
 
   ngOnInit() {
     this.currentUser = this.userService.get();
     this.setAutoOptions();
-    this.InitForm();
+
   }
 
   setAutoOptions() {
@@ -51,18 +57,16 @@ export class NewchatComponent implements OnInit {
     });
     console.log('this.OptionUsers -> ', this.OptionUsers);
   }
-  //TODO add multe users to chat
+
   InitForm() {
     this.chatName = '';
     this.chatForm = new FormGroup({
       name: new FormControl(this.chatName, [Validators.required]),
       users: new FormArray([new FormControl(this.formControlUserReset, Validators.required)]),
     });
-    //console.log('init this.chatForm => ', this.chatForm);
   }
 
   get users() {
-    //console.log('get users => ', this.chatForm.get('users') as FormArray);
     return this.chatForm.get('users') as FormArray;
   }
 
