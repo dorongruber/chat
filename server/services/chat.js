@@ -139,8 +139,9 @@ class ChatService {
 
   async responseChatFormat(chats) {
     const formatedChats = [];
+    const feildToPopulate = 'messages';
     for (const chat of chats) {
-      await this.getChatMessages(chat.id).then(msgs => {
+      await this.getSingalePopulatedField(chat.id, feildToPopulate).then(msgs => {
         formatedChats.push({
           id: chat.id,
           name: chat.name,
