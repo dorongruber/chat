@@ -17,8 +17,8 @@
           </ng-container>
         </h3>
         <!-- last message -->
-        <ng-container *ngIf="(chat.onMsgChange | async)">
-          <div *ngIf="chat.newmsgscounter > 0 && chat.lastMsg.message !== ''" class="new-msg">
+        <ng-container *ngIf="(chat.onMsgChange | async) || chat.lastMsg ">
+          <div *ngIf="chat.newmsgscounter > 0 else showLasgMessage" class="new-msg">
             <div class="from">
               {{ chat.lastMsg.userName }}
             </div>
@@ -29,6 +29,19 @@
               {{ chat.lastMsg.message }}
             </div>
           </div>
+          <ng-template #showLasgMessage>
+            <div *ngIf="chat.lastMsg !== null" class="new-msg">
+              <div class="from last-msg-color">
+                {{ chat.lastMsg.userName }}
+              </div>
+              <div class="time last-msg-color">
+                {{ chat.lastMsg.date | date: 'shortDate'}}
+              </div>
+              <div class="msg-content last-msg-color">
+                {{ chat.lastMsg.message }}
+              </div>
+            </div>
+          </ng-template>
         </ng-container>
       </div>
     </ng-container>

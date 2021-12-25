@@ -60,7 +60,11 @@ export class UserService {
     return this.baseService.get<ChatInMenu[]>(url,userId)
     .then(res => {
       console.log('get chats  res -> ', res);
-      return res.map(c => new ChatInMenu(c.id,c.name));
+      return res.map(c => {
+        const chat = new ChatInMenu(c.id,c.name);
+        chat.lastMsg = c.lastMsg;
+        return chat;
+      });
     })
     .catch(err => {
       throw err;

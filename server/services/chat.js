@@ -66,7 +66,7 @@ class ChatService {
       const chat = await Chats.findOne({name: chatName})
       .populate('users')
       .exec();
-      console.log('chat.users => ', chat);
+      //console.log('chat.users => ', chat);
       // const formatedUsers = await userService.responseUsersFormat(chat.users);
       // return formatedUsers;
       const user = await chat.users.find(u => u.id === userId);
@@ -148,13 +148,45 @@ class ChatService {
   }
 
   async responseChatFormat(chats) {
+    let lastMsg;
     const formatedChats = [];
-    chats.forEach(chat => {
-      formatedChats.push({
-        id: chat.id,
-        name: chat.name
+    for (const chat of chats) {
+      await this.getChatMessages(chat.id).then(msgs => {
+        if(msgs && msgs.length) {
+          const index = msgs.length -1;
+          lastMsg = msgs[index];
+        } else {
+          lastMsg = null;
+        }
+        formatedChats.push({
+          id: chat.id,
+          name: chat.name,
+          lastMsg: lastMsg,
+        })
       })
-    });
+    }
+    // for (const chat of chats) {
+    //   Chats.findOne({ id: chat.id })
+    //     .populate('messages')
+    //     .exec((err, chat) => {
+    //       if (err)
+    //         throw err;
+    //       if (chat.messages && chat.messages.length) {
+    //         const index = chat.messages.length - 1;
+    //         console.log('index => ', chat.messages[index]);
+    //         lastMsg = chat.messages[index];
+    //       }
+    //       else {
+    //         lastMsg = null;
+    //       }
+    //       formatedChats.push({
+    //         id: chat.id,
+    //         name: chat.name,
+    //         lastMsg: lastMsg,
+    //       });
+    //     })
+
+    // }
     return formatedChats;
   }
 
