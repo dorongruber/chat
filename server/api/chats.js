@@ -37,7 +37,8 @@ function getChatById(req,res,next) {
 
 function getMessagesByChatId(req,res,next) {
   const { id } = req.params;
-  chatService.getChatMessages(id)
+  const feildToPopulate = 'messages';
+  chatService.getChatMessages(id, feildToPopulate)
   .then(messages => {
     res.status(200).json(messages);
   })

@@ -8,7 +8,7 @@ const Chats = require('../models/Chats');
 const { ObjectId } = require('bson');
 const io = require('../config/socketio').getIO();
 class SocketServerService {
-
+  feildToPopulate = 'users';
   constructor() {}
 
   async EnterToPool(userId,userName,chatId,chatName,socket) {
@@ -84,7 +84,7 @@ class SocketServerService {
         const savedUser = chatService.addUserToChat(user);
       }
       socket.join(chatId);
-      const chatUsers = await chatService.getChatUsers(chatId);
+      const chatUsers = await chatService.getSingalePopulatedField(chatId, this.feildToPopulate);
       io.in(chatId).emit('inChat', (chatUsers));
     }catch(err) {
       throw err;
@@ -107,8 +107,7 @@ class SocketServerService {
   }
 
   async sendMessageToUsersNotConnectedToSocket(userId,chatId,newMesg) {
-    let chatUsers = await chatService.getChatUsers(chatId);
-    //console.log('chatUsers =>!!!!!!!!!!!!!!! ', chatUsers,userId);
+    let chatUsers = await chatService.getSingalePopulatedField(chatId, this.feildToPopulate);
     chatUsers = chatUsers.filter(u => u.id !== userId);
     chatUsers.forEach(async (u) => {
       const socketUser = await userService.get(u.id);
