@@ -1,13 +1,9 @@
 const Chats = require('../models/Chats');
 const { msgService } = require('./message');
-const { ObjectId } = require('mongodb');
 const Users = require('../models/Users');
 
-
 class ChatService {
-  constructor() {
-    //this.poolChat = this.getByName('generalPool');
-  }
+  constructor() {}
 
   getById = async function(id) {
     const chat = await Chats.findOne({id});
@@ -31,45 +27,39 @@ class ChatService {
     return saved;
   }
 
-  getChatMessages = async function(id) {
+  getSingalePopulatedField = async function(id, fieldToPopulate) {
     try {
       const chat = await Chats.findOne({id})
-      .populate('messages')
-      .exec()
-      const formatedMessages = msgService.requestMsgFormat(chat.messages);
-      return formatedMessages;
+      .populate({
+        path: fieldToPopulate
+      })
+      if (fieldToPopulate === 'messages') {
+        const formatedMessages = msgService.requestMsgFormat(chat.messages);
+        return formatedMessages;
+      } else {
+        return chat.users;
+      }
     }catch(err) {
-      throw err;
-    }
-  }
-
-  getChatUsers = async function(id) {
-    try {
-      const chat = await Chats.findOne({id})
-      .populate('users')
-      .exec();
-      // console.log('chat.users => ', userService);
-      // const formatedUsers = await userService.responseUsersFormat(chat.users);
-      return chat.users;
-    }catch(err) {
-      throw err;
+      throw new Error(err);
     }
   }
 
   getSingleChatUserById = async function(chatId,userId) {
-    const chatUsers = await this.getChatUsers(chatId);
+    const FeildToPopulate = 'users';
+    const chatUsers = await this.getSingalePopulatedField(chatId, FeildToPopulate);
     return await chatUsers.find(u => u.id === userId);
   }
 
   getUserInPool = async function(chatName,userId) {
     try {
       const chat = await Chats.findOne({name: chatName})
-      .populate('users')
+      .populate({
+        path: 'users',
+        match: {id: {$eq: userId}}
+      })
       .exec();
-      console.log('chat.users => ', chat);
-      // const formatedUsers = await userService.responseUsersFormat(chat.users);
-      // return formatedUsers;
-      const user = await chat.users.find(u => u.id === userId);
+      //console.log('getUserInPool user => ', chat.users);
+      const user = chat.users[0];
       return user;
     }catch(err) {
       throw err;
@@ -149,12 +139,15 @@ class ChatService {
 
   async responseChatFormat(chats) {
     const formatedChats = [];
-    chats.forEach(chat => {
-      formatedChats.push({
-        id: chat.id,
-        name: chat.name
+    for (const chat of chats) {
+      await this.getChatMessages(chat.id).then(msgs => {
+        formatedChats.push({
+          id: chat.id,
+          name: chat.name,
+          lastMsg: msgs && msgs.length? msgs[msgs.length -1] : null,
+        })
       })
-    });
+    }
     return formatedChats;
   }
 

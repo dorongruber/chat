@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 
-import { AlertComponent } from './alert/alert.component';
-import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
+import { AlertComponent } from './components/alert/alert.component';
+import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
 import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -13,6 +13,7 @@ import {MatButtonModule} from '@angular/material/button';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FocusDirective } from './directives/focuslastelement.directive';
+import { Page404Component } from './components/page404/page404.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { FocusDirective } from './directives/focuslastelement.directive';
     LoadingSpinnerComponent,
     DynamicFormComponent,
     FocusDirective,
+    Page404Component,
   ],
   imports: [
     FormsModule,
@@ -45,6 +47,7 @@ import { FocusDirective } from './directives/focuslastelement.directive';
     MatMenuModule,
     MatAutocompleteModule,
     MatButtonModule,
+    Page404Component,
   ]
 })
 export class SharedModule { }

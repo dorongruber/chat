@@ -40,8 +40,6 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
 
     ngOnInit() {
       this.isMobile = this.deviceTypeService.isMobile;
-      this.user = this.userService.get();
-      this.initMenu(this.user.id);
 
       this.subscription = this.chatsService.onNewChat.subscribe(res => {
         console.log('new chat subject -> ', res);
@@ -68,25 +66,12 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
     }
 
   async ngOnChanges() {
-    if(this.user) {
-      console.log('chats menu-> ', this.user)
-      const resChat = await this.userService.getChats(this.user.id);
-      console.log('resChat -> ',resChat);
-
-      this.chats = [...resChat];
-      this.subscription = this.routerService.onRouteChange.subscribe(currentURL => {
-        if (this.CheckInitRoute(currentURL))
-          this.router.navigate(['./landingpage'], {relativeTo: this.route});
-      });
-      this.subscriptions.add(this.subscription);
-    }
+    if(this.user)
+      this.initMenu(this.user.id);
   }
 
   async initMenu(userId: string) {
-    console.log('chats menu-> ', this.user)
     const resChat = await this.userService.getChats(userId);
-    console.log('resChat -> ',resChat);
-
     this.chats = [...resChat];
     this.subscription = this.routerService.onRouteChange.subscribe(currentURL => {
       if (this.CheckInitRoute(currentURL))
@@ -96,7 +81,6 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
   }
 
   CheckInitRoute(currentURL: string) {
-
     if (
       currentURL === COMPONENT_BASE_ROUTE &&
       this.chats.length &&
@@ -116,7 +100,9 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
     this.chats.find(c => {
       if(c.id === id) {
         c.newmsgscounter = 0;
-        c.resetLastMessage();
+        console.log('chat => ',c);
+
+        //c.resetLastMessage();
       }
     })
   }
