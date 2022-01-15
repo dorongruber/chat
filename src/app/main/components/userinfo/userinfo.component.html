@@ -4,7 +4,17 @@
       <mat-icon (click)="closeWindow()">close</mat-icon>
     </div>
     <div class="icon-container">
-      <mat-icon class="icon">person_outline</mat-icon>
+      <ng-container *ngIf="user.img.name === 'emptyFile' && selectedFile === undefined else haveImg">
+        <mat-icon class="icon">person_outline</mat-icon>
+      </ng-container>
+
+      <ng-template #haveImg>
+        <img
+        [src]="Transform()"
+        alt="Image Preview"
+        class="image-preview"
+        width="103" height="103">
+      </ng-template>
     </div>
     <h3>user Info</h3>
   </header>
@@ -83,6 +93,19 @@
 
   </div> -->
 
+  <div class="load-img-container">
+    <label class="file-label" for="file">Image</label>
+    <input
+    class="input"
+    id="file"
+    type="file"
+    placeholder="image"
+    formControlName="image"
+    (change)="ProcessFile($event)"
+    accept="image/*"
+    #fileInput>
+  </div>
+
   <div class='btn-container'>
     <button
     type="submit"
@@ -90,5 +113,9 @@
     mat-raised-button> update </button>
   </div>
 </form>
+
+<ng-container *ngIf="isLoading">
+  <app-loading-spinner></app-loading-spinner>
+</ng-container>
 
 </body>

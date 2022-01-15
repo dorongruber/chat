@@ -15,6 +15,8 @@ import { ChatsmenuComponent } from './components/chatsmenu/chatsmenu.component';
 import { NewchatComponent } from './routes/newchat/newchat.component';
 import { DeletechatComponent } from './components/deletechat/deletechat.component';
 import { UserinfoComponent } from './components/userinfo/userinfo.component';
+import { ChatmenuitemComponent } from './components/chatsmenu/chatmenuitem/chatmenuitem.component';
+
 
 
 @NgModule({
@@ -28,7 +30,8 @@ import { UserinfoComponent } from './components/userinfo/userinfo.component';
     ChatsmenuComponent,
     NewchatComponent,
     DeletechatComponent,
-    UserinfoComponent
+    UserinfoComponent,
+    ChatmenuitemComponent,
   ],
   imports: [
     CommonModule,

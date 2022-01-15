@@ -1,13 +1,12 @@
 const express = require('express');
 const { userService } = require('../services/user');
 const { AuthenticationToken } = require('../middleware/jwt');
-const path = require('path');
-
+const { upload } = require('../middleware/processimg');
 const router = express.Router();
 
 router.post('/save', saveUser);
 
-router.put('/',updateUserInfo)
+router.put('/', upload.single('image') ,updateUserInfo)
 
 //router.post('/update', updateUserInfo);
 
@@ -48,8 +47,9 @@ function saveUser(req,res,next) {
 }
 
 function updateUserInfo(req,res,next) {
- console.log('updateUserInfo -> ', req.body);
- userService.update(req.body)
+ const { id, name, phone, password, email, image } = req.body;
+ const img = req.file;
+ userService.update({id, name, phone, password, email,img})
  .then(updatedUser => {
    res.status(200).json(updatedUser);
  })

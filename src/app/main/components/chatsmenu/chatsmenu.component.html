@@ -1,51 +1,8 @@
-<!--
-  [ngClass]="{'remove-overflow-y': isMenuOpen}"
--->
 <div class="chats-list-container" >
   <div id="chats" class="chats">
     <ng-container *ngFor="let chat of chats"  >
-      <div class="chat-contaienr" [routerLink]="['./', chat.id]" (click)="OnChatSelect(chat.id)">
-         <!-- TODO add counter for new massages in chat and show last message preview -->
-        <h3 class="chat-name">
-          {{chat.name}}
-          <ng-container *ngIf="(chat.onCounterChange | async)">
-            <div *ngIf="chat.newmsgscounter > 0" class="new-masgs-counter-badge">
-              <div class="count">
-                {{chat.newmsgscounter}}
-              </div>
-            </div>
-          </ng-container>
-        </h3>
-        <!-- last message -->
-        <ng-container *ngIf="(chat.onMsgChange | async) || chat.lastMsg ">
-          <div *ngIf="chat.newmsgscounter > 0 else showLasgMessage" class="new-msg">
-            <div class="from">
-              {{ chat.lastMsg.userName }}
-            </div>
-            <div class="time">
-              {{ chat.lastMsg.date | date: 'shortDate'}}
-            </div>
-            <div class="msg-content">
-              {{ chat.lastMsg.message }}
-            </div>
-          </div>
-          <ng-template #showLasgMessage>
-            <div *ngIf="chat.lastMsg !== null" class="new-msg">
-              <div class="from last-msg-color">
-                {{ chat.lastMsg.userName }}
-              </div>
-              <div class="time last-msg-color">
-                {{ chat.lastMsg.date | date: 'shortDate'}}
-              </div>
-              <div class="msg-content last-msg-color">
-                {{ chat.lastMsg.message }}
-              </div>
-            </div>
-          </ng-template>
-        </ng-container>
-      </div>
+      <app-chatmenuitem [chat]="chat"></app-chatmenuitem>
     </ng-container>
   </div>
-
 </div>
 

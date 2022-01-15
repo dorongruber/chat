@@ -1,7 +1,9 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { mockUserList } from 'src/app/mockData/usersList';
+import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatsService } from 'src/app/services/chats.service';
 import { DeviceTypeService } from 'src/app/services/devicetype.service';
@@ -36,6 +38,8 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
     private route: ActivatedRoute,
     private chatsService: ChatsService,
     private chatService: ChatService,
+    private controllerService: ControllerService,
+
     ) {}
 
     ngOnInit() {
@@ -43,7 +47,7 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
 
       this.subscription = this.chatsService.onNewChat.subscribe(res => {
         console.log('new chat subject -> ', res);
-        const newChat = new ChatInMenu(res.id,res.name);
+        const newChat = new ChatInMenu(res.id,res.name, res.img);
         this.chats.push(newChat);
       });
 
@@ -52,7 +56,6 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
         console.log('new mesggsas -> ', resMsg);
         if (resMsg && resMsg.chatId) {
           this.chats.find(c => {
-            //console.log('chat =>>>> ', c);
             if (c.id === resMsg.chatId && resMsg.message) {
               c.lastMsg = resMsg;
               c.newmsgscounter = c.newmsgscounter + 1;
@@ -71,7 +74,7 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
   }
 
   async initMenu(userId: string) {
-    const resChat = await this.userService.getChats(userId);
+    const resChat = await this.chatsService.getChats(userId);
     this.chats = [...resChat];
     this.subscription = this.routerService.onRouteChange.subscribe(currentURL => {
       if (this.CheckInitRoute(currentURL))
@@ -88,24 +91,13 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
     return false;
   }
 
-  OnChatSelect(id: string) {
-    const user = this.userService.get();
-    const userName = user.name;
-    const userId = user.id;
-    this.resetMsgAndCount(id);
-    this.socketService.connectToChat(userId, userName, id);
-  }
 
-  resetMsgAndCount(id: string) {
-    this.chats.find(c => {
-      if(c.id === id) {
-        c.newmsgscounter = 0;
-        console.log('chat => ',c);
 
-        //c.resetLastMessage();
-      }
-    })
-  }
+
+
+
+
+
 
   ngOnDestroy() {
     this.subscription.unsubscribe();

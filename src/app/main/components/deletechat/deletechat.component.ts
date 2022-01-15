@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
+import { ChatsService } from 'src/app/services/chats.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/models/user';
 import { Chat } from '../../models/chat';
@@ -18,12 +19,13 @@ export class DeletechatComponent implements OnInit, OnChanges {
   chats: Chat[] = [];
   filterOptions: Observable<Chat[]> = of([]);
   deleteForm: FormGroup = new FormGroup({});
-  chatToDelete: Chat = new Chat('','');
+  chatToDelete: Chat = new Chat('','', new File([],'emptyFile'));
   resMsg = '';
   user: User;
   constructor(
     private chatService: ChatService,
     private userService: UserService,
+    private chatsService: ChatsService,
     private controllerService: ControllerService,
     ) {
       this.user = this.userService.get();
@@ -49,7 +51,7 @@ export class DeletechatComponent implements OnInit, OnChanges {
 
   async initChats() {
     if(this.userId)
-      this.chats = await this.userService.getChats(this.userId);
+      this.chats = await this.chatsService.getChats(this.userId);
     this.filterOptions = of([...this.chats]);
   }
 

@@ -1,19 +1,22 @@
-const Users = require('../models/Users');
 
-const { chatService } = require('./chat');
+const fs = require('fs');
+const path = require('path');
+
+const Users = require('../models/Users');
+//const { chatService } = require('./chat');
+const { formatService } = require('./format.js');
 
 class UserService {
 
   constructor() {}
 
-  get = function(id) {
+  get = async function(id) {
     try{
-      return Users.findOne({id})
-      .then(user => {
-        console.log('then user ,id-> ', !user,id);
-        if (!user) return new Error('404');
-        return this.getUserFormat(user);
-      });
+      const user = await Users.findOne({ id });
+      console.log('then user ,id-> ', !user, id);
+      if (!user)
+        return new Error('404');
+      return formatService.getUserFormat(user);
     }catch(err) {
       throw err;
     }
@@ -24,9 +27,10 @@ class UserService {
       const user = await Users.findOne({id})
       .populate('chats')
       .exec();
-      const chats = await chatService.responseChatFormat(user.chats);
+      const chats = await formatService.responseChatFormat(user.chats);
       return chats;
     } catch (err) {
+      console.error('user get chat serr => ', err);
       throw new Error(err);
     }
   }
@@ -45,11 +49,13 @@ class UserService {
       });
       return newUser.save();
     }catch(err) {
+      console.error('user save err => ', err);
       throw err;
     }
   }
 
   update = async function (newUserInfo) {
+    //console.log('update -> updatedUser ', updatedUser);
     try {
       const user = await Users.findOne({ id: newUserInfo.id });
       if (!user) throw new Error('404');
@@ -60,39 +66,40 @@ class UserService {
       user.password = newUserInfo.password? newUserInfo.password: user.password,
       user.chats = newUserInfo.chats? [... newUserInfo.chats]: [...user.chats];
       user.socketId = newUserInfo.socketId? newUserInfo.socketId : user.socketId;
-      return user.save();
+      console.log('newUserInfo.img => ', newUserInfo.img.filename);
+      if (newUserInfo.img && Object.keys(newUserInfo.img).includes('filename') && newUserInfo.img.filename) {
+        //const imageFile = fs.readFileSync(path.join('.','public','images',`${newUserInfo.img.name}`));
+        const imageFile = fs.readFileSync(path.join('./public/images/' + `${newUserInfo.img.filename}`));
+        user.img = {
+          data: imageFile,
+          contentType: 'image/*',
+          filename: newUserInfo.img.filename,
+        }
+      }
+      user.save();
+      return await this.get(user.id);
     }catch(err) {
+      console.log('user update err => ', err);
       throw err;
     }
+  }
+
+  find = async function(params) {
+   try{
+    return await Users.find(params).exec()
+   }catch(err) {
+     console.log('find function err => ', err);
+     throw err;
+   }
   }
 
   async getAll() {
     try{
       return await Users.find({});
     } catch(err) {
+      console.error('user getAll err => ', err);
       throw err;
     }
-  }
-
-  async responseUsersFormat(users) {
-    const formatedUsers = [];
-    for(i =0; i< users.length; i++) {
-      formatedUsers.push(this.getUserFormat(users[i]));
-    }
-    return formatedUsers;
-  }
-
-  getUserFormat(user) {
-    return {
-      _id: user._id,
-      id: user.id,
-      name: user.name,
-      phone: user.phone,
-      password: user.password,
-      email: user.email,
-      chats: user.chats,
-      socketId: user.socketId,
-    };
   }
 
 }

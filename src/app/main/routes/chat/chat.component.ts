@@ -1,21 +1,23 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Message } from 'src/app/main/models/message';
+import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
+import { ChatInMenu } from '../../models/chat';
 
-const COMPONENT_BASE_ROUTE = '/main/chats/chat';
+const COMPONENT_BASE_ROUTE = '/main/chat';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit ,OnDestroy {
+export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
   private subscription = new Subscription();
   private subscriptions = new Subscription();
   msgContent: string = '';
@@ -25,14 +27,16 @@ export class ChatComponent implements OnInit ,OnDestroy {
   chatId: string = '';
   chatUsers: {userId: string, userName: string, chatId: string}[] ;
   baseRoute = COMPONENT_BASE_ROUTE;
-
+  lastMsgElement: Element | null = null;
   isLoading = false;
+
+  selectedChat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
   constructor(
     private route: ActivatedRoute,
     private chatService: ChatService,
     private socketService: SocketService,
     private userService: UserService,
-    private el: ElementRef,
+    private controllerService: ControllerService,
     ) {
     this.chatId$ = new Observable<string>();
     this.chatUsers = []
@@ -50,11 +54,14 @@ export class ChatComponent implements OnInit ,OnDestroy {
      this.messages = formDb;
      setTimeout(() => {
       this.scrollToLastMsg();
-
-    }, 1000);
+      this.scrollObservable();
+    });
     this.onLoadingChange();
    });
    this.subscriptions.add(this.subscription);
+
+   const user = this.userService.get();
+   this.socketService.connectToChat(user.id, user.name, this.chatId);
 
    this.subscription = this.chatService.usersInChat.subscribe(resUsers => {
     this.chatUsers = [...resUsers];
@@ -65,13 +72,55 @@ export class ChatComponent implements OnInit ,OnDestroy {
      this.messages.push(resMsg);
      setTimeout(() => {
       this.scrollToLastMsg();
-    }, 1000);
+    });
     this.onLoadingChange();
    });
   }
 
+  ngAfterViewInit(): void {
+    this.selectedChat = this.chatService.selectedChat;
+    this.chatService.onChatChange.subscribe(chatData => {
+      this.selectedChat = this.chatService.selectedChat;
+    });
+  }
+
   onLoadingChange() {
     this.isLoading =!this.isLoading;
+  }
+
+  scrollObservable() {
+    const lmEl = document.querySelector('#chat-top-indicator');
+    let options = {
+      root: document.querySelector('#msgs-container'),
+      threshold: [1],
+    }
+    if(lmEl) {
+      let observer = new IntersectionObserver(this.checkScroll.bind(this), options);
+
+      if(!this.lastMsgElement)
+        this.lastMsgElement = lmEl;
+      else {
+        observer.unobserve(this.lastMsgElement)
+        this.lastMsgElement = lmEl;
+      }
+      observer.observe(this.lastMsgElement);
+    }
+
+  }
+
+  async checkScroll(entires: any) {
+    console.log('scroll event -> ',entires[0]);
+    let prevDayMsgs;
+    if(entires[0].intersectionRatio === 1) {
+      console.log('load prev day');
+      const currentDate = this.messages[0]?.date? this.messages[0]?.date: null;
+      if(currentDate)
+        prevDayMsgs = await this.chatService.getPrevDayMsgs(this.chatId,currentDate);
+        if (prevDayMsgs) {
+          this.messages = [...prevDayMsgs, ...this.messages];
+          console.log('messages len -> ', this.messages.length);
+        }
+    }
   }
 
   onMessageSubmit(form: NgForm) {
@@ -82,7 +131,7 @@ export class ChatComponent implements OnInit ,OnDestroy {
     this.msgContent = '';
     setTimeout(() => {
       this.scrollToLastMsg();
-    }, 1000);
+    });
   }
 
   createMessage(msg: string): Message {
@@ -99,9 +148,12 @@ export class ChatComponent implements OnInit ,OnDestroy {
     };
   }
 
-  scrollToLastMsg() {
-    const chatMsgsElement = document.getElementById('msgs-container') as HTMLElement;
+  FocusOnChat() {
+    this.controllerService.onChatFocusChange(this.chatId);
+  }
 
+  scrollToLastMsg() {
+    const chatMsgsElement = document.querySelector('#msgs-container') as HTMLElement;
     chatMsgsElement.scrollTop = chatMsgsElement.scrollHeight;
   }
 

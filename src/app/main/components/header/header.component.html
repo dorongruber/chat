@@ -1,5 +1,13 @@
 <header>
-  <h4>{{ title }}</h4>
+  <ng-container *ngIf="chat.name !== '' else Title">
+    <div class="chat-header">
+      <app-chatmenuitem [chat]="chat"></app-chatmenuitem>
+    </div>
+  </ng-container>
+  <ng-template #Title>
+    <h4>{{ title }}</h4>
+  </ng-template>
+
   <ng-container *ngIf="isChatOpen else Menu">
     <div class="back-btn">
       <mat-icon [matMenuTriggerFor]="chatMenu">more_vert</mat-icon>

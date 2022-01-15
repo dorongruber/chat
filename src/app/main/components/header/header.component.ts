@@ -5,8 +5,9 @@ import { DeviceTypeService } from 'src/app/services/devicetype.service';
 import { RouterService } from 'src/app/services/router.service';
 
 import {chatMenuOptions, mainMenuOptions} from '../../../mockData/menuoptionslists';
+import { ChatInMenu } from '../../models/chat';
 
-const ROUTE_TO_SHOW_BUTTON = '/main/chats/chat';
+const ROUTE_TO_SHOW_BUTTON = '/main/chat';
 
 @Component({
   selector: 'app-header',
@@ -19,6 +20,7 @@ export class HeaderComponent implements OnInit {
   menuOptions: any[] = [];
   @Input() title: string = '';
   @Input() relatedToRoute = '';
+  @Input() chat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -42,13 +44,13 @@ export class HeaderComponent implements OnInit {
   }
 
   checkRoute(url: string) {
+    console.log('check url => ', url, this.relatedToRoute);
+
     const checkIfNum = Number(url.slice(-1));
-    console.log('last route -> ', url.slice(-1), checkIfNum,this.relatedToRoute);
 
     if (typeof checkIfNum === 'number' && !isNaN(checkIfNum) && this.relatedToRoute === ROUTE_TO_SHOW_BUTTON) {
       this.isChatOpen = true;
     }
-
   }
 
   onMenuChange(optionIndex: number) {

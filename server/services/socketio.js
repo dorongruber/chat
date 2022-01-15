@@ -1,11 +1,9 @@
-
-
-const { newUser, getUser, removeUser, updateUser, getChatUsers, getSingleChatUserByIds } = require('../socketio/utils/users');
 const { msgService } = require('../services/message');
 const { chatService } = require('../services/chat');
 const { userService } = require('../services/user');
 const Chats = require('../models/Chats');
 const { ObjectId } = require('bson');
+const { formatService } = require('./format.js');
 const io = require('../config/socketio').getIO();
 class SocketServerService {
   feildToPopulate = 'users';
@@ -27,7 +25,7 @@ class SocketServerService {
         const user = await userService.get(userId);
         user.socketId = socket.id;
         const updatedUser = await userService.update(user);
-        //console.log('updateed user -> ', updatedUser);
+        console.log('updateed user -> ', updatedUser._id);
         if (!updatedUser) throw false;
         return true;
       }
@@ -37,36 +35,7 @@ class SocketServerService {
   }
 //new ObjectId(u._id)
   CreateChat(chatId, chatName, chatUsers,userId,socket) {
-    const user = userService.get(userId);
-    //console.log('chatusers -> ', chatUsers);
-    const users = chatUsers.map(u => {
-      return userService.get(u.id);
-    })
-    const ids = chatUsers.map(u => {
-      const user = userService.get(u._id);
-      return new ObjectId(parseInt(user._id));
-    });
-    const newChat = new Chats({
-      id: chatId,
-      name: chatName,
-      messages: [],
-      users: [...ids],
-    });
 
-    newChat.save(function(err) {
-      if (err) throw new Error(err);
-      //socket.join(chatId);
-      chatUsers.forEach(u => {
-        userService.get(u._id)
-        .then(user => {
-          if(!user) return;
-          user.chats.push(new ObjectId(newChat._id));
-          userService.update(user);
-          // const connectedUser = userService.get(u._id);
-          // newUser(connectedUser.userId, connectedUser.userName,chatId, connectedUser.socketId);
-        })
-      })
-    });
     chatUsers.forEach(u => {
       const connectedUser = userService.get(u._id);
       if(connectedUser) {
@@ -97,35 +66,25 @@ class SocketServerService {
       const msgId = `${userId}${chatId}${date}`;
       const msgState = await msgService.save(message,msgId,userId,chatId,chatId,date,userName);
       const chatState = await chatService.addMessageToChat(msgState)
-      const newMesg = this.messageFormat(msgState,userName);
+      const newMesg = formatService.messageFormat(msgState,userName);
 
-      this.sendMessageToUsersNotConnectedToSocket(userId,chatId,newMesg);
+      this.sendMessageToUsersNotConnectedToSocket(chatId,newMesg);
       socket.to(chatId).emit('newMessage', (newMesg));
+
     }catch(err) {
       throw err;
     }
   }
 
-  async sendMessageToUsersNotConnectedToSocket(userId,chatId,newMesg) {
+  async sendMessageToUsersNotConnectedToSocket(chatId,newMesg) {
     let chatUsers = await chatService.getSingalePopulatedField(chatId, this.feildToPopulate);
-    chatUsers = chatUsers.filter(u => u.id !== userId);
+    //chatUsers = chatUsers.filter(u => u.id !== userId);
     chatUsers.forEach(async (u) => {
-      const socketUser = await userService.get(u.id);
-      //console.log('socketUser => ',socketUser);
-      io.to(socketUser.socketId).emit('newMessageToChatMenu', (newMesg));
+      io.to(u.socketId).emit('newMessageToChatMenu', (newMesg));
     });
   }
 
-  messageFormat(msgState,userName) {
-     const msg = {
-      message: msgState.message,
-      userId: msgState.Fid,
-      chatId: msgState.Cid,
-      userName: userName,
-      date: msgState.date
-    };
-    return msg;
-  }
+
 
 }
 

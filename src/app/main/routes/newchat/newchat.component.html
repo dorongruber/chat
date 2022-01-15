@@ -2,7 +2,16 @@
   <body class="container">
     <!-- <app-alert *ngIf="error"></app-alert> -->
     <header class="img-container">
-      <div class="cyrcle-img img"></div>
+      <ng-container *ngIf="selectedFile === undefined else haveImg">
+        <div class="cyrcle-img img"></div>
+      </ng-container>
+      <ng-template #haveImg>
+        <img
+        [src]="Transform()"
+        alt="Image Preview"
+        class="image-preview"
+        width="103" height="103">
+      </ng-template>
     </header>
   <form class="form-container"
   [formGroup]="chatForm"
@@ -22,49 +31,44 @@
     </mat-form-field>
     <br>
 
-    <!-- <div class="load-img-container">
-      <mat-form-field>
-        <mat-label>Load Image</mat-label>
-        <input
-        type="file"
-        placeholder="image"
-        formControlName="Img"
-        (change)="ProcessFile($event)"
-        accept="image/*"
-        #fileInput>
-
-        <div (click)="fileInput.click()"> Select File</div>
-      </mat-form-field>
-
-      <div class="img-preview-container">
-        <ng-container *ngIf="selectedFile && selectedFile.file.name !== 'emptyFile'">
-          <img [src]="Transform()" alt="image preview" class="img-preview">
-        </ng-container>
-      </div>
-    </div> -->
+    <div class="load-img-container">
+      <label class="file-label" for="file">Image</label>
+      <input
+      class="input"
+      id="file"
+      type="file"
+      placeholder="image"
+      formControlName="image"
+      (change)="ProcessFile($event)"
+      accept="image/*"
+      #fileInput>
+    </div>
 
     <div *ngIf="users && users.length > 0" class="form-array-container" formArrayName="users">
       <ng-container *ngFor="let user of users.controls; let i=index;">
-        <mat-form-field
-        class="form-content"
-        appearance="outline"
-        *ngIf="i === users.controls.length -1"
-        >
-          <mat-label>Add User To Chat</mat-label>
-          <input
-          matInput
-          type="text"
-          [formControlName]="i"
-          [matAutocomplete]="auto"
-          placeholder="User Name"
-          [value]="UsersToAddToChat[i]?.name"
+        <ng-container [formGroupName]="i">
+          <mat-form-field
+          class="form-content"
+          appearance="outline"
+          *ngIf="i === users.controls.length -1"
           >
-        </mat-form-field>
-        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          <mat-option (click)="selectOption(i)" *ngFor="let user of OptionUsers;let i=index" [value]="user">
-            {{user.name}}
-          </mat-option>
-        </mat-autocomplete>
+            <mat-label>Add User To Chat</mat-label>
+            <input
+            matInput
+            type="text"
+            formControlName="user"
+            [matAutocomplete]="auto"
+            placeholder="User Name"
+            >
+          </mat-form-field>
+          <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption [displayWith]="displayFn">
+            <ng-container *ngFor="let user of this.filteredOptions[i] | async;let i=index">
+              <mat-option [value]="user">
+                {{user.name}}
+              </mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </ng-container>
       </ng-container>
     </div>
 
@@ -75,8 +79,8 @@
     <div *ngIf="users.length > 0">
       <div class="users-in-chat-list">
         <ng-container *ngFor="let user of users.controls; let i=index">
-          <div *ngIf="user.value.name !== ''" class="in-chat in-chat-container">
-            {{user.value.name}}
+          <div *ngIf="user.value.user" class="in-chat in-chat-container">
+            {{user.value.user.name}}
             <mat-icon class="close-icon" (click)="removeUser(i)">close</mat-icon>
           </div>
         </ng-container>

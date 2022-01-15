@@ -1,8 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/models/user';
+import { ImageSnippet } from '../../models/imagesnippet.model';
 
 @Component({
   selector: 'app-userinfo',
@@ -12,17 +14,28 @@ import { User } from 'src/app/shared/models/user';
 export class UserinfoComponent implements OnInit {
   @Input() userId: string | undefined;
   userForm: FormGroup = new FormGroup({});
-  user: User = new User('','','','','');
+  user: User = new User('','','','','',new File([],'emptyFile'));
   isLoading = false;
+  selectedFile: ImageSnippet | undefined;
+  sf = false;
+  imgToShow: any;
   constructor(
     private userService: UserService,
     private controllerService: ControllerService,
+    private sanitizer: DomSanitizer,
   ) { }
 
   async ngOnInit() {
     if (this.userId) {
       this.onLoadingChange(this.isLoading);
       this.user = await this.userService.getUserById(this.userId);
+      if(Object.keys(this.user.img).includes('data')) {
+        this.imgToShow = (this.user.img as any).data;
+        this.selectedFile = new ImageSnippet(
+          new File([(this.user.img as any).data],
+         (this.user.img as any).filename)
+        )
+      }
       this.initForm();
     }
     this.onLoadingChange(this.isLoading);
@@ -33,19 +46,23 @@ export class UserinfoComponent implements OnInit {
       name: new FormControl(this.user.name, Validators.required),
       email: new FormControl(this.user.email, Validators.required),
       phone: new FormControl(this.user.phone, Validators.required),
+      image: new FormControl(null)
     })
   }
 
   onSubmit(form: FormGroup) {
-    if (!form.valid) return;
+    if (!form.valid && this.selectedFile) return;
     this.onLoadingChange(this.isLoading);
     let name = form.value.name;
     let email = form.value.email;
     let phone = form.value.phone;
+    let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
 
-    const updatedUser = new User(this.user.id,name,phone, this.user.password,email);
-
+    const updatedUser = new User(this.user.id,name,phone,this.user.password,email,img);
+    //console.log('updatedUser => ', updatedUser);
+    this.userService.set(updatedUser);
     this.userService.updateUser(updatedUser);
+    this.onLoadingChange(this.isLoading);
   }
 
   onLoadingChange(load: boolean) {
@@ -54,5 +71,31 @@ export class UserinfoComponent implements OnInit {
 
   closeWindow() {
     this.controllerService.onStateChange(undefined);
+  }
+
+
+  ProcessFile(imageInput: any) {
+    const file: File = imageInput.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.addEventListener('load', (event: any) => {
+        if (file) {
+          const newfile = new File([file], file.name);
+          this.selectedFile = new ImageSnippet(newfile);
+          this.sf = !this.sf;
+        } else {
+          const emptyFile = new File([], 'emptyfile');
+          this.selectedFile = new ImageSnippet(emptyFile);
+          this.sf = false;
+        }
+        this.imgToShow = event.target.result;
+      });
+      reader.readAsDataURL(file);
+    }
+  }
+
+  Transform() {
+    const imgURL = this.imgToShow.includes('data:image/')? this.imgToShow : 'data:image/*;base64,' + this.imgToShow;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(imgURL);
   }
 }

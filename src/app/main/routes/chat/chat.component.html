@@ -1,6 +1,7 @@
-<body class="chat-container main-background-img">
-  <app-header [relatedToRoute]="baseRoute" [title]="chatId"></app-header>
+<body id="chat" class="chat-container main-background-img" (click)="FocusOnChat()">
+  <app-header [relatedToRoute]="baseRoute" [title]="chatId" [chat]="selectedChat"></app-header>
   <section id="msgs-container" class="messages-container msgs" *ngIf="!isLoading else ShowSpinner">
+    <div id="chat-top-indicator"></div>
     <ng-container *ngFor="let message of messages; let i=index;">
       <app-message class="single-msg" [msgFromat]="message"></app-message>
     </ng-container>

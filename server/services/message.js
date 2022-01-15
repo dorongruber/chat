@@ -1,4 +1,5 @@
 const Messages = require('../models/messages');
+const { formatService } = require('./format.js');
 
 class MessageService {
 
@@ -8,7 +9,18 @@ class MessageService {
     try {
       const message = await Messages.findOne({id});
       if (!message) throw 404;
-      return this.responseMsgFormat(message);
+      return formatService.responseMsgFormat(message);
+    }catch(err) {
+      throw err;
+    }
+  }
+
+  async getByObjectId(_id) {
+    console.log('getByObjectId => ', _id, formatService);
+    try {
+      const message = await Messages.findOne({_id: _id});
+      if (!message) throw 404;
+      return formatService.responseMsgFormat(message);
     }catch(err) {
       throw err;
     }
@@ -37,23 +49,6 @@ class MessageService {
     }
   }
 
-  requestMsgFormat(msgs) {
-    const formatedMsgs = [];
-    for(let i=0; i< msgs.length; i++) {
-      formatedMsgs.push(this.responseMsgFormat(msgs[i]));
-    }
-    return formatedMsgs;
-  }
-
-  responseMsgFormat(msg) {
-    return {
-      userName: msg.Fname,
-      chatId: msg.Cid,
-      date: msg.date,
-      userId: msg.Fid,
-      message: msg.message,
-    }
-  }
 }
 
 module.exports = {
