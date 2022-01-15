@@ -7,6 +7,7 @@ import { Subject } from "rxjs";
 export class ControllerService {
   isMenuOpen = false;
   onMenuStateChange = new Subject<{state: boolean, option: number}>();
+  onChatFocus = new Subject<string>();
 
   onStateChange(index = 0) {
     if(!index)
@@ -19,6 +20,10 @@ export class ControllerService {
       option: index,
     }
     this.onMenuStateChange.next(obj);
+  }
+
+  onChatFocusChange(chatId: string) {
+    this.onChatFocus.next(chatId);
   }
 
   setFlag(state: boolean) {

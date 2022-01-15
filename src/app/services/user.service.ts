@@ -5,7 +5,7 @@ import { User } from "../shared/models/user";
 import { BaseService } from "./base/base.service";
 
 const URI = 'http://localhost:3000/api/user/';
-
+const EmptyFile = new File([],'emptyFile');
 @Injectable({
   providedIn: 'root'
 })
@@ -15,23 +15,24 @@ export class UserService {
   constructor(
     private baseService: BaseService
     ) {
-    this.user = new User('','','','','');
+    this.user = new User('','','','','', EmptyFile);
   }
 
   getUserById(id: string) {
 
     return this.baseService.get<
     {id: string, name: string, phone: string,
-      password: string, email: string}
+      password: string, email: string, img: File}
     >(URI,id)
     .then(user => {
-      console.log('user -> ', user);
+      const img = Object.values(user.img)[0] ? user.img : EmptyFile;
       const currentUser = new User(
         user.id,
         user.name,
         user.phone,
         user.password,
         user.email,
+        img,
       )
       this.set(currentUser);
       return currentUser;
@@ -43,45 +44,46 @@ export class UserService {
     const newURI = `${URI}allUsers`;
     return this.baseService
     .get<{id: string, name: string, phone: string,
-      password: string, email: string}[]
+      password: string, email: string, img: File}[]
     >(newURI,'')
     .then(users => {
-      //console.log('then all users -> ', users);
       const formatUsers: User[] = [];
       users.forEach(u => {
-        formatUsers.push(new User(u.id,u.name,u.phone,u.password,u.email))
+        formatUsers.push(new User(u.id,u.name,u.phone,u.password,u.email,u.img))
       })
       return formatUsers;
     })
   }
 
-  getChats(userId: string) {
-    const url =`${URI}chats/`;
-    return this.baseService.get<ChatInMenu[]>(url,userId)
-    .then(res => {
-      console.log('get chats  res -> ', res);
-      return res.map(c => {
-        const chat = new ChatInMenu(c.id,c.name);
-        chat.lastMsg = c.lastMsg;
-        return chat;
-      });
+  updateUser(updateduser: User) {
+    const formData = new FormData();
+
+    formData.append('id', updateduser.id);
+    formData.append('name', updateduser.name);
+    formData.append('phone',  updateduser.phone);
+    formData.append('password', updateduser.password);
+    formData.append('email', updateduser.email);
+    formData.append('image', updateduser.img);
+
+    const url =`${URI}update/`
+    this.baseService.put<any>(URI,formData)
+    .then(resUpdatedUser => {
+      const updatedUser = new User
+      (resUpdatedUser.id,
+        resUpdatedUser.name,
+        resUpdatedUser.phone,
+        resUpdatedUser.password,
+        resUpdatedUser.email,
+        resUpdatedUser.img)
+      this.set(updatedUser);
+      this.onUserChange.next(updatedUser);
     })
     .catch(err => {
-      throw err;
+      throw new Error(err)
     })
-  }
-
-  updateUser(updateduser: User) {
-    this.baseService.put<User>(URI,updateduser)
-    .then(resUpdatedUser => {
-      this.set(resUpdatedUser);
-      this.onUserChange.next(resUpdatedUser);
-    })
-    .catch()
   }
 
   set(selectedUser: User) {
-    console.log('set user => ', selectedUser);
     this.user = selectedUser;
   }
 

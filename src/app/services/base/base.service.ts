@@ -16,11 +16,11 @@ export class BaseService {
   }
 
   post<Type>(url: string, obj: Type) {
-    return this.http.post<Type>(`${url}`,{obj}).toPromise();
+    return this.http.post<Type>(`${url}`,obj).toPromise();
   }
 
   put<Type>(url: string, obj: Type) {
-    return this.http.put<Type>(`${url}`,{obj}).toPromise();
+    return this.http.put<Type>(`${url}`,obj).toPromise();
   }
 
   delete(url: string, args: string) {

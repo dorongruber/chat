@@ -15,7 +15,11 @@ const ChatSchema = mongoose.Schema({
   users: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Users',
-  }]
+  }],
+  img: {
+    data: Buffer,
+    contentType: String
+  }
 });
 
 module.exports = mongoose.model('Chats', ChatSchema);

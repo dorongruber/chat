@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { RouterAnimations } from 'src/app/app.animation';
 import { ChatsService } from 'src/app/services/chats.service';
 import { UserService } from 'src/app/services/user.service';
@@ -18,52 +19,59 @@ import { ImageSnippet } from '../../models/imagesnippet.model';
   ]
 })
 export class NewchatComponent implements OnInit {
-  OptionUsers: User[] = [];
   isLoading = false;
   chatForm: FormGroup = new FormGroup({});
   error: string | null = null;
-  // selectedFile: ImageSnippet;
-  // sf = false;
-  // temp: any;
+  selectedFile: ImageSnippet | undefined = undefined;
+  sf = false;
+  temp: any;
+  imgToShow: any;
   chatName = '';
-  UsersToAddToChat: User[] = [];
+  filteredOptions: Observable<User[]>[] = [];
   currentUser: any;
   allUsers: User[] = [];
-  formControlUserReset: User = new User('','','','','');
+  formControlUserReset: User = new User('','','','','',new File([],'emptyFile'));
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
     private chatsService: ChatsService,
     private sanitizer: DomSanitizer,
+    private fb: FormBuilder,
   ) {
     this.InitForm();
    }
-
+  //TODO on page reload need to pass user ID
   ngOnInit() {
     this.currentUser = this.userService.get();
+    // if (this.currentUser.name === '') {
+    //   this.currentUser = this.userService.getUserById()
+    // }
     this.setAutoOptions();
-
   }
 
   setAutoOptions() {
 
     this.userService.getAllUsers()
     .then(resData => {
-      console.log('current user -> ', this.currentUser);
+
       console.log('resData -> ', resData);
       this.allUsers = [...resData.filter(u => u.id !== this.currentUser.id)];
-      this.OptionUsers = [...this.allUsers];
+      this.ManageNameControl(0);
     });
-    console.log('this.OptionUsers -> ', this.OptionUsers);
   }
 
   InitForm() {
     this.chatName = '';
     this.chatForm = new FormGroup({
       name: new FormControl(this.chatName, [Validators.required]),
-      users: new FormArray([new FormControl(this.formControlUserReset, Validators.required)]),
+      users: new FormArray([this.fb.group({
+        user: new FormControl(null, Validators.required)
+      })]),
+      image: new FormControl(null)
     });
+    console.log('chatForm -> ', this.users.controls);
+
   }
 
   get users() {
@@ -71,30 +79,17 @@ export class NewchatComponent implements OnInit {
   }
 
   addUser() {
-    this.users.push(new FormControl(this.formControlUserReset, Validators.required));
+    let formGroup = this.fb.group({
+      user: new FormControl(null, Validators.required)
+    });
+    this.users.push(formGroup);
+    this.ManageNameControl(this.users.length - 1);
   }
 
   async removeUser(i: number) {
-    const userToRemove = this.users.value[i];
-    this.UsersToAddToChat = this.UsersToAddToChat.filter( u => u.id !== userToRemove.id);
-    await this.updateUserOptions(userToRemove);
-    this.users.setControl(i,new FormControl(this.formControlUserReset, Validators.required));
-    this.addUser();
-  }
-
-  async updateUserOptions(user: User) {
-    if (user)
-      this.OptionUsers.push(user);
-  }
-
-  filterSelectedUsers(id: string) {
-    this.OptionUsers = this.allUsers
-    .filter(userOption => userOption.id !== id);
-  }
-
-  selectOption(index: number) {
-    this.UsersToAddToChat.push(this.OptionUsers[index]);
-    this.filterSelectedUsers(this.OptionUsers[index].id);
+    this.users.setControl(i,this.fb.group({
+      user: new FormControl(null, Validators.required)
+    }));
   }
 
   onSubmit(form: FormGroup) {
@@ -104,60 +99,67 @@ export class NewchatComponent implements OnInit {
       return;
     }
     this.isLoading = true;
-    console.log('register form -> ', form, this.UsersToAddToChat);
+    let reqUsers: any[] = [];
+    for(const formgroup of this.users.value) {
+      reqUsers.push(formgroup.user);
+    }
+    reqUsers.push(this.currentUser)
     let name = form.value.name;
-    let users = [...this.UsersToAddToChat,this.currentUser];
+    let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
+    console.log('name,users,this.currentUser.id -> ', name,reqUsers,this.currentUser.id);
 
-    this.chatsService.addChat(name,users,this.currentUser.id);
-    // const newuser = new RegisterUser(Img,password,name,name,phone);
-    // authObs = this.authService.onRegister(newuser);
-    // console.log('autb observable -> ', authObs);
-    // // add new user to db
-
-    // authObs.subscribe(resData => {
-    //   if (resData) {
-    //     this.isLoading = false;
-    //     this.authService.loadingObs.next(this.isLoading);
-    //     this.router.navigate(['../login'], {relativeTo: this.route});
-    //   } else {
-    //     this.isLoading = false;
-    //     this.authService.loadingObs.next(this.isLoading);
-    //   }
-    // });
+    this.chatsService.addChat(name,reqUsers,this.currentUser.id,img);
     form.reset();
     this.InitForm();
     this.isLoading = false;
   }
 
-  // ProcessFile(imgInput: any) {
-  //   const file: File = imgInput.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.addEventListener('load', (event: any) => {
-  //       if (file) {
-  //         this.ng2ImgMax.resizeImage(file, 200, 150)
-  //         .subscribe(result => {
-  //           const newfile = new File([result], result.name);
-  //           this.selectedFile = new ImageSnippet(newfile);
-  //           this.sf = !this.sf;
-  //         },
-  //         error => {
-  //           console.log('error => ', error);
-  //         });
-  //       } else {
-  //         console.log('jhasbfabsdofibasdbfasd');
-  //         const emptyFile = new File([], 'emptyfile');
-  //         this.selectedFile = new ImageSnippet(emptyFile);
-  //         this.sf = false
-  //       }
-  //       this.temp = event.target.result;
-  //     });
-  //     reader.readAsDataURL(file);
-  //   }
-  // }
+  ProcessFile(imageInput: any) {
+    const file: File = imageInput.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.addEventListener('load', (event: any) => {
+        if (file) {
+          const newfile = new File([file], file.name);
+          this.selectedFile = new ImageSnippet(newfile);
+          this.sf = !this.sf;
+        } else {
+          const emptyFile = new File([], 'emptyfile');
+          this.selectedFile = new ImageSnippet(emptyFile);
+          this.sf = false;
+        }
+        this.imgToShow = event.target.result;
+      });
+      reader.readAsDataURL(file);
+    }
+  }
 
-  // Transform() {
-  //   return this.sanitizer.bypassSecurityTrustResourceUrl(this.temp);
-  // }
+  Transform() {
+    const imgURL = this.imgToShow.includes('data:image/')? this.imgToShow : 'data:image/*;base64,' + this.imgToShow;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(imgURL);
+  }
+
+  ManageNameControl(index: number) {
+    if(this.users && this.users.length) {
+      const options = this.users.at(index).get('user')?.valueChanges
+      .pipe(
+      startWith<User>(this.formControlUserReset),
+      map(obj => obj),
+      map(user => user && user.name ? this._filter(user.name) : this._filter(this.currentUser.name))
+      );
+      if(options) {
+        this.filteredOptions[index] = options;
+      }
+    }
+  }
+
+  displayFn(user?: User): string {
+    return user ? user.name : '';
+  }
+
+  private _filter(name: string): User[] {
+    const filterValue = name.toLowerCase();
+    return this.allUsers.filter(user => user.name !== filterValue);
+  }
 }
 

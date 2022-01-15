@@ -4,18 +4,21 @@ export class User {
   private _phone: string;
   private _password: string;
   private _email: string;
+  private _img: File;
   constructor(
     id: string,
     name: string,
     phone: string,
     password: string,
     email: string,
+    image: File,
   ) {
     this._id = id;
     this._name = name;
     this._phone = phone;
     this._password = password;
     this._email = email;
+    this._img = image;
   }
 
   get id() {
@@ -38,7 +41,18 @@ export class User {
     return this._password
   }
 
+  get img() {
+    return this._img;
+  }
+
   getUser() {
-    return this;
+    return {
+      id: this.id,
+      name: this.name,
+      phone: this.phone,
+      email: this.email,
+      password: this.password,
+      img: this.img,
+    };
   }
 }

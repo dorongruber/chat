@@ -28,6 +28,13 @@ const UserSchema = mongoose.Schema({
   socketId: {
     type: String,
     required: false,
+  },
+  img: {
+    data: Buffer,
+    contentType: String,
+    filename: {
+      type: String,
+    },
   }
 });
 

@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
-import { Chat } from "../main/models/chat";
+import { Chat, ChatInMenu } from "../main/models/chat";
 import { User } from "../shared/models/user";
 import { BaseService } from "./base/base.service";
-
+import { ChatService } from './chat.service';
 import { SocketService } from "./socket.service";
 const URI = 'http://localhost:3000/api/chat/';
+const USER_URI = 'http://localhost:3000/api/user/';
 const MULTE = 1000000000000000;
 
 @Injectable({
@@ -16,31 +17,41 @@ export class ChatsService {
   onNewChat = new Subject<Chat>();
   constructor(
     private baseService: BaseService,
+    private chatService: ChatService,
     private socketService: SocketService
     )
   {
     this.onNewChat = this.socketService.joinNewChat()
     .pipe(map((newChat: any) => {
       console.log('new chat => ', newChat);
-      return new Chat(newChat.chatId, newChat.chatName);
+      return new Chat(newChat.chatId, newChat.chatName, newChat.img);
     })) as Subject<Chat>
-
-    // this.socketService.joinNewChat().subscribe(res => {
-    //   console.log('new chat res => ', res);
-    //   // const newChat = new Chat(res.chatId, res.chatName);
-    //   // this.onNewChat.next(newChat);
-    // })
   }
 
+  getChats(userId: string) {
+    const url =`${USER_URI}chats/`;
+    return this.baseService.get<ChatInMenu[]>(url,userId)
+    .then(res => {
+      console.log('get chats  res -> ', res);
+      return res.map(c => {
+        const chat = new ChatInMenu(c.id,c.name,c.img);
+        chat.lastMsg = c.lastMsg;
+        return chat;
+      });
+    })
+    .catch(err => {
+      throw err;
+    })
+  }
 
-
-  addChat(name: string, users: User[], userId: string) {
-    this.socketService.createChat(this.GenerateId(),name,users, userId);
+  async addChat(name: string, users: User[], userId: string, img: File) {
+    const id = this.GenerateId();
+    const savedChat = await this.chatService.newChat(id,name,users,userId,img);
+    this.socketService.createChat(id,name,users, userId);
   }
 
   GenerateId() {
     const randomId = Number(Math.random() * MULTE).toFixed(0).toString();
-    //console.log('randomId -> ', randomId);
     return randomId;
   }
 }

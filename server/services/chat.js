@@ -1,6 +1,11 @@
+const fs = require('fs');
+const path = require('path');
+
 const Chats = require('../models/Chats');
-const { msgService } = require('./message');
 const Users = require('../models/Users');
+const { userService } = require('../services/user');
+const { formatService } = require('./format.js');
+
 
 class ChatService {
   constructor() {}
@@ -15,16 +20,58 @@ class ChatService {
     return Chats.findOne({name: chatName});
   }
 
-  createChat = async function(id,name,users) {
-    const chat = await Chats.findOne({id});
+  createChat = async function(newChatInfo) {
+   try{
+    console.log('create chat chat service newChatInfo ==> ', newChatInfo.id, newChatInfo.name, JSON.parse(newChatInfo.users));
+
+    const chat = await Chats.findOne({id: newChatInfo.id});
+    let image = null;
     if (chat) return res.status(200).end();
+    if (newChatInfo.img && Object.keys(newChatInfo.img).includes('filename') && newChatInfo.img.filename) {
+      //const imageFile = fs.readFileSync(path.join('.','public','images',`${newChatInfo.img.name}`));
+      const imageFile = fs.readFileSync(path.join('./public/images/' + `${newChatInfo.img.filename}`));
+      image = {
+        data: imageFile,
+        contentType: 'image/*',
+        filename: newChatInfo.img.filename,
+      }
+    }
+    const params = {id: {$in : [...newChatInfo.users]}};
+    const users = await Users.find({id: {$in: [...JSON.parse(newChatInfo.users)]}}).exec();
+
+    //const ids = await userService.find(params);
+    //console.log('ids - >', newChatInfo.img.filename, users.map(u => u._id));
     const newChat = new Chats({
-      id,
-      name,
-      users: [users.map(u => u._id)]
+      id: newChatInfo.id,
+      name: newChatInfo.name,
+      users: [...users.map(u => u._id)],
+      img: image,
     });
-    const saved = await newChat.save();
+
+    // newChatInfo.users.forEach(uid => {
+
+    // })
+    for(const user of users) {
+      // userService.get(uid)
+      // .then(user => {
+      //   if(!user) return;
+      //   user.chats.push(new ObjectId(newChat._id));
+      //   userService.update(user);
+      // })
+
+        user.chats.push(newChat._id);
+        await userService.update(user);
+    }
+    const saved = await newChat.save(function(err,chat) {
+      if(err) throw err;
+      console.log('saved chat -> ', chat._id);
+      return chat;
+    });
     return saved;
+   } catch(err) {
+     console.error('create chat err => ', err);
+     throw err;
+   }
   }
 
   getSingalePopulatedField = async function(id, fieldToPopulate) {
@@ -34,8 +81,7 @@ class ChatService {
         path: fieldToPopulate
       })
       if (fieldToPopulate === 'messages') {
-        const formatedMessages = msgService.requestMsgFormat(chat.messages);
-        return formatedMessages;
+        return chat.messages;
       } else {
         return chat.users;
       }
@@ -48,6 +94,15 @@ class ChatService {
     const FeildToPopulate = 'users';
     const chatUsers = await this.getSingalePopulatedField(chatId, FeildToPopulate);
     return await chatUsers.find(u => u.id === userId);
+  }
+
+  getSingleChatMessages = async function(chatId) {
+    const FeildToPopulate = 'messages';
+    let chatMsgs = await this.getSingalePopulatedField(chatId, FeildToPopulate);
+    //const lastDayMsgs;
+    chatMsgs = this.getMessagesFromLastDate(chatMsgs);
+    const formatedMessages = formatService.requestMsgFormat(chatMsgs);
+    return formatedMessages;
   }
 
   getUserInPool = async function(chatName,userId) {
@@ -89,7 +144,7 @@ class ChatService {
 
   async removeUserFromChat(chatId,userId) {
     try{
-      const chat = Chats.findOne({id: chatId})
+      return Chats.findOne({id: chatId})
       .populate('users')
       .exec(function(err,chat) {
         if(err) return err;
@@ -103,14 +158,36 @@ class ChatService {
           //console.log('user chats after -> ', user.chats, chatId);
           user.save();
         })
-      })
-      if (chat.users.length < 1)
+        if (chat.users.length < 1)
         return this.deleteChat(chatId);
       return chat.save();
+      })
+
     }catch(err) {
       console.log('err =>!!!!!', err);
       throw err
     }
+  }
+
+  async getPrevDayMsgs(id,date) {
+    const FeildToPopulate = 'messages';
+    let chatMsgs = await this.getSingalePopulatedField(id, FeildToPopulate);
+    const refDate = new Date(date);
+    const lastMsgDate = {
+      day: refDate.getUTCDate(),
+      month: refDate.getUTCMonth(),
+      year: refDate.getUTCFullYear()
+    }
+    console.log('lastMsgDate -> ', refDate.getUTCDate());
+    const index = chatMsgs.findIndex(m => this.checkDate(lastMsgDate,m.date));
+    console.log('index -> ', index);
+    if (index !== -1 && index !== 0) {
+      chatMsgs = chatMsgs.slice(0, index -1);
+      chatMsgs = this.getMessagesFromLastDate(chatMsgs);
+      const formatedMessages = formatService.requestMsgFormat(chatMsgs);
+      return formatedMessages;
+    }
+    return null;
   }
 
   ////////////////////// inner functions
@@ -137,20 +214,7 @@ class ChatService {
     }
   }
 
-  async responseChatFormat(chats) {
-    const formatedChats = [];
-    const feildToPopulate = 'messages';
-    for (const chat of chats) {
-      await this.getSingalePopulatedField(chat.id, feildToPopulate).then(msgs => {
-        formatedChats.push({
-          id: chat.id,
-          name: chat.name,
-          lastMsg: msgs && msgs.length? msgs[msgs.length -1] : null,
-        })
-      })
-    }
-    return formatedChats;
-  }
+
 
   populaueUsersInPollChat() {
     this.poolChat.populate('users')
@@ -164,6 +228,29 @@ class ChatService {
     }catch(err) {
       throw err;
     }
+  }
+
+  getMessagesFromLastDate(chatMsgs) {
+    console.log('chatMsgs => ', chatMsgs);
+    if(!chatMsgs || !chatMsgs.length) return [];
+    const lastMsgDate = {
+      day: chatMsgs[chatMsgs.length -1].date.getUTCDate(),
+      month: chatMsgs[chatMsgs.length -1].date.getUTCMonth(),
+      year: chatMsgs[chatMsgs.length -1].date.getUTCFullYear()
+    }
+    console.log('chatMsgs => ',lastMsgDate);
+    return chatMsgs.filter(m => this.checkDate(lastMsgDate, m.date));
+
+  }
+
+  checkDate(date, msgDate) {
+    if (
+      date.day === msgDate.getUTCDate() &&
+      date.month === msgDate.getUTCMonth() &&
+      date.year === msgDate.getUTCFullYear()
+      )
+      return true;
+    return false;
   }
 
   deleteChat(id) {

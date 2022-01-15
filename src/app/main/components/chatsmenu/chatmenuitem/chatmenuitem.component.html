@@ -1,0 +1,53 @@
+<div class="chat-contaienr" [routerLink]="['./chat', chat.id]" (click)="OnChatSelect(chat.id)">
+  <div class="chat-img-container">
+    <ng-container *ngIf="checkImage(chat.img) else NotFound">
+      <img class="chat-img" [src]="Transform(chat.img)" width="20" height="20" alt="">
+    </ng-container>
+    <ng-template #NotFound>
+      <mat-icon class="icon">group</mat-icon>
+    </ng-template>
+  </div>
+  <h3 class="chat-name">
+    {{chat.name}}
+    <ng-container *ngIf="(chat.onCounterChange | async)">
+      <ng-container *ngIf="chat.newmsgscounter > 0">
+        <div class="new-masgs-counter-badge">
+          <div class="count">
+            {{chat.newmsgscounter}}
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </h3>
+  <!-- last message -->
+  <ng-container *ngIf="(chat.onMsgChange | async) || chat.lastMsg ">
+    <ng-container *ngIf="chat.newmsgscounter > 0 else showLasgMessage">
+      <div  class="new-msg">
+        <div class="from">
+          {{ chat.lastMsg.userName }}
+        </div>
+        <div class="time">
+          {{ chat.lastMsg.date | date: 'shortDate'}}
+        </div>
+        <div class="msg-content">
+          {{ chat.lastMsg.message }}
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #showLasgMessage>
+      <ng-container *ngIf="chat.lastMsg !== null">
+        <div  class="new-msg">
+          <div class="from last-msg-color">
+            {{ chat.lastMsg.userName }}
+          </div>
+          <div class="time last-msg-color">
+            {{ chat.lastMsg.date | date: 'shortDate'}}
+          </div>
+          <div class="msg-content last-msg-color">
+            {{ chat.lastMsg.message }}
+          </div>
+        </div>
+      </ng-container>
+    </ng-template>
+  </ng-container>
+</div>

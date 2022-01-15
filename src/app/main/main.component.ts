@@ -49,10 +49,10 @@ export class MainComponent implements OnInit {
 
         this.isMenuOpen = obj.state;
         if(this.isMenuOpen)
-          this.menuOption = obj.option;
+          this.menuOption = obj.option? obj.option: 3;
         else {
           setTimeout(() => {
-            this.menuOption = obj.option;
+            this.menuOption = obj.option? obj.option: 3;
           }, 1000);
         }
       })

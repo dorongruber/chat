@@ -13,7 +13,7 @@ const routes: Routes = [
   {path: '', component: MainComponent, children: [
     {path: 'landingpage', component: LandingpageComponent},
     {path: 'newchat', component: NewchatComponent, data: {animation: 'Chat'}},
-    {path: ':id', component: ChatComponent, data: {animation: 'Chat'}},
+    {path: 'chat/:id', component: ChatComponent, data: {animation: 'Chat'}},
   ]}
 ];
 

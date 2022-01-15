@@ -14,7 +14,7 @@ header {
   }
 
   @media (min-width: 640px) {
-    position: relative;
+    //position: relative;
     z-index: 5;
   }
 }
@@ -71,8 +71,45 @@ h4 {
 }
 
 //remove chats icon on desktop
-// #chats {
-//   @media (min-width: 640px) {
-//     display: none;
-//   }
-// }
+#chats {
+  @media (min-width: 640px) {
+    display: none;
+  }
+}
+
+:host ::ng-deep app-chatmenuitem {
+  .chat-contaienr {
+    flex-direction: row !important;
+    border-bottom: unset !important;
+    margin-top: 5%;
+    @media (min-width: 640px) {
+      width: 10vw;
+    }
+  }
+
+  .chat-img-container {
+    width: 30px !important;
+    height: 30px !important;
+    margin: auto 5px auto 15px !important;
+  }
+
+  .icon {
+    width: 25px !important;
+    height: 25px !important;
+    font-size: 25px !important;
+  }
+
+  .chat-name {
+    margin-left: 0%;
+  }
+
+  .new-msg {
+    //margin-top: 3% !important;
+    display: none !important;
+  }
+
+  img {
+    width: 28px !important;
+    height: 28px !important;
+  }
+}

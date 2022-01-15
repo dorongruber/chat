@@ -3,16 +3,17 @@ import { User } from "src/app/shared/models/user";
 import { Message } from "./message";
 
 export class Chat {
-
+  private _img: File;
   constructor(
     private _id: string,
     private _name: string,
-    private users: User[] = []
+    image: File,
+    private users: User[] = [],
   ) {
     this._id = _id;
     this._name = _name;
     users = users;
-
+    this._img = image;
   }
 
   get id() {
@@ -21,6 +22,10 @@ export class Chat {
 
   get name() {
     return this._name;
+  }
+
+  get img() {
+    return this._img;
   }
 }
 
@@ -33,8 +38,9 @@ export class ChatInMenu extends Chat {
   constructor(
     private CMid: string,
     private CMname: string,
+    private CMimage: File,
     ) {
-      super(CMid,CMname);
+      super(CMid,CMname,CMimage);
       this.lastMsg = this.resetLastMessage();
       this.newmsgscounter = 0;
       this.onMsgChange = new Subject<Message>();
