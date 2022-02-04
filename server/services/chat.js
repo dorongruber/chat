@@ -11,9 +11,10 @@ class ChatService {
   constructor() {}
 
   getById = async function(id) {
-    const chat = await Chats.findOne({id});
+    const chat = await Chats.findOne({id}).populate('users');
     if (!chat) return new Error('404');
-    return chat;
+    //console.log('get chat by id chat -> ', chat.name);
+    return formatService.singleChatResponseFormat(chat);
   }
 
   getByName = async function(chatName) {
@@ -26,21 +27,20 @@ class ChatService {
 
     const chat = await Chats.findOne({id: newChatInfo.id});
     let image = null;
-    if (chat) return res.status(200).end();
+    //if (chat) return res.status(200).end();
+    if (chat) return this.updateChat(newChatInfo)
     if (newChatInfo.img && Object.keys(newChatInfo.img).includes('filename') && newChatInfo.img.filename) {
       //const imageFile = fs.readFileSync(path.join('.','public','images',`${newChatInfo.img.name}`));
-      const imageFile = fs.readFileSync(path.join('./public/images/' + `${newChatInfo.img.filename}`));
-      image = {
-        data: imageFile,
-        contentType: 'image/*',
-        filename: newChatInfo.img.filename,
-      }
+      // const imageFile = fs.readFileSync(path.join('./public/images/' + `${newChatInfo.img.filename}`));
+      // image = {
+      //   data: imageFile,
+      //   contentType: 'image/*',
+      //   filename: newChatInfo.img.filename,
+      // }
+      image = this.processImage(newChatInfo.img);
     }
-    const params = {id: {$in : [...newChatInfo.users]}};
+    //const params = {id: {$in : [...newChatInfo.users]}};
     const users = await Users.find({id: {$in: [...JSON.parse(newChatInfo.users)]}}).exec();
-
-    //const ids = await userService.find(params);
-    //console.log('ids - >', newChatInfo.img.filename, users.map(u => u._id));
     const newChat = new Chats({
       id: newChatInfo.id,
       name: newChatInfo.name,
@@ -48,17 +48,7 @@ class ChatService {
       img: image,
     });
 
-    // newChatInfo.users.forEach(uid => {
-
-    // })
     for(const user of users) {
-      // userService.get(uid)
-      // .then(user => {
-      //   if(!user) return;
-      //   user.chats.push(new ObjectId(newChat._id));
-      //   userService.update(user);
-      // })
-
         user.chats.push(newChat._id);
         await userService.update(user);
     }
@@ -72,6 +62,38 @@ class ChatService {
      console.error('create chat err => ', err);
      throw err;
    }
+  }
+
+  async updateChat(newChatInfo) {
+    try{
+      let image;
+      const chat = await Chats.findOne({id: newChatInfo.id});
+      if (newChatInfo.img && Object.keys(newChatInfo.img).includes('filename') && newChatInfo.img.filename) {
+        image = this.processImage(newChatInfo.img);
+      }
+      const users = await Users.find({id: {$in: [...JSON.parse(newChatInfo.users)]}}).exec();
+      chat.name = newChatInfo.name;
+      chat.users = [...users.map(u => u._id)];
+      chat.img = image;
+      for(const user of users) {
+          const index = user.chats.findIndex(c => c.equals(chat._id));
+          if( index === -1) {
+            user.chats.push(chat._id);
+            await userService.update(user);
+          }
+      }
+      const saved = await chat.save(function(err,chat) {
+        if(err) {
+          throw err
+        };
+        return chat;
+      });
+      console.log('updateChat saved => ', saved);
+      return saved;
+    }catch(err) {
+      console.log('chat service updateChat err => ', err);
+      throw new Error(err)
+    }
   }
 
   getSingalePopulatedField = async function(id, fieldToPopulate) {
@@ -191,6 +213,16 @@ class ChatService {
   }
 
   ////////////////////// inner functions
+
+  processImage(img) {
+    const imageFile = fs.readFileSync(path.join('./public/images/' + `${img.filename}`));
+    const image = {
+      data: imageFile,
+      contentType: 'image/*',
+      filename: img.filename,
+    }
+    return image;
+  }
 
   async addMessageToChat(msgState) {
     try{

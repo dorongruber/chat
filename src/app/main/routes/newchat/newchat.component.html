@@ -2,7 +2,7 @@
   <body class="container">
     <!-- <app-alert *ngIf="error"></app-alert> -->
     <header class="img-container">
-      <ng-container *ngIf="selectedFile === undefined else haveImg">
+      <ng-container *ngIf="selectedFile === undefined && !imgToShow else haveImg">
         <div class="cyrcle-img img"></div>
       </ng-container>
       <ng-template #haveImg>
@@ -34,7 +34,7 @@
     <div class="load-img-container">
       <label class="file-label" for="file">Image</label>
       <input
-      class="input"
+      class="input file-input"
       id="file"
       type="file"
       placeholder="image"

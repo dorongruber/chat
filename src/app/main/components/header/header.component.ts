@@ -86,7 +86,10 @@ export class HeaderComponent implements OnInit {
 
   chatMenuOptions(index: number) {
     switch(index) {
-      case 3:
+      case 0:
+        this.onNavigationChange(`../../newchat/${this.chat.id}`);
+        break;
+      case 1:
         this.OnBackClick();
         break;
       default:
@@ -100,7 +103,7 @@ export class HeaderComponent implements OnInit {
   }
 
   OnBackClick() {
-    this.router.navigate(['../'], {relativeTo: this.route});
+    this.router.navigate(['/main'], {relativeTo: this.route});
   }
 
 }

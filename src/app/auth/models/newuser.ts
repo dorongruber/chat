@@ -28,7 +28,7 @@ export class RegisterUser extends BaseUser {
     password: string,
     private _firstName: string,
     private _lastName: string,
-    private _address: string,
+    private _phone: string,
   ) {
     super(email,password);
   }
@@ -41,8 +41,8 @@ export class RegisterUser extends BaseUser {
     this._lastName = lname;
   }
 
-  set address(address: string) {
-    this._address = address;
+  set phone(phone: string) {
+    this._phone = phone;
   }
 
   get firstname() {
@@ -53,7 +53,7 @@ export class RegisterUser extends BaseUser {
     return this._lastName;
   }
 
-  get address() {
-    return this._address;
+  get phone() {
+    return this._phone;
   }
 }

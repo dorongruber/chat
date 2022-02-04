@@ -6,6 +6,7 @@ import { User } from "../shared/models/user";
 import { BaseService } from "./base/base.service";
 import { ChatService } from './chat.service';
 import { SocketService } from "./socket.service";
+
 const URI = 'http://localhost:3000/api/chat/';
 const USER_URI = 'http://localhost:3000/api/user/';
 const MULTE = 1000000000000000;
@@ -18,12 +19,12 @@ export class ChatsService {
   constructor(
     private baseService: BaseService,
     private chatService: ChatService,
-    private socketService: SocketService
+    private socketService: SocketService,
     )
   {
     this.onNewChat = this.socketService.joinNewChat()
     .pipe(map((newChat: any) => {
-      console.log('new chat => ', newChat);
+      console.log('new chat => ', newChat.chatName);
       return new Chat(newChat.chatId, newChat.chatName, newChat.img);
     })) as Subject<Chat>
   }
@@ -40,12 +41,14 @@ export class ChatsService {
       });
     })
     .catch(err => {
+      if (err.status === 404)
+        return [];
       throw err;
     })
   }
 
-  async addChat(name: string, users: User[], userId: string, img: File) {
-    const id = this.GenerateId();
+  async addChat(chatId: string, name: string, users: User[], userId: string, img: File) {
+    const id = chatId.length === 0? this.GenerateId(): chatId;
     const savedChat = await this.chatService.newChat(id,name,users,userId,img);
     this.socketService.createChat(id,name,users, userId);
   }

@@ -154,7 +154,8 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
 
   scrollToLastMsg() {
     const chatMsgsElement = document.querySelector('#msgs-container') as HTMLElement;
-    chatMsgsElement.scrollTop = chatMsgsElement.scrollHeight;
+    if(chatMsgsElement)
+      chatMsgsElement.scrollTop = chatMsgsElement.scrollHeight;
   }
 
   ngOnDestroy() {

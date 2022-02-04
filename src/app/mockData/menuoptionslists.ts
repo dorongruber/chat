@@ -1,6 +1,4 @@
 export const chatMenuOptions = [
-  {title: 'add user', icon: 'add_circle_outline'},
-  {title: 'remove user', icon: 'remove_circle_outline'},
   {title: 'chat info', icon: 'info'},
   {title: 'exit chat', icon: 'chevron_right'},
 ];

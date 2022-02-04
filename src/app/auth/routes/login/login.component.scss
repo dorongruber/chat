@@ -5,8 +5,16 @@
 
 .login-btn {
   box-sizing: content-box;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 10px;
+  line-height: 24px;
 }
 
 :host ::ng-deep .mat-form-field-infix {
   width: 100% !important;
+}
+
+input {
+  color: #fff;
 }

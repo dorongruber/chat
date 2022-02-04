@@ -28,6 +28,20 @@ class FormatService {
     return formatedChats;
   }
 
+  async singleChatResponseFormat(chat) {
+    const singleChatFormat = {
+      id: chat.id,
+      name: chat.name,
+      users: chat.users,
+      img: {
+        contentType: chat?.img && chat?.img.contentType ? chat.img.contentType : null,
+        data: chat?.img && chat?.img.data ? chat.img.data.toString('base64') : null,
+        filename: chat?.img? chat.img.filename : null,
+      }
+    }
+    return singleChatFormat;
+  }
+
   async responseUsersFormat(users) {
     const formatedUsers = [];
     for(i =0; i< users.length; i++) {

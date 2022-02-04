@@ -1,5 +1,5 @@
 <div class="chat-contaienr" [routerLink]="['./chat', chat.id]" (click)="OnChatSelect(chat.id)">
-  <div class="chat-img-container">
+  <div class="chat-img-container" [ngClass]="{'remove-border': checkImage(chat.img)}">
     <ng-container *ngIf="checkImage(chat.img) else NotFound">
       <img class="chat-img" [src]="Transform(chat.img)" width="20" height="20" alt="">
     </ng-container>

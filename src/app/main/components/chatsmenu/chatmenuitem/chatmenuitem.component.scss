@@ -44,8 +44,8 @@
   display: grid;
   grid-template-columns: repeat(2,1fr);
   grid-template-rows: repeat(2,1fr);
-  max-width: 25ch;
-  width: 25ch;
+  max-width: 21ch;
+  width: 21ch;
   font-size: 12px;
   height: min-content;
   line-height: 15px;
@@ -97,6 +97,10 @@
   width: 20px;
   height: 20px;
   margin: auto 5px auto 0px;
+}
+
+.remove-border {
+  border: transparent;
 }
 
 .icon {

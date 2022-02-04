@@ -16,7 +16,7 @@ const URI = 'http://localhost:3000/api/user/';
 export class AuthService {
 
 
-  authUser = new Subject<Auth>();
+  authUser = new BehaviorSubject<Auth | undefined>(undefined);
   private tokenExpirationTimer: any;
   loadingObs = new Subject<boolean>();
   constructor(
@@ -30,13 +30,16 @@ export class AuthService {
       `${URI}register`, {
         newUser
       }
-    )
+    ).pipe((message) => {
+      this.loadingObs.next(false);
+      return message;
+    })
   }
 
   onLogin(isUser: BaseUser) {
     this.loadingObs.next(true);
     return this.http.post<AuthResponseData>(
-      `${URI}loguser`,
+      `${URI}login`,
       {
         isUser
       }
@@ -51,7 +54,7 @@ export class AuthService {
     const expirationDate = new Date(new Date().getTime() + gurd.expiresIn * 1000);
     const user = new Auth(
       gurd.email,
-      gurd.userId,
+      gurd.id,
       gurd.token,
       expirationDate
     );
@@ -70,14 +73,14 @@ export class AuthService {
   AutoLogin() {
     const userData: {
       name: string;
-      pass: string;
+      id: string;
       _token: string;
       _tokenExpirationDate: string;
     } = JSON.parse(localStorage.getItem('userData') || '');
     if (!userData) return;
     const loadedUser = new Auth(
       userData.name,
-      userData.pass,
+      userData.id,
       userData._token,
       new Date(userData._tokenExpirationDate)
     );
@@ -101,7 +104,7 @@ export class AuthService {
   Logout() {
     this.authUser.next(undefined);
     this.router.navigate(['/auth']);
-    localStorage.removeItem('serData');
+    localStorage.removeItem('userData');
     if ( this.tokenExpirationTimer )
       clearTimeout(this.tokenExpirationTimer);
     this.tokenExpirationTimer = null;

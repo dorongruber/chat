@@ -75,8 +75,9 @@
 
   <div class='btn-container'>
     <button
+    class="register-btn"
     type="submit"
-    [disabled]="!authForm.valid"
+    [disabled]="authForm.invalid && authForm.get('passform')?.invalid"
     mat-raised-button> Register </button>
   </div>
 </form>
