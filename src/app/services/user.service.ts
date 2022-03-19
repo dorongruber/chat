@@ -4,6 +4,7 @@ import { User } from "../shared/models/user";
 import { BaseService } from "./base/base.service";
 
 const URI = 'http://localhost:3000/api/user/';
+//const URI = 'http://10.100.102.8:3000/api/user/';
 const EmptyFile = new File([],'emptyFile');
 @Injectable({
   providedIn: 'root'
