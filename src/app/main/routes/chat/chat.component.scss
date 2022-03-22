@@ -51,8 +51,8 @@
 }
 
 .send-message-btn {
-  width: 1.5em;
-  height: 1.5em;
+  width: 2.5em;
+  height: 2.5em;
   border-radius: 50%;
   padding: 8px;
   border: 1px solid gray;
@@ -72,7 +72,7 @@
 }
 
 .send-icon {
-  font-size: .9em;
+  font-size: 1.5em;
   @media (max-width: 640px) {
     font-size: 1.5em;
   }
@@ -85,12 +85,11 @@
 // }
 
 .messages-container {
-  height: 86.5%;
+  height: 90.5%;
   overflow-y: scroll;
-  //transform: rotate(180deg);
+  transform: rotateZ(180deg);
   @media (max-width: 640px) {
-    height: 83%;
-    //transform: rotate(180deg);
+    height: calc(92% - 100px);
   }
 }
 

@@ -6,6 +6,7 @@ import { User } from 'src/app/shared/models/user';
 import { DeviceTypeService } from '../services/devicetype.service';
 import { ControllerService } from '../services/base/controller.service';
 import { Subscription } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
 
 const COMPONENT_BASE_ROUTE = '/main';
 const ids = ['doron123', 'bar876'];
@@ -16,7 +17,7 @@ const ids = ['doron123', 'bar876'];
 
 })
 export class MainComponent implements OnInit {
-  title = "chats list page"
+  title = "Landing page";
   baseRoute = COMPONENT_BASE_ROUTE;
   user: User | undefined;
   isMobile = false;
@@ -25,6 +26,7 @@ export class MainComponent implements OnInit {
   subscription = new Subscription();
   private subscriptions = new Subscription();
   constructor(
+    private router: Router,
     private userService: UserService,
     private socketService: SocketService,
     private chatService: ChatsService,
@@ -33,8 +35,13 @@ export class MainComponent implements OnInit {
   ) { }
 
   async ngOnInit(): Promise<void> {
-    const index = Math.floor(Math.random() * 2);
-    const id = ids[index];
+    // const index = Math.floor(Math.random() * 2);
+    // let id = ids[index];
+    let id: string = '';
+    const authUser = JSON.parse(localStorage.getItem('userData') || '');
+    console.log('user auth => ', authUser);
+    if(authUser)
+      id = authUser.id;
     console.log('id -> ', id);
 
     this.isMobile = this.deviceTypeService.isMobile;
@@ -45,18 +52,67 @@ export class MainComponent implements OnInit {
       .enterPool(this.user.id, this.user.name,this.chatService.GenerateId(),'generalPool');
 
       this.subscription = this.controllerService.onMenuStateChange.subscribe(obj => {
-        console.log('onMenuStateChange => ', obj);
 
-        this.isMenuOpen = obj.state;
-        if(this.isMenuOpen)
-          this.menuOption = obj.option? obj.option: 3;
-        else {
-          setTimeout(() => {
-            this.menuOption = obj.option? obj.option: 3;
-          }, 1000);
+        if(this.isMobile) {
+          this.setHeaderTitleOnMobile(obj.option);
+          this.mobileMenuControl(obj);
+        } else {
+          this.descktopMenuControl(obj);
+        }
+
+
+
+      })
+      this.router.events.subscribe(res => {
+        if(res instanceof NavigationEnd) {
+          console.log(' if(res instanceof NavigationEnd) -> ', res.url.split('/'));
+          this.title = res.url.split('/')[2];
         }
       })
+  }
 
+  setHeaderTitleOnMobile(index: number) {
+    switch(index) {
+      case 0:
+        this.title = 'Landing page';
+        break;
+      case 2:
+        this.title = 'User Info';
+        break;
+      case 3:
+        this.title = 'Chats';
+        break;
+    }
+  }
+
+  mobileMenuControl(obj: {state: boolean, option: number}) {
+    console.log('onMenuStateChange => ', obj, this.isMenuOpen);
+    if(obj.state){
+      this.isMenuOpen = obj.state;
+      this.menuOption = obj.option? obj.option: 3;
+    }
+
+    else {
+      console.log('this.title ===> ', this.title);
+
+      setTimeout(() => {
+
+        this.isMenuOpen = obj.state;
+
+      }, 1000);
+      this.menuOption = obj.option !== undefined? obj.option: 3;
+    }
+  }
+
+  descktopMenuControl(obj: {state: boolean, option: number}) {
+    this.isMenuOpen = obj.state;
+    if(this.isMenuOpen)
+      this.menuOption = obj.option? obj.option: 3;
+    else {
+      setTimeout(() => {
+        this.menuOption = obj.option ? obj.option: 3;
+      });
+    }
   }
 
 }

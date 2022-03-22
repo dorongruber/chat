@@ -36,7 +36,7 @@ export class RegisterComponent implements OnInit {
       name: new FormControl(userName, [Validators.required]),
       email: new FormControl(userEmail, [
         Validators.required,
-        Validators. email]),
+        Validators.email]),
       phone: new FormControl(userPhone, [ Validators.required]),
       passform: new FormGroup({
         password: new FormControl(userPassword, [
@@ -88,8 +88,8 @@ export const PassValidator: ValidatorFn = (control:
   AbstractControl): ValidationErrors | null =>  {
     const pass = control.get('password');
     const confpass = control.get('confirmpassword');
-    console.log('custom validator -> ', pass, confpass);
-    if (( pass !== confpass) && pass && confpass) {
+    //console.log('custom validator -> ', pass?.value, confpass?.value);
+    if (( pass?.value !== confpass?.value) && pass && confpass) {
       return {NotEqualPasswords: true};
     }
     return null;

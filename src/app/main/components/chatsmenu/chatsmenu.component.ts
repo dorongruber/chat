@@ -91,14 +91,6 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
     return false;
   }
 
-
-
-
-
-
-
-
-
   ngOnDestroy() {
     this.subscription.unsubscribe();
     this.subscriptions.unsubscribe();

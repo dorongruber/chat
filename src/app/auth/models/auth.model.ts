@@ -2,7 +2,7 @@ export class Auth {
 
   constructor(
     public name: string,
-    public pass: string,
+    public id: string,
     private _token: string,
     private _tokenExpirationDate: Date
   ) {}

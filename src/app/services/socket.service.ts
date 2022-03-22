@@ -5,7 +5,7 @@ import { Message } from "../main/models/message";
 import { User } from "../shared/models/user";
 
 const SOCKET_ENDPOINT = 'http://localhost:3000/';
-
+//const SOCKET_ENDPOINT = 'http://10.100.102.8:3000/';
 @Injectable({
   providedIn: 'root'
 })

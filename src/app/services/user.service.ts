@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
-import { Chat, ChatInMenu } from "../main/models/chat";
 import { User } from "../shared/models/user";
 import { BaseService } from "./base/base.service";
 
 const URI = 'http://localhost:3000/api/user/';
+//const URI = 'http://10.100.102.8:3000/api/user/';
 const EmptyFile = new File([],'emptyFile');
 @Injectable({
   providedIn: 'root'
@@ -40,7 +40,7 @@ export class UserService {
     .catch(err => err);
   }
 
-  getAllUsers() {
+  async getAllUsers() {
     const newURI = `${URI}allUsers`;
     return this.baseService
     .get<{id: string, name: string, phone: string,

@@ -3,11 +3,13 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, switchMap } from 'rxjs/operators';
 import { RouterAnimations } from 'src/app/app.animation';
+import { ChatService } from 'src/app/services/chat.service';
 import { ChatsService } from 'src/app/services/chats.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/models/user';
+import { Chat } from '../../models/chat';
 import { ImageSnippet } from '../../models/imagesnippet.model';
 
 @Component({
@@ -25,17 +27,22 @@ export class NewchatComponent implements OnInit {
   selectedFile: ImageSnippet | undefined = undefined;
   sf = false;
   temp: any;
-  imgToShow: any;
+  imgToShow: any = null;
   chatName = '';
   filteredOptions: Observable<User[]>[] = [];
   currentUser: any;
   allUsers: User[] = [];
   formControlUserReset: User = new User('','','','','',new File([],'emptyFile'));
+
+  chatId$: Observable<string>= new Observable<string>();
+  chatId: string = '';
+  chatusers: User[] = [];
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
     private chatsService: ChatsService,
+    private chatService: ChatService,
     private sanitizer: DomSanitizer,
     private fb: FormBuilder,
   ) {
@@ -44,6 +51,18 @@ export class NewchatComponent implements OnInit {
   //TODO on page reload need to pass user ID
   ngOnInit() {
     this.currentUser = this.userService.get();
+
+    this.chatId$ = this.route.paramMap.pipe(switchMap(params => {
+      return params.getAll('id');
+    }))
+    this.chatId$.subscribe(async (res) => {
+      this.chatId = res;
+      const chat = (await this.chatService.getChatData(this.chatId) as Chat);
+      this.chatName = chat.name;
+      this.imgToShow = chat?.img ? (chat.img as any).data : null;
+      this.chatusers = chat.users;
+      this.InitEditForm();
+    })
     // if (this.currentUser.name === '') {
     //   this.currentUser = this.userService.getUserById()
     // }
@@ -51,18 +70,14 @@ export class NewchatComponent implements OnInit {
   }
 
   setAutoOptions() {
-
     this.userService.getAllUsers()
     .then(resData => {
-
-      console.log('resData -> ', resData);
       this.allUsers = [...resData.filter(u => u.id !== this.currentUser.id)];
       this.ManageNameControl(0);
     });
   }
 
   InitForm() {
-    this.chatName = '';
     this.chatForm = new FormGroup({
       name: new FormControl(this.chatName, [Validators.required]),
       users: new FormArray([this.fb.group({
@@ -70,8 +85,18 @@ export class NewchatComponent implements OnInit {
       })]),
       image: new FormControl(null)
     });
-    console.log('chatForm -> ', this.users.controls);
+  }
 
+  InitEditForm() {
+    this.chatForm = new FormGroup({
+      name: new FormControl(this.chatName, [Validators.required]),
+      users: new FormArray([...this.chatusers.map(user => {
+        return this.fb.group({
+              user: new FormControl(user, Validators.required)
+            })
+      })]),
+      image: new FormControl(null)
+    });
   }
 
   get users() {
@@ -107,8 +132,7 @@ export class NewchatComponent implements OnInit {
     let name = form.value.name;
     let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
     console.log('name,users,this.currentUser.id -> ', name,reqUsers,this.currentUser.id);
-
-    this.chatsService.addChat(name,reqUsers,this.currentUser.id,img);
+    this.chatsService.addChat(this.chatId,name,reqUsers,this.currentUser.id,img);
     form.reset();
     this.InitForm();
     this.isLoading = false;

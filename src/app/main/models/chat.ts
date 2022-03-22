@@ -8,11 +8,11 @@ export class Chat {
     private _id: string,
     private _name: string,
     image: File,
-    private users: User[] = [],
+    private _users: User[] = [],
   ) {
     this._id = _id;
     this._name = _name;
-    users = users;
+    _users = _users;
     this._img = image;
   }
 
@@ -26,6 +26,10 @@ export class Chat {
 
   get img() {
     return this._img;
+  }
+
+  get users() {
+    return this._users;
   }
 }
 

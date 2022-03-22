@@ -1,21 +1,44 @@
 
 const fs = require('fs');
 const path = require('path');
-
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const Users = require('../models/Users');
 //const { chatService } = require('./chat');
+const { userErrorOptions } = require('../utils/errormessages');
 const { formatService } = require('./format.js');
-
+const { makeId } = require('../utils/randomstring');
 class UserService {
 
   constructor() {}
+
+  login = async function(loginUser) {
+    const user = await Users.findOne({email: loginUser._email});
+    console.log('login user => ', user);
+    if(!user) return new Error(userErrorOptions.LOGIN);
+    const response = await bcrypt.compare(loginUser._password, user.password);
+    console.log('login response => ', response);
+    if(!response) return new Error(userErrorOptions.LOGIN);
+    const currentUser = {
+      id: user.id,
+      name: user.name,
+      phone: user.phone,
+      email: user.email,
+    };
+    const accessToken = jwt.sign(currentUser,
+      process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: '1h'
+    });
+    const expirationTime = 60*60;
+    return {email: currentUser.email, id: currentUser.id , token: accessToken, expiresIn: expirationTime};
+  }
 
   get = async function(id) {
     try{
       const user = await Users.findOne({ id });
       console.log('then user ,id-> ', !user, id);
       if (!user)
-        return new Error('404');
+        return new Error(userErrorOptions.NOTFOUND);
       return formatService.getUserFormat(user);
     }catch(err) {
       throw err;
@@ -27,25 +50,30 @@ class UserService {
       const user = await Users.findOne({id})
       .populate('chats')
       .exec();
-      const chats = await formatService.responseChatFormat(user.chats);
+      const chats = await formatService.responseChatFormat(user?.chats? user.chats: []);
       return chats;
     } catch (err) {
-      console.error('user get chat serr => ', err);
+      console.error('user get chats err => ', err);
       throw new Error(err);
     }
   }
 
-  save = async function (id,name,phone,email,password) {
+  save = async function (newUserInfo) {
     try {
-      const user = await Users.find({ id });
+      console.log('save user => ', newUserInfo);
+      const hash = await bcrypt.hash(newUserInfo._password,10);
+      const user = await Users.findOne({$and: [{ email: {$eq: newUserInfo._email}},{password: {$eq: hash}}]});
       if (user)
-        throw new Error('404');
+        throw new Error(userErrorOptions.ALLREADYEXISTS);
       const newUser = new Users({
-        id,
-        name,
-        phone,
-        email,
-        password,
+        id: makeId(15),
+        name: newUserInfo._firstName,
+        phone: newUserInfo._phone,
+        email: newUserInfo._email,
+        chats: [],
+        img: null,
+        socketId: null,
+        password: hash,
       });
       return newUser.save();
     }catch(err) {
@@ -58,7 +86,7 @@ class UserService {
     //console.log('update -> updatedUser ', updatedUser);
     try {
       const user = await Users.findOne({ id: newUserInfo.id });
-      if (!user) throw new Error('404');
+      if (!user) throw new Error(userErrorOptions.NOTFOUND);
       user.id = newUserInfo.id;
       user.name =  newUserInfo.name;
       user.phone =  newUserInfo.phone;

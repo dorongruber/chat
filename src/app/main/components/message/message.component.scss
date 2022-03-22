@@ -2,9 +2,12 @@
   position: relative;
   margin-top: 15px;
   min-height: 35px;
+  max-width: 50%;
+  transform: rotateZ(180deg);
   @media (max-width: 640px) {
     margin-top: 10px;
     min-height: 45px;
+    max-width: 85%;
   }
 }
 
@@ -66,7 +69,7 @@
 .message-content {
   display: flex;
   justify-content: flex-start;
-  font-size: 80%;
+  font-size: 110%;
   margin: 0 10px 0 5px;
 }
 
@@ -75,6 +78,6 @@
 }
 
 .header-content {
-  font-size: 125%;
+  font-size: 170%;
   font-weight: 600;
 }

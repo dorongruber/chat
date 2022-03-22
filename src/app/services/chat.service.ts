@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
-import { ChatInMenu } from "../main/models/chat";
+import { Chat, ChatInMenu } from "../main/models/chat";
 import { Message } from "../main/models/message";
 import { User } from "../main/models/user";
 import { User as FullUser } from "../shared/models/user";;
@@ -10,7 +10,7 @@ import { SocketService } from "./socket.service";
 import { UserService } from "./user.service";
 
 const URI = 'http://localhost:3000/api/chat/';
-
+//const URI = 'http://10.100.102.8:3000/api/chat/';
 @Injectable({
   providedIn: 'root'
 })
@@ -67,10 +67,11 @@ export class ChatService {
        }
      }
 
-     getChatData(id: string) {
-       this.baseService.get(URI,id)
+     async getChatData(id: string) {
+       return this.baseService.get<Chat>(URI,id)
        .then(chat => {
          console.log('chat data => ', chat);
+         return chat;
        })
        .catch(err => err);
      }

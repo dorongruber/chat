@@ -28,7 +28,7 @@
 .sidenav-menu-container::before {
   position: absolute;
   content: '';
-  top: 0;
+  top: 3px;
   bottom: 0;
   left: 0;
   right: 0;
@@ -43,7 +43,7 @@
 .sidenav-menu-container {
   position: fixed;
   width: inherit;
-  height: 93.6vh;
+  height: -webkit-fill-available;
   box-sizing: border-box;
   //top: 0px;
   right: 0;
