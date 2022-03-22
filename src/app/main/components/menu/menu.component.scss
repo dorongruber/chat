@@ -43,7 +43,7 @@
 .sidenav-menu-container {
   position: fixed;
   width: inherit;
-  height: 93.6vh;
+  height: -webkit-fill-available;
   box-sizing: border-box;
   //top: 0px;
   right: 0;

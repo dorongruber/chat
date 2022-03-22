@@ -62,6 +62,8 @@ export class HeaderComponent implements OnInit {
   }
 
   mainMenuOptions(index: number) {
+    console.log('mainMenuOptions   =>>>> ', index);
+
     switch(index) {
       case 0:
         if (this.isMobile)
@@ -77,6 +79,10 @@ export class HeaderComponent implements OnInit {
       case 3:
         this.controllerService.onStateChange(index);
         //this.onNavigationChange('./chats');
+        break;
+      case 4:
+        localStorage.removeItem('userData');
+        this.router.navigate(['auth']);
         break;
       default:
         this.controllerService.onStateChange(undefined);

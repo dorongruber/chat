@@ -17,7 +17,7 @@ const ids = ['doron123', 'bar876'];
 
 })
 export class MainComponent implements OnInit {
-  title = "Landing page"
+  title = "Landing page";
   baseRoute = COMPONENT_BASE_ROUTE;
   user: User | undefined;
   isMobile = false;
@@ -52,16 +52,16 @@ export class MainComponent implements OnInit {
       .enterPool(this.user.id, this.user.name,this.chatService.GenerateId(),'generalPool');
 
       this.subscription = this.controllerService.onMenuStateChange.subscribe(obj => {
-        console.log('onMenuStateChange => ', obj);
 
-        this.isMenuOpen = obj.state;
-        if(this.isMenuOpen)
-          this.menuOption = obj.option? obj.option: 3;
-        else {
-          setTimeout(() => {
-            this.menuOption = obj.option? obj.option: 3;
-          }, 1000);
+        if(this.isMobile) {
+          this.setHeaderTitleOnMobile(obj.option);
+          this.mobileMenuControl(obj);
+        } else {
+          this.descktopMenuControl(obj);
         }
+
+
+
       })
       this.router.events.subscribe(res => {
         if(res instanceof NavigationEnd) {
@@ -69,6 +69,50 @@ export class MainComponent implements OnInit {
           this.title = res.url.split('/')[2];
         }
       })
+  }
+
+  setHeaderTitleOnMobile(index: number) {
+    switch(index) {
+      case 0:
+        this.title = 'Landing page';
+        break;
+      case 2:
+        this.title = 'User Info';
+        break;
+      case 3:
+        this.title = 'Chats';
+        break;
+    }
+  }
+
+  mobileMenuControl(obj: {state: boolean, option: number}) {
+    console.log('onMenuStateChange => ', obj, this.isMenuOpen);
+    if(obj.state){
+      this.isMenuOpen = obj.state;
+      this.menuOption = obj.option? obj.option: 3;
+    }
+
+    else {
+      console.log('this.title ===> ', this.title);
+
+      setTimeout(() => {
+
+        this.isMenuOpen = obj.state;
+
+      }, 1000);
+      this.menuOption = obj.option !== undefined? obj.option: 3;
+    }
+  }
+
+  descktopMenuControl(obj: {state: boolean, option: number}) {
+    this.isMenuOpen = obj.state;
+    if(this.isMenuOpen)
+      this.menuOption = obj.option? obj.option: 3;
+    else {
+      setTimeout(() => {
+        this.menuOption = obj.option ? obj.option: 3;
+      });
+    }
   }
 
 }

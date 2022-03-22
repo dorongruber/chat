@@ -52,12 +52,11 @@ class ChatService {
         user.chats.push(newChat._id);
         await userService.update(user);
     }
-    const saved = await newChat.save(function(err,chat) {
+    await newChat.save(function(err,chat) {
       if(err) throw err;
       console.log('saved chat -> ', chat._id);
-      return chat;
     });
-    return saved;
+    return newChat;
    } catch(err) {
      console.error('create chat err => ', err);
      throw err;
@@ -135,8 +134,7 @@ class ChatService {
         match: {id: {$eq: userId}}
       })
       .exec();
-      //console.log('getUserInPool user => ', chat.users);
-      const user = chat.users[0];
+      const user = chat && chat.users ? chat.users[0] : null;
       return user;
     }catch(err) {
       throw err;

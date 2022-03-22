@@ -10,7 +10,7 @@ import { SocketService } from "./socket.service";
 import { UserService } from "./user.service";
 
 const URI = 'http://localhost:3000/api/chat/';
-
+//const URI = 'http://10.100.102.8:3000/api/chat/';
 @Injectable({
   providedIn: 'root'
 })

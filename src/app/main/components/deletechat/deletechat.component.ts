@@ -1,7 +1,6 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatsService } from 'src/app/services/chats.service';
@@ -14,7 +13,7 @@ import { Chat } from '../../models/chat';
   templateUrl: './deletechat.component.html',
   styleUrls: ['./deletechat.component.scss']
 })
-export class DeletechatComponent implements OnInit, OnChanges {
+export class DeletechatComponent implements OnChanges {
   @Input() userId: string | undefined;
   chats: Chat[] = [];
   filterOptions: Observable<Chat[]> = of([]);
@@ -30,17 +29,15 @@ export class DeletechatComponent implements OnInit, OnChanges {
     ) {
       this.user = this.userService.get();
      }
-  ngOnInit() {
-    this.deleteForm.controls['chatName'].valueChanges.subscribe(value => {
-      this.filterOptions = of(this._filter(value))
-    });
-  }
 
   ngOnChanges(): void {
     if(this.userId) {
       this.initChats();
-      this.initForm();
+      this.deleteForm.controls['chatName'].valueChanges.subscribe(value => {
+        this.filterOptions = of(this._filter(value))
+      });
     }
+    this.initForm();
   }
 
   initForm() {

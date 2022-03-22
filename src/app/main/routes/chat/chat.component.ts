@@ -29,7 +29,6 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
   baseRoute = COMPONENT_BASE_ROUTE;
   lastMsgElement: Element | null = null;
   isLoading = false;
-
   selectedChat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
   constructor(
     private route: ActivatedRoute,
@@ -51,7 +50,7 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
      this.onLoadingChange();
      this.chatId = res;
      const formDb = await this.chatService.getChatMessages(this.chatId);
-     this.messages = formDb;
+     this.messages = formDb.reverse();
      setTimeout(() => {
       this.scrollToLastMsg();
       this.scrollObservable();
@@ -69,7 +68,8 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
    this.subscriptions.add(this.subscription);
    this.subscriptions = this.chatService.messages.subscribe(resMsg => {
      this.onLoadingChange();
-     this.messages.push(resMsg);
+     //this.messages.push(resMsg);
+     this.messages = [resMsg, ...this.messages];
      setTimeout(() => {
       this.scrollToLastMsg();
     });
@@ -82,6 +82,12 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
     this.chatService.onChatChange.subscribe(chatData => {
       this.selectedChat = this.chatService.selectedChat;
     });
+    if ('scrollRestoration' in history) {
+      // Back off, browser, I got this...
+      console.log('??????????????????????????????');
+
+      window.history.scrollRestoration = 'manual';
+    }
   }
 
   onLoadingChange() {
@@ -116,9 +122,16 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
       const currentDate = this.messages[0]?.date? this.messages[0]?.date: null;
       if(currentDate)
         prevDayMsgs = await this.chatService.getPrevDayMsgs(this.chatId,currentDate);
-        if (prevDayMsgs) {
-          this.messages = [...prevDayMsgs, ...this.messages];
+        if (prevDayMsgs && prevDayMsgs.length) {
+          this.messages = [...this.messages,...prevDayMsgs];
           console.log('messages len -> ', this.messages.length);
+        } else {
+          //test save scroll position
+          await this.fixScrollOnFirstMsgOfDay();
+          setTimeout(() => {
+            this.messages = [...this.messages, ...this.messages];
+          },2000)
+          console.log('test save scroll position messages len -> ', this.messages.length);
         }
     }
   }
@@ -127,7 +140,8 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
     if (form.invalid) return;
     this.messageFormat = this.createMessage(form.value.message);
     this.socketService.sendMessage(this.messageFormat);
-    this.messages.push(this.messageFormat);
+    //this.messages.push(this.messageFormat);
+    this.messages = [this.messageFormat, ...this.messages];
     this.msgContent = '';
     setTimeout(() => {
       this.scrollToLastMsg();
@@ -152,10 +166,17 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
     this.controllerService.onChatFocusChange(this.chatId);
   }
 
+  async fixScrollOnFirstMsgOfDay() {
+    const chatMsgsElement = document.querySelector('#msgs-container') as HTMLElement;
+    const firstMsgContainer = (document.querySelectorAll('.single-msg') as NodeListOf<HTMLElement>)[0];
+    console.log('firstMsgContainer ==> ', firstMsgContainer.offsetTop, window.pageYOffset );
+
+  }
+
   scrollToLastMsg() {
     const chatMsgsElement = document.querySelector('#msgs-container') as HTMLElement;
     if(chatMsgsElement)
-      chatMsgsElement.scrollTop = chatMsgsElement.scrollHeight;
+      chatMsgsElement.scrollTop = 0;
   }
 
   ngOnDestroy() {

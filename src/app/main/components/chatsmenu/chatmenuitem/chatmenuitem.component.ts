@@ -48,7 +48,7 @@ export class ChatmenuitemComponent implements OnInit {
   }
 
   checkImage(img: File): boolean {
-    return img && Object.keys(img).includes('contentType') && (img as any).contentType;
+    return img && (img as any).data.data;
   }
 
   Transform(img: any) {

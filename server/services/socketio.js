@@ -25,7 +25,7 @@ class SocketServerService {
         const user = await userService.get(userId);
         user.socketId = socket.id;
         const updatedUser = await userService.update(user);
-        console.log('updateed user -> ', updatedUser._id);
+        console.log('update pool');
         if (!updatedUser) throw false;
         return true;
       }

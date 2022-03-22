@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ControllerService } from 'src/app/services/base/controller.service';
@@ -11,8 +11,8 @@ import { ImageSnippet } from '../../models/imagesnippet.model';
   templateUrl: './userinfo.component.html',
   styleUrls: ['./userinfo.component.scss']
 })
-export class UserinfoComponent implements OnInit {
-  @Input() userId: string | undefined;
+export class UserinfoComponent implements OnChanges {
+  @Input() inputUser: User | undefined;
   userForm: FormGroup = new FormGroup({});
   user: User = new User('','','','','',new File([],'emptyFile'));
   isLoading = false;
@@ -25,10 +25,13 @@ export class UserinfoComponent implements OnInit {
     private sanitizer: DomSanitizer,
   ) { }
 
-  async ngOnInit() {
-    if (this.userId) {
+  async ngOnChanges() {
+    console.log('user info => ', this.inputUser);
+
+    if (this.inputUser) {
       this.onLoadingChange(this.isLoading);
-      this.user = await this.userService.getUserById(this.userId);
+      //this.user = await this.userService.getUserById(this.userId);
+      this.user = this.inputUser;
       if(Object.keys(this.user.img).includes('data')) {
         this.imgToShow = (this.user.img as any).data;
         this.selectedFile = new ImageSnippet(
@@ -36,12 +39,16 @@ export class UserinfoComponent implements OnInit {
          (this.user.img as any).filename)
         )
       }
-      this.initForm();
-    }
-    this.onLoadingChange(this.isLoading);
+    } else
+      this.onLoadingChange(this.isLoading);
+
+    this.initForm();
+
   }
 
   initForm(){
+    console.log('initForm user => ', this.user);
+
     this.userForm = new FormGroup({
       name: new FormControl(this.user.name, Validators.required),
       email: new FormControl(this.user.email, Validators.required),
