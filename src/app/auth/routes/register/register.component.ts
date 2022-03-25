@@ -53,10 +53,9 @@ export class RegisterComponent implements OnInit {
   onSubmit(form: FormGroup) {
 
     if (!form.valid) {
-      console.log('invalide form -> ', form);
+      return;
     }
     this.isLoading = true;
-    console.log('register form -> ', form);
     let name = form.value.name;
     let email = form.value.email;
     let phone = form.value.phone;
@@ -65,7 +64,6 @@ export class RegisterComponent implements OnInit {
     let authObs: Observable<{message: boolean}>;
     const newuser = new RegisterUser(email,password,name,name,phone);
     authObs = this.authService.onRegister(newuser);
-    console.log('autb observable -> ', authObs);
     // add new user to db
 
     authObs.subscribe(resData => {
@@ -78,9 +76,7 @@ export class RegisterComponent implements OnInit {
         this.authService.loadingObs.next(this.isLoading);
       }
     });
-
     form.reset();
-
   }
 }
 
@@ -88,7 +84,6 @@ export const PassValidator: ValidatorFn = (control:
   AbstractControl): ValidationErrors | null =>  {
     const pass = control.get('password');
     const confpass = control.get('confirmpassword');
-    //console.log('custom validator -> ', pass?.value, confpass?.value);
     if (( pass?.value !== confpass?.value) && pass && confpass) {
       return {NotEqualPasswords: true};
     }

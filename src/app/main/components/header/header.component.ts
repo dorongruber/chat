@@ -36,7 +36,6 @@ export class HeaderComponent implements OnInit {
       this.checkRoute(currentURL);
     })
     this.isMobile = this.deviceTypeService.isMobile;
-    console.log('check res => ', this.isChatOpen);
     if (this.isChatOpen)
       this.menuOptions = chatMenuOptions;
     else
@@ -44,8 +43,6 @@ export class HeaderComponent implements OnInit {
   }
 
   checkRoute(url: string) {
-    console.log('check url => ', url, this.relatedToRoute);
-
     const checkIfNum = Number(url.slice(-1));
 
     if (typeof checkIfNum === 'number' && !isNaN(checkIfNum) && this.relatedToRoute === ROUTE_TO_SHOW_BUTTON) {
@@ -62,8 +59,6 @@ export class HeaderComponent implements OnInit {
   }
 
   mainMenuOptions(index: number) {
-    console.log('mainMenuOptions   =>>>> ', index);
-
     switch(index) {
       case 0:
         if (this.isMobile)
@@ -78,7 +73,6 @@ export class HeaderComponent implements OnInit {
         break;
       case 3:
         this.controllerService.onStateChange(index);
-        //this.onNavigationChange('./chats');
         break;
       case 4:
         localStorage.removeItem('userData');

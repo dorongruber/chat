@@ -24,7 +24,6 @@ export class MainComponent implements OnInit {
   isMenuOpen = false;
   menuOption = 3;
   subscription = new Subscription();
-  private subscriptions = new Subscription();
   constructor(
     private router: Router,
     private userService: UserService,
@@ -35,14 +34,11 @@ export class MainComponent implements OnInit {
   ) { }
 
   async ngOnInit(): Promise<void> {
-    // const index = Math.floor(Math.random() * 2);
-    // let id = ids[index];
+
     let id: string = '';
     const authUser = JSON.parse(localStorage.getItem('userData') || '');
-    console.log('user auth => ', authUser);
     if(authUser)
       id = authUser.id;
-    console.log('id -> ', id);
 
     this.isMobile = this.deviceTypeService.isMobile;
     this.menuOption = this.isMobile? 0 : 3;
@@ -52,20 +48,15 @@ export class MainComponent implements OnInit {
       .enterPool(this.user.id, this.user.name,this.chatService.GenerateId(),'generalPool');
 
       this.subscription = this.controllerService.onMenuStateChange.subscribe(obj => {
-
         if(this.isMobile) {
           this.setHeaderTitleOnMobile(obj.option);
           this.mobileMenuControl(obj);
         } else {
           this.descktopMenuControl(obj);
         }
-
-
-
       })
       this.router.events.subscribe(res => {
         if(res instanceof NavigationEnd) {
-          console.log(' if(res instanceof NavigationEnd) -> ', res.url.split('/'));
           this.title = res.url.split('/')[2];
         }
       })
@@ -86,19 +77,12 @@ export class MainComponent implements OnInit {
   }
 
   mobileMenuControl(obj: {state: boolean, option: number}) {
-    console.log('onMenuStateChange => ', obj, this.isMenuOpen);
     if(obj.state){
       this.isMenuOpen = obj.state;
       this.menuOption = obj.option? obj.option: 3;
-    }
-
-    else {
-      console.log('this.title ===> ', this.title);
-
+    } else {
       setTimeout(() => {
-
         this.isMenuOpen = obj.state;
-
       }, 1000);
       this.menuOption = obj.option !== undefined? obj.option: 3;
     }

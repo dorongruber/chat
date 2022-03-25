@@ -17,7 +17,6 @@ router.delete('/:chatId/:userId', deleteUserById);
 module.exports = router;
 
 function addChat(req,res,next) {
-  console.log('addChat body => ', req.body.id, req.body.name);
   const {id,name,users} = req.body;
   const img = req.file;
   chatService.createChat({id,name,users,img})
@@ -47,7 +46,6 @@ function getMessagesByChatId(req,res,next) {
     res.status(200).json(messages);
   })
   .catch(err => {
-    console.log('err ->', err);
     res.status(404).json(err);
   });
 }

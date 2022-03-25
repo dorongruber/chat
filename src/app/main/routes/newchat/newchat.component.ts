@@ -131,7 +131,6 @@ export class NewchatComponent implements OnInit {
     reqUsers.push(this.currentUser)
     let name = form.value.name;
     let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
-    console.log('name,users,this.currentUser.id -> ', name,reqUsers,this.currentUser.id);
     this.chatsService.addChat(this.chatId,name,reqUsers,this.currentUser.id,img);
     form.reset();
     this.InitForm();

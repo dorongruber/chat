@@ -15,17 +15,14 @@ class SocketServerService {
       if(!checkUser) {
         socket.join(chatName);
         const user = await userService.get(userId);
-        //console.log('get user => ', user);
         const isAdded = chatService.addUserToPool(user._id)
         if (!user) throw false;
-        console.log('pool');
         return true;
       } else if (checkUser.socketId !== socket.id) {
         socket.join(chatName);
         const user = await userService.get(userId);
         user.socketId = socket.id;
         const updatedUser = await userService.update(user);
-        console.log('update pool');
         if (!updatedUser) throw false;
         return true;
       }
@@ -33,13 +30,12 @@ class SocketServerService {
       throw err;
     }
   }
-//new ObjectId(u._id)
+
   CreateChat(chatId, chatName, chatUsers,userId,socket) {
 
     chatUsers.forEach(u => {
       const connectedUser = userService.get(u._id);
       if(connectedUser) {
-        //console.log('connectedUser -> ', connectedUser,chatName,chatId);
         io.to(connectedUser.socketId).emit('JoinChat',({chatName,chatId}));
       }
     });
@@ -62,7 +58,6 @@ class SocketServerService {
 
   async SendMessage(userId, chatId, message, socket,date,userName) {
     try {
-      console.log('socket service -> ',userId, chatId, message,date,userName);
       const msgId = `${userId}${chatId}${date}`;
       const msgState = await msgService.save(message,msgId,userId,chatId,chatId,date,userName);
       const chatState = await chatService.addMessageToChat(msgState)
@@ -78,7 +73,6 @@ class SocketServerService {
 
   async sendMessageToUsersNotConnectedToSocket(chatId,newMesg) {
     let chatUsers = await chatService.getSingalePopulatedField(chatId, this.feildToPopulate);
-    //chatUsers = chatUsers.filter(u => u.id !== userId);
     chatUsers.forEach(async (u) => {
       io.to(u.socketId).emit('newMessageToChatMenu', (newMesg));
     });

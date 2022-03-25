@@ -25,10 +25,8 @@ module.exports = router;
 
 function Login(req,res,next) {
   const {isUser} = req.body;
-  console.log('login user => ', isUser);
   userService.login(isUser)
   .then(authUser => {
-    console.log('login user response => ', authUser);
     res.status(200).json(authUser);
   })
   .catch(err => {
@@ -53,11 +51,9 @@ function saveUser(req,res,next) {
   const {newUser } = req.body;
   userService.save(newUser)
   .then(savedUser => {
-    console.log('savedUser => ', savedUser);
     res.status(200).json(savedUser);
   })
   .catch(err => {
-    console.log('savedUser => err', err);
     res.status(400).json(new Error(err));
   })
 }
@@ -95,7 +91,6 @@ function getChatByuserId(req,res,next) {
       res.status(200).json(chatsData);
   })
   .catch(err => {
-    console.log('getChatByuserId errr => ',err);
     res.status(505).json(err);
   })
  }

@@ -26,11 +26,8 @@ export class UserinfoComponent implements OnChanges {
   ) { }
 
   async ngOnChanges() {
-    console.log('user info => ', this.inputUser);
-
     if (this.inputUser) {
       this.onLoadingChange(this.isLoading);
-      //this.user = await this.userService.getUserById(this.userId);
       this.user = this.inputUser;
       if(Object.keys(this.user.img).includes('data')) {
         this.imgToShow = (this.user.img as any).data;
@@ -47,8 +44,6 @@ export class UserinfoComponent implements OnChanges {
   }
 
   initForm(){
-    console.log('initForm user => ', this.user);
-
     this.userForm = new FormGroup({
       name: new FormControl(this.user.name, Validators.required),
       email: new FormControl(this.user.email, Validators.required),
@@ -66,7 +61,6 @@ export class UserinfoComponent implements OnChanges {
     let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
 
     const updatedUser = new User(this.user.id,name,phone,this.user.password,email,img);
-    //console.log('updatedUser => ', updatedUser);
     this.userService.set(updatedUser);
     this.userService.updateUser(updatedUser);
     this.onLoadingChange(this.isLoading);

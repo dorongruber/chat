@@ -39,8 +39,6 @@ export class AuthComponent implements OnInit {
 
 
     this.loadState = !this.loadState;
-    console.log('select form -> ', this.loadState);
-
   }
 
   ngOnDestroy() {

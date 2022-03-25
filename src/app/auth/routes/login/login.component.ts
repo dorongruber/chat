@@ -46,15 +46,12 @@ export class LoginComponent implements OnInit {
   }
   onSubmit(form: FormGroup) {
     // submit form
-    console.log('auth form -> ', this.authForm);
     this.isLoading = true;
     let authObs: Observable<AuthResponseData>;
     const isUser = new BaseUser(form.value.email, form.value.password)
     authObs = this.authService.onLogin(isUser);
 
     authObs.subscribe(resData => {
-      // console.log('resData -> ', resData);
-
       this.error = null;
       this.router.navigate(['../../main'], { relativeTo: this.route});
 
@@ -64,10 +61,7 @@ export class LoginComponent implements OnInit {
         this.isLoading = false;
       }, 1000);
     }, errorMessage => {
-      // this.isLoading = false;
-      console.log(errorMessage);
 
-      // console.log('error -> ', this.error);
       this.authService.loadingObs.next(false);
       this.error = errorMessage;
       setTimeout(() => {

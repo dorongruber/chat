@@ -13,8 +13,6 @@ export class MenuComponent implements OnChanges {
   constructor() { }
 
   ngOnChanges(): void {
-    console.log('MenuComponent =>>> ', this.option);
-
      setTimeout(() => {
        this.selectedMenuOption = this.option;
      },1000)
