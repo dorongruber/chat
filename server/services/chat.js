@@ -27,19 +27,10 @@ class ChatService {
 
     const chat = await Chats.findOne({id: newChatInfo.id});
     let image = null;
-    //if (chat) return res.status(200).end();
     if (chat) return this.updateChat(newChatInfo)
     if (newChatInfo.img && Object.keys(newChatInfo.img).includes('filename') && newChatInfo.img.filename) {
-      //const imageFile = fs.readFileSync(path.join('.','public','images',`${newChatInfo.img.name}`));
-      // const imageFile = fs.readFileSync(path.join('./public/images/' + `${newChatInfo.img.filename}`));
-      // image = {
-      //   data: imageFile,
-      //   contentType: 'image/*',
-      //   filename: newChatInfo.img.filename,
-      // }
       image = this.processImage(newChatInfo.img);
     }
-    //const params = {id: {$in : [...newChatInfo.users]}};
     const users = await Users.find({id: {$in: [...JSON.parse(newChatInfo.users)]}}).exec();
     const newChat = new Chats({
       id: newChatInfo.id,
@@ -54,11 +45,9 @@ class ChatService {
     }
     await newChat.save(function(err,chat) {
       if(err) throw err;
-      console.log('saved chat -> ', chat._id);
     });
     return newChat;
    } catch(err) {
-     console.error('create chat err => ', err);
      throw err;
    }
   }
@@ -87,10 +76,8 @@ class ChatService {
         };
         return chat;
       });
-      console.log('updateChat saved => ', saved);
       return saved;
     }catch(err) {
-      console.log('chat service updateChat err => ', err);
       throw new Error(err)
     }
   }
@@ -170,12 +157,10 @@ class ChatService {
         if(err) return err;
         const user = chat.users.find(u => u.id === userId);
         chat.users = chat.users.filter(u => u.id !== userId);
-        //console.log('chat.users after => ', chat.users, userId);
         Users.findOne({id: userId}).populate('chats')
         .exec((err, user) => {
           if (err) return err;
           user.chats = user.chats.filter(c => c.id !== chatId);
-          //console.log('user chats after -> ', user.chats, chatId);
           user.save();
         })
         if (chat.users.length < 1)
@@ -184,7 +169,6 @@ class ChatService {
       })
 
     }catch(err) {
-      console.log('err =>!!!!!', err);
       throw err
     }
   }
@@ -198,7 +182,6 @@ class ChatService {
       month: refDate.getUTCMonth(),
       year: refDate.getUTCFullYear()
     }
-    console.log('lastMsgDate -> ', refDate.getUTCDate());
     const index = chatMsgs.findIndex(m => this.checkDate(lastMsgDate,m.date));
     console.log('index -> ', index);
     if (index !== -1 && index !== 0) {
@@ -261,14 +244,12 @@ class ChatService {
   }
 
   getMessagesFromLastDate(chatMsgs) {
-    console.log('chatMsgs => ', chatMsgs);
     if(!chatMsgs || !chatMsgs.length) return [];
     const lastMsgDate = {
       day: chatMsgs[chatMsgs.length -1].date.getUTCDate(),
       month: chatMsgs[chatMsgs.length -1].date.getUTCMonth(),
       year: chatMsgs[chatMsgs.length -1].date.getUTCFullYear()
     }
-    console.log('chatMsgs => ',lastMsgDate);
     return chatMsgs.filter(m => this.checkDate(lastMsgDate, m.date));
 
   }

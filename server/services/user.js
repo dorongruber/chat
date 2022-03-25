@@ -14,10 +14,8 @@ class UserService {
 
   login = async function(loginUser) {
     const user = await Users.findOne({email: loginUser._email});
-    console.log('login user => ', user);
     if(!user) return new Error(userErrorOptions.LOGIN);
     const response = await bcrypt.compare(loginUser._password, user.password);
-    console.log('login response => ', response);
     if(!response) return new Error(userErrorOptions.LOGIN);
     const currentUser = {
       id: user.id,
@@ -36,7 +34,6 @@ class UserService {
   get = async function(id) {
     try{
       const user = await Users.findOne({ id });
-      console.log('then user ,id-> ', !user, id);
       if (!user)
         return new Error(userErrorOptions.NOTFOUND);
       return formatService.getUserFormat(user);
@@ -53,14 +50,12 @@ class UserService {
       const chats = await formatService.responseChatFormat(user?.chats? user.chats: []);
       return chats;
     } catch (err) {
-      console.error('user get chats err => ', err);
       throw new Error(err);
     }
   }
 
   save = async function (newUserInfo) {
     try {
-      console.log('save user => ', newUserInfo);
       const hash = await bcrypt.hash(newUserInfo._password,10);
       const user = await Users.findOne({$and: [{ email: {$eq: newUserInfo._email}},{password: {$eq: hash}}]});
       if (user)
@@ -77,13 +72,11 @@ class UserService {
       });
       return newUser.save();
     }catch(err) {
-      console.error('user save err => ', err);
       throw err;
     }
   }
 
   update = async function (newUserInfo) {
-    //console.log('update -> updatedUser ', updatedUser);
     try {
       const user = await Users.findOne({ id: newUserInfo.id });
       if (!user) throw new Error(userErrorOptions.NOTFOUND);
@@ -96,7 +89,6 @@ class UserService {
       user.socketId = newUserInfo.socketId? newUserInfo.socketId : user.socketId;
       console.log('newUserInfo.img => ', newUserInfo.img.filename);
       if (newUserInfo.img && Object.keys(newUserInfo.img).includes('filename') && newUserInfo.img.filename) {
-        //const imageFile = fs.readFileSync(path.join('.','public','images',`${newUserInfo.img.name}`));
         const imageFile = fs.readFileSync(path.join('./public/images/' + `${newUserInfo.img.filename}`));
         user.img = {
           data: imageFile,
@@ -107,7 +99,6 @@ class UserService {
       user.save();
       return await this.get(user.id);
     }catch(err) {
-      console.log('user update err => ', err);
       throw err;
     }
   }
@@ -116,7 +107,6 @@ class UserService {
    try{
     return await Users.find(params).exec()
    }catch(err) {
-     console.log('find function err => ', err);
      throw err;
    }
   }
@@ -125,7 +115,6 @@ class UserService {
     try{
       return await Users.find({});
     } catch(err) {
-      console.error('user getAll err => ', err);
       throw err;
     }
   }

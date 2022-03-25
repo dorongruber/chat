@@ -16,7 +16,6 @@ class MessageService {
   }
 
   async getByObjectId(_id) {
-    console.log('getByObjectId => ', _id, formatService);
     try {
       const message = await Messages.findOne({_id: _id});
       if (!message) throw 404;
@@ -30,7 +29,6 @@ class MessageService {
     console.log('save message -> ', msg,id,fid,tid,cid,date);
     try {
       const checkMsg = await Messages.findOne({id});
-      //console.log('asve msg => ', checkMsg);
       if (checkMsg) return null;
       const newMsg = new Messages({
         id,
@@ -41,7 +39,6 @@ class MessageService {
         date,
         Fname: fname,
       });
-      console.log('new message -> ', newMsg);
       const saveState = await newMsg.save();
       return saveState;
     }catch(err) {
