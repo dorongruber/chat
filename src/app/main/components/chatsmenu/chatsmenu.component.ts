@@ -46,14 +46,12 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
       this.isMobile = this.deviceTypeService.isMobile;
 
       this.subscription = this.chatsService.onNewChat.subscribe(res => {
-        console.log('new chat subject -> ', res);
         const newChat = new ChatInMenu(res.id,res.name, res.img);
         this.chats.push(newChat);
       });
 
       this.subscriptions.add(this.subscription);
       this.subscription = this.chatService.newMenuMsg.subscribe(resMsg => {
-        console.log('new mesggsas -> ', resMsg);
         if (resMsg && resMsg.chatId) {
           this.chats.find(c => {
             if (c.id === resMsg.chatId && resMsg.message) {

@@ -83,9 +83,6 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
       this.selectedChat = this.chatService.selectedChat;
     });
     if ('scrollRestoration' in history) {
-      // Back off, browser, I got this...
-      console.log('??????????????????????????????');
-
       window.history.scrollRestoration = 'manual';
     }
   }
@@ -115,23 +112,15 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
   }
 
   async checkScroll(entires: any) {
-    console.log('scroll event -> ',entires[0]);
     let prevDayMsgs;
     if(entires[0].intersectionRatio === 1) {
-      console.log('load prev day');
       const currentDate = this.messages[0]?.date? this.messages[0]?.date: null;
       if(currentDate)
         prevDayMsgs = await this.chatService.getPrevDayMsgs(this.chatId,currentDate);
         if (prevDayMsgs && prevDayMsgs.length) {
           this.messages = [...this.messages,...prevDayMsgs];
-          console.log('messages len -> ', this.messages.length);
         } else {
-          //test save scroll position
           await this.fixScrollOnFirstMsgOfDay();
-          setTimeout(() => {
-            this.messages = [...this.messages, ...this.messages];
-          },2000)
-          console.log('test save scroll position messages len -> ', this.messages.length);
         }
     }
   }
@@ -140,7 +129,6 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
     if (form.invalid) return;
     this.messageFormat = this.createMessage(form.value.message);
     this.socketService.sendMessage(this.messageFormat);
-    //this.messages.push(this.messageFormat);
     this.messages = [this.messageFormat, ...this.messages];
     this.msgContent = '';
     setTimeout(() => {

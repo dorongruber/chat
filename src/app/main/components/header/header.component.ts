@@ -73,7 +73,6 @@ export class HeaderComponent implements OnInit {
         break;
       case 3:
         this.controllerService.onStateChange(index);
-        //this.onNavigationChange('./chats');
         break;
       case 4:
         localStorage.removeItem('userData');
