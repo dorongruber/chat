@@ -3,9 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node app",
+    "start": "node ./server/config/server.js",
     "startDev": "ng serve",
-    "localMobile": "ng serve --host=10.100.102.3",
     "serve": "nodemon ./server/config/server.js",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
