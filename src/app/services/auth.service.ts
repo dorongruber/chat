@@ -7,9 +7,9 @@ import { AuthResponseData } from "../auth/models/auth-response";
 import { Auth } from "../auth/models/auth.model";
 import { BaseUser, RegisterUser } from "../auth/models/newuser";
 
-const URI = 'http://localhost:3000/api/user/';
-// const URI = 'https://guarded-sea-67886.herokuapp.com/api/user/';
-//const URI = 'http://10.100.102.8:3000/api/user/';
+const DEV_URI = 'http://localhost:3000/api/user/';
+const PROD_URI = 'https://pacific-sierra-73043.herokuapp.com/api/user/';
+const URI = window.location.hostname === 'localhost'? DEV_URI: PROD_URI;
 @Injectable({
   providedIn: 'root'
 })
