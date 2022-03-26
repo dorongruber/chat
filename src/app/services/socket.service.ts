@@ -4,8 +4,10 @@ import { io } from 'socket.io-client';
 import { Message } from "../main/models/message";
 import { User } from "../shared/models/user";
 
-const SOCKET_ENDPOINT = 'http://localhost:3000/';
+const DEV_SOCKET_ENDPOINT = 'http://localhost:3000/';
+const PROD_SOCKET_ENDPOINT ='https://pacific-sierra-73043.herokuapp.com/'
 //const SOCKET_ENDPOINT = 'http://10.100.102.8:3000/';
+const SOCKET_ENDPOINT = window.location.hostname === 'localhost'? DEV_SOCKET_ENDPOINT: PROD_SOCKET_ENDPOINT;
 @Injectable({
   providedIn: 'root'
 })
@@ -72,7 +74,6 @@ export class SocketService {
   joinNewChat() {
     const observable = new Observable(observer => {
       this.socket.on('JoinChat', (newChat: {chatName: string,chatId: string}) => {
-        console.log('new chat -> ', newChat);
         observer.next(newChat);
       })
     })

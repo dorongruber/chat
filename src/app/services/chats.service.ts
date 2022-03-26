@@ -8,10 +8,10 @@ import { ChatService } from './chat.service';
 import { SocketService } from "./socket.service";
 
 //const USER_URI = 'http://localhost:3000/api/chat/';
-const USER_URI = 'http://localhost:3000/api/user/';
-//const USER_URI = 'http://10.100.102.8:3000/api/user/';
+const DEV_URI = 'http://localhost:3000/api/user/';
+const PROD_URI = 'https://pacific-sierra-73043.herokuapp.com/api/user/';
 const MULTE = 1000000000000000;
-
+const URI = window.location.hostname === 'localhost'? DEV_URI: PROD_URI;
 @Injectable({
   providedIn: 'root'
 })
@@ -39,7 +39,7 @@ export class ChatsService {
         return resolve(this.chats)
       })
     }
-    const url =`${USER_URI}chats/`;
+    const url =`${URI}chats/`;
     return this.baseService.get<ChatInMenu[]>(url,userId)
     .then(res => {
       console.log('get chats  res -> ', res);
