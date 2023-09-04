@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -22,7 +22,7 @@ import { ImageSnippet } from '../../models/imagesnippet.model';
 })
 export class NewchatComponent implements OnInit {
   isLoading = false;
-  chatForm: FormGroup = new FormGroup({});
+  chatForm: UntypedFormGroup = new UntypedFormGroup({});
   error: string | null = null;
   selectedFile: ImageSnippet | undefined = undefined;
   sf = false;
@@ -44,7 +44,7 @@ export class NewchatComponent implements OnInit {
     private chatsService: ChatsService,
     private chatService: ChatService,
     private sanitizer: DomSanitizer,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
   ) {
     this.InitForm();
    }
@@ -78,34 +78,34 @@ export class NewchatComponent implements OnInit {
   }
 
   InitForm() {
-    this.chatForm = new FormGroup({
-      name: new FormControl(this.chatName, [Validators.required]),
-      users: new FormArray([this.fb.group({
-        user: new FormControl(null, Validators.required)
+    this.chatForm = new UntypedFormGroup({
+      name: new UntypedFormControl(this.chatName, [Validators.required]),
+      users: new UntypedFormArray([this.fb.group({
+        user: new UntypedFormControl(null, Validators.required)
       })]),
-      image: new FormControl(null)
+      image: new UntypedFormControl(null)
     });
   }
 
   InitEditForm() {
-    this.chatForm = new FormGroup({
-      name: new FormControl(this.chatName, [Validators.required]),
-      users: new FormArray([...this.chatusers.map(user => {
+    this.chatForm = new UntypedFormGroup({
+      name: new UntypedFormControl(this.chatName, [Validators.required]),
+      users: new UntypedFormArray([...this.chatusers.map(user => {
         return this.fb.group({
-              user: new FormControl(user, Validators.required)
+              user: new UntypedFormControl(user, Validators.required)
             })
       })]),
-      image: new FormControl(null)
+      image: new UntypedFormControl(null)
     });
   }
 
   get users() {
-    return this.chatForm.get('users') as FormArray;
+    return this.chatForm.get('users') as UntypedFormArray;
   }
 
   addUser() {
     let formGroup = this.fb.group({
-      user: new FormControl(null, Validators.required)
+      user: new UntypedFormControl(null, Validators.required)
     });
     this.users.push(formGroup);
     this.ManageNameControl(this.users.length - 1);
@@ -113,11 +113,11 @@ export class NewchatComponent implements OnInit {
 
   async removeUser(i: number) {
     this.users.setControl(i,this.fb.group({
-      user: new FormControl(null, Validators.required)
+      user: new UntypedFormControl(null, Validators.required)
     }));
   }
 
-  onSubmit(form: FormGroup) {
+  onSubmit(form: UntypedFormGroup) {
 
     if (!form.valid) {
       console.log('invalide form -> ', form);

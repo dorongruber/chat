@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, NgForm, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
 
   isLoading = false;
 
-  authForm: FormGroup = new FormGroup({});
+  authForm: UntypedFormGroup = new UntypedFormGroup({});
   error: string | null;
   constructor(
     private authService: AuthService,
@@ -31,12 +31,12 @@ export class LoginComponent implements OnInit {
 
   InitForm() {
 
-    this.authForm = new FormGroup({
-      email: new FormControl('', [
+    this.authForm = new UntypedFormGroup({
+      email: new UntypedFormControl('', [
         Validators.required,
         Validators.email
       ]),
-      password: new FormControl('', [
+      password: new UntypedFormControl('', [
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(12),
@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
       ])
     });
   }
-  onSubmit(form: FormGroup) {
+  onSubmit(form: UntypedFormGroup) {
     // submit form
     this.isLoading = true;
     let authObs: Observable<AuthResponseData>;

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NgForm, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormControl, UntypedFormGroup, NgForm, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
@@ -12,7 +12,7 @@ import { RegisterUser } from '../../models/newuser';
 })
 export class RegisterComponent implements OnInit {
   isLoading = false;
-  authForm: FormGroup = new FormGroup({});
+  authForm: UntypedFormGroup = new UntypedFormGroup({});
   error: string | null = null;
   constructor(
     private authService: AuthService,
@@ -32,25 +32,25 @@ export class RegisterComponent implements OnInit {
     let userPassword = '';
     let userConfiremPassword = '';
 
-    this.authForm = new FormGroup({
-      name: new FormControl(userName, [Validators.required]),
-      email: new FormControl(userEmail, [
+    this.authForm = new UntypedFormGroup({
+      name: new UntypedFormControl(userName, [Validators.required]),
+      email: new UntypedFormControl(userEmail, [
         Validators.required,
         Validators.email]),
-      phone: new FormControl(userPhone, [ Validators.required]),
-      passform: new FormGroup({
-        password: new FormControl(userPassword, [
+      phone: new UntypedFormControl(userPhone, [ Validators.required]),
+      passform: new UntypedFormGroup({
+        password: new UntypedFormControl(userPassword, [
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(12),
           Validators.pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,12})'))
         ]),
-        confirmpassword: new FormControl(userConfiremPassword, [Validators.required])
+        confirmpassword: new UntypedFormControl(userConfiremPassword, [Validators.required])
       }, {validators: PassValidator})
     });
   }
 
-  onSubmit(form: FormGroup) {
+  onSubmit(form: UntypedFormGroup) {
 
     if (!form.valid) {
       return;

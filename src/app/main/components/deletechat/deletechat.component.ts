@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
@@ -17,7 +17,7 @@ export class DeletechatComponent implements OnChanges {
   @Input() userId: string | undefined;
   chats: Chat[] = [];
   filterOptions: Observable<Chat[]> = of([]);
-  deleteForm: FormGroup = new FormGroup({});
+  deleteForm: UntypedFormGroup = new UntypedFormGroup({});
   chatToDelete: Chat = new Chat('','', new File([],'emptyFile'));
   resMsg = '';
   user: User;
@@ -41,8 +41,8 @@ export class DeletechatComponent implements OnChanges {
   }
 
   initForm() {
-    this.deleteForm = new FormGroup({
-      chatName: new FormControl('', Validators.required),
+    this.deleteForm = new UntypedFormGroup({
+      chatName: new UntypedFormControl('', Validators.required),
     });
   }
 
@@ -62,7 +62,7 @@ export class DeletechatComponent implements OnChanges {
     this.chatToDelete = chat;
   }
 
-  async onSubmit(form: FormGroup) {
+  async onSubmit(form: UntypedFormGroup) {
     if(!form.valid) return;
     if( form.value.chatName === this.chatToDelete.name && this.userId)
       this.resMsg = await this.chatService.deleteChat(this.chatToDelete.id,this.userId)

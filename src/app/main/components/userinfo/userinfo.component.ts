@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { UserService } from 'src/app/services/user.service';
@@ -13,7 +13,7 @@ import { ImageSnippet } from '../../models/imagesnippet.model';
 })
 export class UserinfoComponent implements OnChanges {
   @Input() inputUser: User | undefined;
-  userForm: FormGroup = new FormGroup({});
+  userForm: UntypedFormGroup = new UntypedFormGroup({});
   user: User = new User('','','','','',new File([],'emptyFile'));
   isLoading = false;
   selectedFile: ImageSnippet | undefined;
@@ -44,15 +44,15 @@ export class UserinfoComponent implements OnChanges {
   }
 
   initForm(){
-    this.userForm = new FormGroup({
-      name: new FormControl(this.user.name, Validators.required),
-      email: new FormControl(this.user.email, Validators.required),
-      phone: new FormControl(this.user.phone, Validators.required),
-      image: new FormControl(null)
+    this.userForm = new UntypedFormGroup({
+      name: new UntypedFormControl(this.user.name, Validators.required),
+      email: new UntypedFormControl(this.user.email, Validators.required),
+      phone: new UntypedFormControl(this.user.phone, Validators.required),
+      image: new UntypedFormControl(null)
     })
   }
 
-  onSubmit(form: FormGroup) {
+  onSubmit(form: UntypedFormGroup) {
     if (!form.valid && this.selectedFile) return;
     this.onLoadingChange(this.isLoading);
     let name = form.value.name;
