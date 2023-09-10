@@ -1,27 +1,9 @@
 <form [formGroup]="authForm"
   (ngSubmit)="onSubmit(authForm)" class="form-container">
 
-  <mat-form-field class="form-content"  appearance="outline">
-    <mat-label>Email </mat-label>
-    <input
-    matInput
-    type="email"
-    formControlName="email"
-    placeholder="Email"
-    name="email">
-  </mat-form-field>
-  <br>
-
-  <mat-form-field class="form-content"  appearance="outline">
-    <mat-label>Password </mat-label>
-    <input
-    matInput
-    type="password"
-    formControlName="password"
-    placeholder="password"
-    name="password"
-    matTooltip="password needs to have at lest one Uppercase, Lowercase, number">
-  </mat-form-field>
+  <ng-container *ngFor="let formField of loginFormFields.GetChildrens()">
+    <app-dynamic-authform-input [form]="authForm" [formField]="formField"></app-dynamic-authform-input>
+  </ng-container>
 
   <div class='btn-container'>
     <button

@@ -1,56 +1,35 @@
-import { Component, OnInit } from '@angular/core';
-import { AbstractControl, UntypedFormControl, UntypedFormGroup, NgForm, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { RegisterUser } from '../../models/newuser';
+import { authFormGroup } from '../../models/form-field';
+import { registrationFormStracture,  } from '../../consts/auth-forms-controls';
+import { AuthFormControlService } from '../../services/auth-forncontrol.service';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
   isLoading = false;
-  authForm: UntypedFormGroup = new UntypedFormGroup({});
+  authForm: FormGroup;
   error: string | null = null;
+  registrationFormFieldsStracture: authFormGroup;
+
   constructor(
     private authService: AuthService,
+    private authFormControlService: AuthFormControlService,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
-
-  ngOnInit() {
-    this.InitForm();
+  ) {
+    this.registrationFormFieldsStracture = registrationFormStracture;
+    this.authForm = this.authFormControlService.InstantiateForm(this.registrationFormFieldsStracture);
   }
 
-  InitForm() {
-
-    let userName = '';
-    let userEmail = '';
-    let userPhone = '';
-    let userPassword = '';
-    let userConfiremPassword = '';
-
-    this.authForm = new UntypedFormGroup({
-      name: new UntypedFormControl(userName, [Validators.required]),
-      email: new UntypedFormControl(userEmail, [
-        Validators.required,
-        Validators.email]),
-      phone: new UntypedFormControl(userPhone, [ Validators.required]),
-      passform: new UntypedFormGroup({
-        password: new UntypedFormControl(userPassword, [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.maxLength(12),
-          Validators.pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,12})'))
-        ]),
-        confirmpassword: new UntypedFormControl(userConfiremPassword, [Validators.required])
-      }, {validators: PassValidator})
-    });
-  }
-
-  onSubmit(form: UntypedFormGroup) {
+  onSubmit(form: FormGroup) {
 
     if (!form.valid) {
       return;
@@ -80,12 +59,4 @@ export class RegisterComponent implements OnInit {
   }
 }
 
-export const PassValidator: ValidatorFn = (control:
-  AbstractControl): ValidationErrors | null =>  {
-    const pass = control.get('password');
-    const confpass = control.get('confirmpassword');
-    if (( pass?.value !== confpass?.value) && pass && confpass) {
-      return {NotEqualPasswords: true};
-    }
-    return null;
-  };
+

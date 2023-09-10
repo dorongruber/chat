@@ -1,50 +1,40 @@
-import { Component, OnInit } from '@angular/core';
-import { UntypedFormControl, UntypedFormGroup, NgForm, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { AuthResponseData } from '../../models/auth-response';
 import { BaseUser } from '../../models/newuser';
+import { BasicFormElementActions } from '../../models/form-field';
+import { loginFormStructure } from '../../consts/auth-forms-controls';
+import { AuthFormControlService } from '../../services/auth-forncontrol.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
   isLoading = false;
-
-  authForm: UntypedFormGroup = new UntypedFormGroup({});
+  authForm: FormGroup;
+  loginFormFields: BasicFormElementActions;
   error: string | null;
   constructor(
     private authService: AuthService,
+    private authFormControlService: AuthFormControlService,
     private router: Router,
     private route: ActivatedRoute
   ) {
      this.error = null;
+     this.loginFormFields = loginFormStructure;
+     this.authForm = this.authFormControlService.InstantiateForm(this.loginFormFields);
    }
 
-  ngOnInit() {
-    this.InitForm();
-  }
-
-  InitForm() {
-
-    this.authForm = new UntypedFormGroup({
-      email: new UntypedFormControl('', [
-        Validators.required,
-        Validators.email
-      ]),
-      password: new UntypedFormControl('', [
-        Validators.required,
-        Validators.minLength(6),
-        Validators.maxLength(12),
-        Validators.pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,12})'))
-      ])
-    });
-  }
-  onSubmit(form: UntypedFormGroup) {
+  onSubmit(form: FormGroup) {
+    if(form.invalid) {
+      return;
+    }
     // submit form
     this.isLoading = true;
     let authObs: Observable<AuthResponseData>;
@@ -52,6 +42,8 @@ export class LoginComponent implements OnInit {
     authObs = this.authService.onLogin(isUser);
 
     authObs.subscribe(resData => {
+      console.log(`res Data ==> ${resData}`);
+
       this.error = null;
       this.router.navigate(['../../main'], { relativeTo: this.route});
 
