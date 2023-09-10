@@ -30,7 +30,7 @@ function Login(req,res,next) {
     res.status(200).json(authUser);
   })
   .catch(err => {
-    res.status(500).json(new Error(err))
+    res.status(err.statusCode).json(err.name);
   })
 }
 

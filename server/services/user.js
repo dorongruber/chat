@@ -8,15 +8,16 @@ const Users = require('../models/Users');
 const { userErrorOptions } = require('../utils/errormessages');
 const { formatService } = require('./format.js');
 const { makeId } = require('../utils/randomstring');
+const { Api400Error, Api404Error } = require('../utils/error_handlling/custom_error_handlers')
 class UserService {
 
   constructor() {}
 
   login = async function(loginUser) {
     const user = await Users.findOne({email: loginUser._email});
-    if(!user) return new Error(userErrorOptions.LOGIN);
+    if(!user) throw new Api404Error(userErrorOptions.NOTFOUND);
     const response = await bcrypt.compare(loginUser._password, user.password);
-    if(!response) return new Error(userErrorOptions.LOGIN);
+    if(!response) throw new Api400Error(userErrorOptions.LOGIN);
     const currentUser = {
       id: user.id,
       name: user.name,
