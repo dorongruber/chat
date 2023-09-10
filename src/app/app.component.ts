@@ -24,8 +24,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('host url => ', window.location.host);
-
     this.authService.AutoLogin();
   }
 
