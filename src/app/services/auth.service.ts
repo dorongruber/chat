@@ -77,7 +77,7 @@ export class AuthService {
         id: string;
         _token: string;
         _tokenExpirationDate: string;
-      } = JSON.parse(localStorage.getItem('userData') || "{name: null,id:null,_token: null,_tokenExpirationDate:null}");
+      } = JSON.parse(localStorage.getItem('userData') || '{"name": null,"id":null,"_token": null,"_tokenExpirationDate":null}');
       if (!userData) return;
       const loadedUser = new Auth(
         userData.name,
