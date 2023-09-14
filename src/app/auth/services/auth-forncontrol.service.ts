@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 //import { FormField } from "../models/form-field";
 import { FormBuilder, FormControl, FormGroup, ValidatorFn } from "@angular/forms";
-import { BasicFormElementActions } from "../models/form-field";
+import { TestBasic } from "../models/form-field";
 
 @Injectable({
   providedIn: "root"
@@ -12,7 +12,7 @@ export class AuthFormControlService {
     this.fb = formBuilder;
   }
 
-  InstantiateForm(formFieldsTree: BasicFormElementActions) {
+  InstantiateForm(formFieldsTree: TestBasic) {
     const structuredFrom = formFieldsTree.ToRelatedFormFormat(this.fb) as FormGroup;
     return structuredFrom;
   }

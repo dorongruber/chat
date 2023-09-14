@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { AuthResponseData } from '../../models/auth-response';
 import { BaseUser } from '../../models/newuser';
-import { BasicFormElementActions } from '../../models/form-field';
+import { TestNode } from '../../models/form-field';
 import { loginFormStructure } from '../../consts/auth-forms-controls';
 import { AuthFormControlService } from '../../services/auth-forncontrol.service';
 
@@ -18,7 +18,7 @@ export class LoginComponent {
 
   isLoading = false;
   authForm: FormGroup;
-  loginFormFields: BasicFormElementActions;
+  loginFormFields: TestNode;
   error: string | null;
   constructor(
     private authService: AuthService,
@@ -27,6 +27,8 @@ export class LoginComponent {
     private route: ActivatedRoute
   ) {
      this.error = null;
+     console.log(`loginFormStructure childrens ==> ${loginFormStructure.GetChildrens().length}`);
+
      this.loginFormFields = loginFormStructure;
      this.authForm = this.authFormControlService.InstantiateForm(this.loginFormFields);
    }
