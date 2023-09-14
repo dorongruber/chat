@@ -12,7 +12,7 @@ export const EmailParams = {
 };
 
 export const ConfirmationPasswordParams = {
-  "label": "confirmpassword",
+  "label": "confirmPassword",
   "type": "password",
 }
 
