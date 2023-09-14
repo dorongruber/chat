@@ -1,32 +1,29 @@
-<ng-container *ngIf="formGroupName == null; else nested">
-  <ng-container [formGroup]="form">
-    <mat-form-field  class="form-content" appearance="outline">
-      <mat-label>{{formField.GetFieldValue('label')}} </mat-label>
+<ng-container [formGroup]="form">
+  <ng-container *ngIf="!formGroupName; else nested">
+    <mat-form-field  class="form-content simpaleController" appearance="outline">
+      <mat-label>{{label}} </mat-label>
       <input
       matInput
-      [type]="formField.GetFieldValue('type')!"
-      [formControlName]="formField.GetFieldValue('name')!"
-      [placeholder]="formField.GetFieldValue('label')!"
+      [type]="type!"
+      [formControlName]="name!"
+      [placeholder]="label!"
       autocomplete="off"
-      [name]="formField.GetFieldValue('name')!">
+      [name]="name!">
     </mat-form-field>
-    <br>
   </ng-container>
+  <ng-template #nested>
+      <ng-container [formGroupName]="formGroupName!">
+        <mat-form-field class="form-content nestedController" appearance="outline">
+        <mat-label>{{label}} </mat-label>
+        <input
+        matInput
+        [type]="type!"
+        [formControlName]="name!"
+        [placeholder]="label!"
+        autocomplete="off"
+        [name]="name!">
+      </mat-form-field>
+      </ng-container>
+  </ng-template>
 </ng-container>
-<ng-template #nested>
-  <ng-container [formGroup]="form">
-    <ng-container [formGroupName]="formGroupName">
-      <mat-form-field  class="form-content" appearance="outline">
-      <mat-label>{{formField.GetFieldValue('label')}} </mat-label>
-      <input
-      matInput
-      [type]="formField.GetFieldValue('type')!"
-      [formControlName]="formField.GetFieldValue('name')!"
-      [placeholder]="formField.GetFieldValue('label')!"
-      autocomplete="off"
-      [name]="formField.GetFieldValue('name')!">
-    </mat-form-field>
-    <br>
-    </ng-container>
-  </ng-container>
-</ng-template>
+<br>
