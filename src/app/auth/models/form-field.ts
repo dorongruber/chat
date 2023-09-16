@@ -1,118 +1,8 @@
 import { AbstractControl, FormBuilder, ValidationErrors, ValidatorFn } from "@angular/forms";
-
-// export class FormField {
-//   value: string;
-//   label: string;
-//   name: string;
-//   type: string;
-//   toolTip?: string;
-//   validators: ValidatorFn[] | null;
-//   childrens: FormField[];
-
-//   constructor(label: string, type:string,
-//     {validators = null, value = "", childrens = [], toolTip = undefined} :
-//     {validators?: ValidatorFn[] | null,value?: string, childrens?: FormField[],toolTip?: string} = {},
-//      ) {
-//     this.value = value;
-//     this.label = label;
-//     this.name = label.toLocaleLowerCase();
-//     this.type = type;
-//     this.validators = validators;
-//     this.toolTip = toolTip;
-//     this.childrens = childrens;
-//   }
-
-//   toFromControl(fb: FormBuilder) {
-//     return fb.control(this.value, this.validators);
-//   }
-
-//   toFromGroup(fb: FormBuilder) {
-//     const formControls: {[key: string]: AbstractControl} = {};
-//     this.childrens.forEach(child => {
-//       if(child.asChildrens()) {
-//         formControls[child.name] = child.toFromGroup(fb);
-//       } else {
-//         formControls[child.name] = child.toFromControl(fb);
-//       }
-//     });
-//     return fb.group(formControls, {validators: this.validators},);
-//   }
-
-//   asChildrens(): boolean {
-//     return this.childrens.length > 0;
-//   }
-// }
-
-// export interface BasicFormElementActions {
-//   ToRelatedFormFormat(fb: FormBuilder): AbstractControl;
-//   AsChildrens(): boolean;
-//   GetFieldValue(key: string): string | undefined;
-//   GetChildrens(): BasicFormElementActions[];
-//   GetValidators(): ValidatorFn[] | null;
-// }
-
-// export class authFormGroup implements BasicFormElementActions {
-
-//   validators: ValidatorFn[] | null;
-//   childrens: BasicFormElementActions[];
-//   fields: {[key: string]: string | undefined} = {};
-//   constructor(label: string, {validators = null, childrens = []} :
-//     {validators?: ValidatorFn[] | null, childrens?: BasicFormElementActions[]}
-//     = {}) {
-//     this.validators = validators;
-//     this.childrens = childrens;
-//     this.fields["label"] = label;
-//     this.fields["name"] = label.toLocaleLowerCase();
-//   }
-//   GetChildrens(): BasicFormElementActions[] {
-//     return this.childrens;
-//   }
-//   GetValidators(): ValidatorFn[] | null {
-//     return this.validators;
-//   }
-
-//   AsChildrens(): boolean {
-//     return this.childrens.length > 0;
-//   }
-//   GetFieldValue(key: string): string | undefined {
-//     console.log(`GetFieldValue ====> ${key}`);
-
-//     return this.fields[key];
-//   }
-
-//   ToRelatedFormFormat(fb: FormBuilder): AbstractControl<any, any> {
-//     const formControls: {[key: string]: AbstractControl} = {};
-//     this.childrens.forEach(child => {
-//         formControls[child.GetFieldValue("name")!] = child.ToRelatedFormFormat(fb);
-
-//     });
-//     return fb.group(formControls, {validators: this.validators},);
-//   }
-
-// }
-
-// export class AuthFormControl extends authFormGroup {
-
-//   constructor(label: string, type:string,
-//     {validators = null, value = "", toolTip = undefined} :
-//     {validators?: ValidatorFn[] | null,value?: string, toolTip?: string} = {},
-//      ) {
-//       super(label , {validators: validators});
-//     this.fields["value"] = value;
-//     this.fields["type"] = type;
-//     this.fields["toolTip"] = toolTip;
-//   }
-
-//   ToRelatedFormFormat(fb: FormBuilder): AbstractControl<any, any> {
-//       return fb.control(this.fields["value"], this.validators);
-//   }
-
-// }
-
-
 export abstract class TestBasic {
   validators: ValidatorFn[] | undefined;
   properties: {[key: string]: string | undefined};
+  parentProps: {[key: string]: string | undefined} | undefined;
   constructor(label: string, validators?: ValidatorFn[] | undefined)
     {
       this.properties = {};
@@ -124,14 +14,14 @@ export abstract class TestBasic {
   abstract ToRelatedFormFormat(fb: FormBuilder): AbstractControl<any,any>;
 
   abstract AsChildrens(): boolean;
+  
+  abstract GetChildrens(): TestBasic[];
 
   Add(field: TestBasic): void {};
 
   Remove(field: TestBasic): void{};
 
-  GetChildrens(): TestBasic[] {
-    return [];
-  };
+  
   GetValidators(): ValidatorFn[] | undefined {
     return this.validators;
   };
@@ -158,6 +48,11 @@ export class TestLeaf extends TestBasic {
   ToRelatedFormFormat(fb: FormBuilder): AbstractControl<any, any> {
     return fb.control(this.properties["value"], this.validators);
   }
+
+  GetChildrens(): TestBasic[] {
+    return [this];
+  };
+
   AsChildrens(): boolean {
       return false;
   }
@@ -185,11 +80,17 @@ export class TestNode extends TestBasic {
   }
 
   GetChildrens(): TestBasic[] {
-      return this.childrens;
+    let flatted: TestBasic[] = [];
+    this.childrens.forEach(child => {
+      flatted = flatted.concat(child.GetChildrens().flat());
+    })
+    return flatted;
   }
 
   Add(controller: TestBasic): void {
-      this.childrens.push(controller);
+    if(!this.properties["label"]!.includes("main"))
+      controller.parentProps = this.properties;
+    this.childrens.push(controller);
   }
 
   Remove(controller: TestBasic): void {
