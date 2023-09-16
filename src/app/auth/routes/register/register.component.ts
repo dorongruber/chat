@@ -6,7 +6,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { RegisterUser } from '../../models/newuser';
 import { TestBasic, TestNode } from '../../models/form-field';
 import { registrationFormStracture,  } from '../../consts/auth-forms-controls';
-import { AuthFormControlService } from '../../services/auth-forncontrol.service';
+import { AuthFormControlService } from '../../services/auth-form-control.service';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 import { takeUntil } from 'rxjs/operators';
 
