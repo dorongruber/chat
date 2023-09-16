@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { TestBasic } from '../../models/form-field';
 
 @Component({
@@ -11,16 +11,23 @@ export class DynamicauthforminputComponent implements OnChanges  {
   @Input() form!: FormGroup;
   @Input() formField!: TestBasic;
   @Input() subGroupName: string | undefined = undefined;
-  label?: string;
-  name?: string;
-  type?: string;
+  label!: string;
+  name!: string;
+  type!: string;
+  control!: AbstractControl<any,any>;
   constructor() {
 
   }
 
   ngOnChanges() {
-    this.label = this.formField.properties["label"];
-    this.name = this.formField.properties["name"];
-    this.type = this.formField.properties["type"];
+    this.label = this.formField.properties["label"]!;
+    this.name = this.formField.properties["name"]!;
+    this.type = this.formField.properties["type"]!;
+    const controlpath = this.subGroupName ? `${this.subGroupName}.${this.name}` : this.name;
+    this.control = this.getController(controlpath)!;   
   }
+
+  getController(name: string) {
+    return this.form.get(name);
+  } 
 }

@@ -4,12 +4,30 @@
       <mat-label>{{label}} </mat-label>
       <input
       matInput
-      [type]="type!"
-      [formControlName]="name!"
-      [placeholder]="label!"
+      [type]="type"
+      [formControlName]="name"
+      [placeholder]="label"
       autocomplete="off"
-      [name]="name!">
+      [name]="name">
+      <mat-error *ngIf="control.touched && control.errors">
+        <ng-container *ngIf="control.errors.required">
+            Required Form Field
+        </ng-container>
+        <ng-container *ngIf="control.errors.minLength">
+            minLength validation Error
+        </ng-container>
+        <ng-container *ngIf="control.errors.maxLength">
+            maxLength validation Error
+        </ng-container>
+        <ng-container *ngIf="control.errors.pattern">
+            Pattern Validation Error
+        </ng-container>
+        <ng-container *ngIf="control.errors.email">
+            Email Pattern Validation Error
+        </ng-container>
+    </mat-error>
     </mat-form-field>
+    
   </ng-container>
   <ng-template #nested>
       <ng-container [formGroupName]="subGroupName!">
@@ -17,13 +35,15 @@
         <mat-label>{{label}} </mat-label>
         <input
         matInput
-        [type]="type!"
-        [formControlName]="name!"
-        [placeholder]="label!"
+        [type]="type"
+        [formControlName]="name"
+        [placeholder]="label"
         autocomplete="off"
-        [name]="name!">
+        [name]="name">
+        
       </mat-form-field>
       </ng-container>
   </ng-template>
+  
 </ng-container>
 <br>
