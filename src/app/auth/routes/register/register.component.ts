@@ -7,6 +7,8 @@ import { RegisterUser } from '../../models/newuser';
 import { TestBasic, TestNode } from '../../models/form-field';
 import { registrationFormStracture,  } from '../../consts/auth-forms-controls';
 import { AuthFormControlService } from '../../services/auth-forncontrol.service';
+import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-register',
@@ -22,6 +24,7 @@ export class RegisterComponent {
   constructor(
     private authService: AuthService,
     private authFormControlService: AuthFormControlService,
+    private subscriptionContolService: SubscriptionContolService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -42,7 +45,7 @@ export class RegisterComponent {
 
     let authObs: Observable<{message: boolean}>;
     const newuser = new RegisterUser(email,password,name,name,phone);
-    authObs = this.authService.onRegister(newuser);
+    authObs = this.authService.onRegister(newuser).pipe(takeUntil(this.subscriptionContolService.stop$));
     // add new user to db
 
     authObs.subscribe(resData => {

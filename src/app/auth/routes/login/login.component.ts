@@ -9,6 +9,7 @@ import { BaseUser } from '../../models/newuser';
 import { TestBasic, TestNode } from '../../models/form-field';
 import { loginFormStructure } from '../../consts/auth-forms-controls';
 import { AuthFormControlService } from '../../services/auth-forncontrol.service';
+import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 
 @Component({
   selector: 'app-login',
@@ -22,10 +23,10 @@ export class LoginComponent {
   loginFormFields: TestBasic[];
   error: string | null;
 
-  stop$ = new Subject<void>();
   constructor(
     private authService: AuthService,
     private authFormControlService: AuthFormControlService,
+    private subscriptionContolService: SubscriptionContolService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -43,7 +44,7 @@ export class LoginComponent {
     let authObs: Observable<AuthResponseData>;
     const isUser = new BaseUser(form.value.email, form.value.password)
 
-    authObs = this.authService.onLogin(isUser).pipe(takeUntil(this.stop$));
+    authObs = this.authService.onLogin(isUser).pipe(takeUntil(this.subscriptionContolService.stop$));
 
     authObs.subscribe((resData) => {
       console.log(`auth obs next ==> ${resData}`);
@@ -60,8 +61,4 @@ export class LoginComponent {
     form.reset();
   }
 
-  stop() {
-    this.stop$.next();
-    this.stop$.complete();
-  }
 }
