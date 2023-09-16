@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { RegisterUser } from '../../models/newuser';
-import { TestNode } from '../../models/form-field';
+import { TestBasic, TestNode } from '../../models/form-field';
 import { registrationFormStracture,  } from '../../consts/auth-forms-controls';
 import { AuthFormControlService } from '../../services/auth-forncontrol.service';
 
@@ -17,7 +17,7 @@ export class RegisterComponent {
   isLoading = false;
   authForm: FormGroup;
   error: string | null = null;
-  registrationFormFieldsStracture: TestNode;
+  registrationFormFieldsStracture: TestBasic[];
 
   constructor(
     private authService: AuthService,
@@ -25,8 +25,8 @@ export class RegisterComponent {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.registrationFormFieldsStracture = registrationFormStracture;
-    this.authForm = this.authFormControlService.InstantiateForm(this.registrationFormFieldsStracture);
+    this.registrationFormFieldsStracture = this.authFormControlService.GetFlattedList(registrationFormStracture);
+    this.authForm = this.authFormControlService.InstantiateForm(registrationFormStracture);
   }
 
   onSubmit(form: FormGroup) {

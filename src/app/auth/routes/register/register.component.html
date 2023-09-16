@@ -1,16 +1,8 @@
 <!-- <app-alert *ngIf="error"></app-alert> -->
 <form class="form-container" [formGroup]="authForm" (ngSubmit)="onSubmit(authForm)" *ngIf="!isLoading">
 
-  <ng-container *ngFor="let parentController of registrationFormFieldsStracture.GetChildrens()">
-    <ng-container *ngIf="!parentController.AsChildrens(); else nestedGroup">
-      <app-dynamic-authform-input [form]="authForm" [formField]="parentController"></app-dynamic-authform-input>
-    </ng-container>
-    <ng-template #nestedGroup>
-      <ng-container *ngFor="let childController of parentController.GetChildrens()">
-        <app-dynamic-authform-input [formGroupName]="parentController.properties['label']!"
-         [form]="authForm" [formField]="childController"></app-dynamic-authform-input>
-      </ng-container>
-    </ng-template>
+  <ng-container *ngFor="let control of registrationFormFieldsStracture">
+    <app-dynamic-authform-input [form]="authForm" [formField]="control" [subGroupName]="control.parentProps?.label"></app-dynamic-authform-input>
   </ng-container>
 
   <div class='btn-container'>
