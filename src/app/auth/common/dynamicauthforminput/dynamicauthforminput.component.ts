@@ -10,7 +10,7 @@ import { TestBasic } from '../../models/form-field';
 export class DynamicauthforminputComponent implements OnChanges  {
   @Input() form!: FormGroup;
   @Input() formField!: TestBasic;
-  @Input() formGroupName: string | undefined = undefined;
+  @Input() subGroupName: string | undefined = undefined;
   label?: string;
   name?: string;
   type?: string;

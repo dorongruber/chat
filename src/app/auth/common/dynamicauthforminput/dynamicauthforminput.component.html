@@ -1,5 +1,5 @@
 <ng-container [formGroup]="form">
-  <ng-container *ngIf="!formGroupName; else nested">
+  <ng-container *ngIf="!subGroupName; else nested">
     <mat-form-field  class="form-content simpaleController" appearance="outline">
       <mat-label>{{label}} </mat-label>
       <input
@@ -12,7 +12,7 @@
     </mat-form-field>
   </ng-container>
   <ng-template #nested>
-      <ng-container [formGroupName]="formGroupName!">
+      <ng-container [formGroupName]="subGroupName!">
         <mat-form-field class="form-content nestedController" appearance="outline">
         <mat-label>{{label}} </mat-label>
         <input
