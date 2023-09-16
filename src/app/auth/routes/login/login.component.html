@@ -1,7 +1,7 @@
 <form [formGroup]="authForm"
   (ngSubmit)="onSubmit(authForm)" class="form-container">
 
-  <ng-container *ngFor="let formField of loginFormFields.GetChildrens()">
+  <ng-container *ngFor="let formField of loginFormFields">
     <app-dynamic-authform-input [form]="authForm" [formField]="formField"></app-dynamic-authform-input>
   </ng-container>
 
