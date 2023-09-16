@@ -16,4 +16,10 @@ export class AuthFormControlService {
     const structuredFrom = formFieldsTree.ToRelatedFormFormat(this.fb) as FormGroup;
     return structuredFrom;
   }
+
+  GetFlattedList(formFieldsTree: TestBasic) {
+    const flattedNestedChildrens = formFieldsTree.GetChildrens();
+    return flattedNestedChildrens;
+  }
+  
 }
