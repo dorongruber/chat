@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from "rxjs/operators";
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -10,9 +11,9 @@ import { AuthService } from '../services/auth.service';
 })
 export class AuthComponent implements OnInit {
   loadState = true;
-  formStateSub = new Subscription;
   isLoading = false;
   direction = false;
+  stop$ = new Subject<void>();
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -24,7 +25,7 @@ export class AuthComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.formStateSub = this.authService.loadingObs.subscribe((state: boolean) =>  {
+    this.authService.loadingObs.pipe(takeUntil(this.stop$)).subscribe((state: boolean) =>  {
       this.isLoading = state;
     });
     this.router.navigate(['login'], {relativeTo: this.route});
@@ -41,7 +42,9 @@ export class AuthComponent implements OnInit {
     this.loadState = !this.loadState;
   }
 
-  ngOnDestroy() {
-    this.formStateSub.unsubscribe();
+  stop() {
+    this.stop$.next();
+    this.stop$.complete();
   }
+
 }
