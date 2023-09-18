@@ -15,19 +15,23 @@ export class DynamicauthforminputComponent implements OnChanges  {
   name!: string;
   type!: string;
   control!: AbstractControl<any,any>;
+  private path!: string;
   constructor() {
-
   }
 
   ngOnChanges() {
     this.label = this.formField.properties["label"]!;
     this.name = this.formField.properties["name"]!;
     this.type = this.formField.properties["type"]!;
-    const controlpath = this.subGroupName ? `${this.subGroupName}.${this.name}` : this.name;
-    this.control = this.getController(controlpath)!;   
+    this.path = this.subGroupName ? `${this.subGroupName}.${this.name}` : this.name;
+    this.control = this.getController(this.path)!;
   }
 
+  getErrorMsg() {
+    const key = Object.keys(this.control.errors!)[0];
+    return this.formField.validators?.getErrorMsg(key);
+  }
   getController(name: string) {
     return this.form.get(name);
-  } 
+  }
 }

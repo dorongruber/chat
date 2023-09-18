@@ -1,9 +1,11 @@
 import { AbstractControl, FormBuilder, ValidationErrors, ValidatorFn } from "@angular/forms";
+import { CustomValidators } from "./custom-validator";
 export abstract class TestBasic {
-  validators: ValidatorFn[] | undefined;
+  //validators: ValidatorFn[] | undefined;
+  validators: CustomValidators | undefined;
   properties: {[key: string]: string | undefined};
   parentProps: {[key: string]: string | undefined} | undefined;
-  constructor(label: string, validators?: ValidatorFn[] | undefined)
+  constructor(label: string, validators?: CustomValidators)
     {
       this.properties = {};
       this.validators = validators;
@@ -14,17 +16,17 @@ export abstract class TestBasic {
   abstract ToRelatedFormFormat(fb: FormBuilder): AbstractControl<any,any>;
 
   abstract AsChildrens(): boolean;
-  
+
   abstract GetChildrens(): TestBasic[];
 
   Add(field: TestBasic): void {};
 
   Remove(field: TestBasic): void{};
 
-  
-  GetValidators(): ValidatorFn[] | undefined {
-    return this.validators;
-  };
+
+  // GetValidators(): ValidatorFn[] | undefined {
+  //   return this.validators;
+  // };
 
 }
 
@@ -35,7 +37,8 @@ const ContrllerMostHaveValidator: ValidatorFn = (control:
 
 export class TestLeaf extends TestBasic {
 
-  constructor(label: string, type:string, validators: ValidatorFn[] = [ContrllerMostHaveValidator],
+  constructor(label: string, type:string
+    , validators: CustomValidators = new CustomValidators(["defualt validator"],[ContrllerMostHaveValidator], ["most difine validator"]),
     { value = "", toolTip = undefined} :
     { value?: string, toolTip?: string} = {},
      ) {
@@ -46,7 +49,7 @@ export class TestLeaf extends TestBasic {
   }
 
   ToRelatedFormFormat(fb: FormBuilder): AbstractControl<any, any> {
-    return fb.control(this.properties["value"], this.validators);
+    return fb.control(this.properties["value"], this.validators!.validatorFn);
   }
 
   GetChildrens(): TestBasic[] {
@@ -61,7 +64,7 @@ export class TestLeaf extends TestBasic {
 export class TestNode extends TestBasic {
   childrens: TestBasic[];
   constructor(label: string, {validators = undefined, childrens = []} :
-    {validators?: ValidatorFn[], childrens?: TestBasic[]}
+    {validators?: CustomValidators, childrens?: TestBasic[]}
     = {}) {
       super(label, validators);
     this.childrens = childrens;
@@ -72,7 +75,7 @@ export class TestNode extends TestBasic {
         formControls[child.properties["name"]!] = child.ToRelatedFormFormat(fb);
 
     });
-    return fb.group(formControls, {validators: this.validators},);
+    return fb.group(formControls, {validators: this.validators?.validatorFn},);
   }
 
   AsChildrens(): boolean {
