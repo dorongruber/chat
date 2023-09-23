@@ -9,7 +9,7 @@
       [placeholder]="label"
       autocomplete="off"
       [name]="name">
-      <mat-error *ngIf="control.touched && control.errors">
+      <mat-error *ngIf="formField.control.touched && formField.control.errors">
           {{getErrorMsg()}}
       </mat-error>
     </mat-form-field>
@@ -26,7 +26,7 @@
         [placeholder]="label"
         autocomplete="off"
         [name]="name">
-        <mat-error *ngIf="control.touched && control.errors">
+        <mat-error *ngIf="formField.control.touched && formField.control.errors">
           {{getErrorMsg()}}
       </mat-error>
       </mat-form-field>
