@@ -1,17 +1,8 @@
-import { AbstractControl, ValidationErrors, ValidatorFn, Validators } from "@angular/forms";
+import { Validators } from "@angular/forms";
 import { TestLeaf, TestNode } from "../models/form-field";
 import { ConfirmationPasswordParams, EmailParams, PasswordParams, PhoneParams, UserNameParams } from "./forms-fields-params";
 import { CustomValidators } from "../models/custom-validator";
-
-export const PassValidator: ValidatorFn = (control:
-  AbstractControl): ValidationErrors | null =>  {
-    const pass = control.get(PasswordParams["label"].toLocaleLowerCase());
-    const confpass = control.get(ConfirmationPasswordParams["label"].toLocaleLowerCase());
-    if (( pass?.value !== confpass?.value) && pass && confpass) {
-      return {NotEqualPasswords: true};
-    }
-    return null;
-  };
+import { PassValidator } from "./form-validators";
 
 const emailLeaf = new TestLeaf(EmailParams["label"],EmailParams["type"],
 new CustomValidators(
@@ -63,7 +54,7 @@ new CustomValidators(
 const confirmPasswordNode = new TestNode("passform", {validators:
   new CustomValidators(
     ["NotEqualPasswords"],
-    [PassValidator],
+    [PassValidator(passVerificationLeaf)],
     [`password dont match`])
 
   });
