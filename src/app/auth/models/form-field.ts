@@ -1,10 +1,10 @@
 import { AbstractControl, FormBuilder, ValidationErrors, ValidatorFn } from "@angular/forms";
 import { CustomValidators } from "./custom-validator";
 export abstract class TestBasic {
-  //validators: ValidatorFn[] | undefined;
+  control!: AbstractControl<any,any>;
   validators: CustomValidators | undefined;
   properties: {[key: string]: string | undefined};
-  parentProps: {[key: string]: string | undefined} | undefined;
+  parent?: TestBasic | undefined;
   constructor(label: string, validators?: CustomValidators)
     {
       this.properties = {};
@@ -22,11 +22,6 @@ export abstract class TestBasic {
   Add(field: TestBasic): void {};
 
   Remove(field: TestBasic): void{};
-
-
-  // GetValidators(): ValidatorFn[] | undefined {
-  //   return this.validators;
-  // };
 
 }
 
@@ -49,7 +44,8 @@ export class TestLeaf extends TestBasic {
   }
 
   ToRelatedFormFormat(fb: FormBuilder): AbstractControl<any, any> {
-    return fb.control(this.properties["value"], this.validators!.validatorFn);
+    this.control = fb.control(this.properties["value"], this.validators!.validatorFn);
+    return this.control;
   }
 
   GetChildrens(): TestBasic[] {
@@ -75,7 +71,8 @@ export class TestNode extends TestBasic {
         formControls[child.properties["name"]!] = child.ToRelatedFormFormat(fb);
 
     });
-    return fb.group(formControls, {validators: this.validators?.validatorFn},);
+    this.control = fb.group(formControls, {validators: this.validators?.validatorFn},);
+    return this.control;
   }
 
   AsChildrens(): boolean {
@@ -90,14 +87,14 @@ export class TestNode extends TestBasic {
     return flatted;
   }
 
-  Add(controller: TestBasic): void {
+  Add(control: TestBasic): void {
     if(!this.properties["label"]!.includes("main"))
-      controller.parentProps = this.properties;
-    this.childrens.push(controller);
+      control.parent = this;
+    this.childrens.push(control);
   }
 
-  Remove(controller: TestBasic): void {
-     const index = this.childrens.findIndex(c => c == controller);
+  Remove(control: TestBasic): void {
+     const index = this.childrens.findIndex(c => c == control);
      this.childrens.splice(index,1);
   }
 
