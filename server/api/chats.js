@@ -1,18 +1,19 @@
 const express = require('express');
 
+const { AuthenticationToken } = require('../middleware/jwt');
 const { chatService } = require('../services/chat');
 const { upload } = require('../middleware/processimg');
 const router = express.Router();
 
-router.get('/messages/:id', getMessagesByChatId);
+router.get('/messages/:id', AuthenticationToken, getMessagesByChatId);
 
-router.get('/prevDateMsgs/:id/:date', getPrevDayMsgs)
+router.get('/prevDateMsgs/:id/:date', AuthenticationToken, getPrevDayMsgs)
 
-router.post('/newchat', upload.single('image') , addChat)
+router.post('/newchat', AuthenticationToken, upload.single('image') , addChat)
 
-router.get('/:id', getChatById);
+router.get('/:id', AuthenticationToken, getChatById);
 
-router.delete('/:chatId/:userId', deleteUserById);
+router.delete('/:chatId/:userId', AuthenticationToken, deleteUserById);
 
 module.exports = router;
 
