@@ -10,10 +10,10 @@ import { TestBasic } from '../../models/form-field';
 export class DynamicauthforminputComponent implements OnChanges  {
   @Input() form!: FormGroup;
   @Input() formField!: TestBasic;
-  @Input() subGroupName: string | undefined = undefined;
   label!: string;
   name!: string;
   type!: string;
+  subGroupName: string | undefined = undefined;
   constructor() {
   }
 
@@ -21,8 +21,12 @@ export class DynamicauthforminputComponent implements OnChanges  {
     this.label = this.formField.properties["label"]!;
     this.name = this.formField.properties["name"]!;
     this.type = this.formField.properties["type"]!;
+    this.getSubGroupName();
   }
 
+  getSubGroupName() {
+    this.subGroupName = this.formField.control.parent != this.form ? this.formField.parent!.properties.label : undefined;
+  }
 
   getErrorMsg() {
     const field = this.formField;
