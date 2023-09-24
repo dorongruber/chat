@@ -4,7 +4,6 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Users = require('../models/Users');
-//const { chatService } = require('./chat');
 const { userErrorOptions } = require('../utils/errormessages');
 const { formatService } = require('./format.js');
 const { makeId } = require('../utils/randomstring');
@@ -88,7 +87,6 @@ class UserService {
       user.password = newUserInfo.password? newUserInfo.password: user.password,
       user.chats = newUserInfo.chats? [... newUserInfo.chats]: [...user.chats];
       user.socketId = newUserInfo.socketId? newUserInfo.socketId : user.socketId;
-      console.log('newUserInfo.img => ', newUserInfo.img.filename);
       if (newUserInfo.img && Object.keys(newUserInfo.img).includes('filename') && newUserInfo.img.filename) {
         const imageFile = fs.readFileSync(path.join('./public/images/' + `${newUserInfo.img.filename}`));
         user.img = {
