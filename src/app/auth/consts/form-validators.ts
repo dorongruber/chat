@@ -11,7 +11,6 @@ export function PassValidator(controlLeaf: TestBasic): ValidatorFn {
       confPass.setErrors({NotEqualPasswords: true});
       return {NotEqualPasswords: true};
     }
-    confPass.setErrors(null);
     return null;
   }
 };
