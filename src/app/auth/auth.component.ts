@@ -20,9 +20,7 @@ export class AuthComponent implements OnInit {
     private authService: AuthService,
     private subscriptionContolService: SubscriptionContolService,
   ) {
-
-    if (window.innerWidth <= 640)
-      this.direction = true;
+      this.direction = window.innerWidth <= 640;
   }
 
   ngOnInit() {
