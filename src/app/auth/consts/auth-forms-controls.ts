@@ -8,7 +8,7 @@ const emailLeaf = new TestLeaf(EmailParams["label"],EmailParams["type"],
 new CustomValidators(
   ["required", "email"],
   [Validators.required,Validators.email],
-   [`${EmailParams["label"]} Field is Required`,`Invalid ${EmailParams["label"]} Format`])
+   [`Field is Required`,`Invalid ${EmailParams["label"]} Format`])
 ,);
 const passwordLeaf = new TestLeaf(PasswordParams["label"], PasswordParams["type"],
 new CustomValidators(
@@ -17,7 +17,7 @@ new CustomValidators(
   Validators.minLength(PasswordParams["minLength"]),
   Validators.maxLength(PasswordParams["maxLength"]),
   Validators.pattern(new RegExp(PasswordParams["regexPattern"]))],
-[`${PasswordParams["label"]} Field is Required`,
+[`Field is Required`,
 `${PasswordParams["label"]} Min Length is ${PasswordParams["minLength"]}`,
 `${PasswordParams["label"]} Max Length is ${PasswordParams["minLength"]}`,
 `Invalid ${PasswordParams["label"]} Pattern`])
@@ -31,13 +31,13 @@ const userNameLeaf = new TestLeaf(UserNameParams["label"],UserNameParams["type"]
 new CustomValidators(
   ["required"],
   [Validators.required],
-   [`${UserNameParams["label"]} Field is Required`])
+   [`Field is Required`])
 );
 const phoneLeaf = new TestLeaf(PhoneParams["label"],PhoneParams["type"],
 new CustomValidators(
   ["required"],
   [Validators.required],
-  [`${PhoneParams["label"]} Field is Required`])
+  [`Field is Required`])
 ,);
 const registrationFormStracture = new TestNode("main group");
 registrationFormStracture.Add(userNameLeaf);
@@ -49,7 +49,7 @@ ConfirmationPasswordParams["type"],
 new CustomValidators(
   ["required"],
   [Validators.required],
-  [`${ConfirmationPasswordParams["label"]} Field is Required`])
+  [`Field is Required`])
 );
 const confirmPasswordNode = new TestNode("passform", {validators:
   new CustomValidators(
