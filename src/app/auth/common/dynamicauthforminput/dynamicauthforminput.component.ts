@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { TestBasic } from '../../models/form-field';
+import { CustomBasicControl } from '../../models/form-field';
 
 @Component({
   selector: 'app-dynamic-authform-input',
@@ -9,7 +9,7 @@ import { TestBasic } from '../../models/form-field';
 })
 export class DynamicauthforminputComponent implements OnChanges  {
   @Input() form!: FormGroup;
-  @Input() formField!: TestBasic;
+  @Input() formField!: CustomBasicControl;
   label!: string;
   name!: string;
   type!: string;

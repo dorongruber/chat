@@ -1,10 +1,10 @@
 import { AbstractControl, FormBuilder, ValidationErrors, ValidatorFn } from "@angular/forms";
 import { CustomValidators } from "./custom-validator";
-export abstract class TestBasic {
+export abstract class CustomBasicControl {
   control!: AbstractControl<any,any>;
   validators: CustomValidators | undefined;
   properties: {[key: string]: string | undefined};
-  parent?: TestBasic | undefined;
+  parent?: CustomBasicControl | undefined;
   constructor(label: string, validators?: CustomValidators)
     {
       this.properties = {};
@@ -17,11 +17,11 @@ export abstract class TestBasic {
 
   abstract AsChildrens(): boolean;
 
-  abstract GetChildrens(): TestBasic[];
+  abstract GetChildrens(): CustomBasicControl[];
 
-  Add(field: TestBasic): void {};
+  Add(field: CustomBasicControl): void {};
 
-  Remove(field: TestBasic): void{};
+  Remove(field: CustomBasicControl): void{};
 
 }
 
@@ -30,7 +30,7 @@ const ContrllerMostHaveValidator: ValidatorFn = (control:
     return {NoValidatorsDefined: true};
   };
 
-export class TestLeaf extends TestBasic {
+export class CustomControl extends CustomBasicControl {
 
   constructor(label: string, type:string
     , validators: CustomValidators = new CustomValidators(["defualt validator"],[ContrllerMostHaveValidator], ["most difine validator"]),
@@ -48,7 +48,7 @@ export class TestLeaf extends TestBasic {
     return this.control;
   }
 
-  GetChildrens(): TestBasic[] {
+  GetChildrens(): CustomBasicControl[] {
     return [this];
   };
 
@@ -57,10 +57,10 @@ export class TestLeaf extends TestBasic {
   }
 }
 
-export class TestNode extends TestBasic {
-  childrens: TestBasic[];
+export class CustomGroup extends CustomBasicControl {
+  childrens: CustomBasicControl[];
   constructor(label: string, {validators = undefined, childrens = []} :
-    {validators?: CustomValidators, childrens?: TestBasic[]}
+    {validators?: CustomValidators, childrens?: CustomBasicControl[]}
     = {}) {
       super(label, validators);
     this.childrens = childrens;
@@ -79,21 +79,21 @@ export class TestNode extends TestBasic {
     return this.childrens.length > 0;
   }
 
-  GetChildrens(): TestBasic[] {
-    let flatted: TestBasic[] = [];
+  GetChildrens(): CustomBasicControl[] {
+    let flatted: CustomBasicControl[] = [];
     this.childrens.forEach(child => {
       flatted = flatted.concat(child.GetChildrens().flat());
     })
     return flatted;
   }
 
-  Add(control: TestBasic): void {
+  Add(control: CustomBasicControl): void {
     if(!this.properties["label"]!.includes("main"))
       control.parent = this;
     this.childrens.push(control);
   }
 
-  Remove(control: TestBasic): void {
+  Remove(control: CustomBasicControl): void {
      const index = this.childrens.findIndex(c => c == control);
      this.childrens.splice(index,1);
   }

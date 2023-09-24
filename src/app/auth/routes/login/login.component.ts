@@ -6,7 +6,7 @@ import { takeUntil } from "rxjs/operators";
 import { AuthService } from 'src/app/services/auth.service';
 import { AuthResponseData } from '../../models/auth-response';
 import { BaseUser } from '../../models/newuser';
-import { TestBasic, TestNode } from '../../models/form-field';
+import { CustomBasicControl } from '../../models/form-field';
 import { loginFormStructure } from '../../consts/auth-forms-controls';
 import { AuthFormControlService } from '../../services/auth-form-control.service';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
@@ -20,7 +20,7 @@ export class LoginComponent {
 
   isLoading = false;
   authForm: FormGroup;
-  loginFormFields: TestBasic[];
+  loginFormFields: CustomBasicControl[];
   error: string | null;
 
   constructor(

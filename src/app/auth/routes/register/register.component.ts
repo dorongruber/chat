@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { RegisterUser } from '../../models/newuser';
-import { TestBasic, TestNode } from '../../models/form-field';
+import { CustomBasicControl } from '../../models/form-field';
 import { registrationFormStracture,  } from '../../consts/auth-forms-controls';
 import { AuthFormControlService } from '../../services/auth-form-control.service';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
@@ -19,7 +19,7 @@ export class RegisterComponent {
   isLoading = false;
   authForm: FormGroup;
   error: string | null = null;
-  registrationFormFieldsStracture: TestBasic[];
+  registrationFormFieldsStracture: CustomBasicControl[];
 
   constructor(
     private authService: AuthService,
