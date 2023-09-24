@@ -1,8 +1,8 @@
 <!-- <app-alert *ngIf="error"></app-alert> -->
 <form class="form-container" [formGroup]="authForm" (ngSubmit)="onSubmit(authForm)" *ngIf="!isLoading">
 
-  <ng-container *ngFor="let control of registrationFormFieldsStracture">
-    <app-dynamic-authform-input [form]="authForm" [formField]="control" [subGroupName]="control.parent?.properties!.label"></app-dynamic-authform-input>
+  <ng-container *ngFor="let formField of registrationFormFieldsStracture">
+    <app-dynamic-authform-input [form]="authForm" [formField]="formField" ></app-dynamic-authform-input>
   </ng-container>
 
   <div class='btn-container'>
