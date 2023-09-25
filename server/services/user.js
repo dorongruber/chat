@@ -37,16 +37,8 @@ class UserService {
       const user = await this.getUserByEmailAndPassword(newUserInfo._email,newUserInfo._password);
       if (user)
         throw new Error(userErrorOptions.ALLREADYEXISTS);
-      const newUser = new Users({
-        id: makeId(15),
-        name: newUserInfo._firstName,
-        phone: newUserInfo._phone,
-        email: newUserInfo._email,
-        chats: [],
-        img: null,
-        socketId: null,
-        password: hash,
-      });
+      const hash = await bcrypt.hash(newUserInfo._password,10);
+      const newUser = this.SerializeUser(newUserInfo,hash);
       return newUser.save();
     }catch(err) {
       throw err;
@@ -79,12 +71,17 @@ class UserService {
     }
   }
 
-  find = async function(params) {
-   try{
-    return await Users.find(params).exec()
-   }catch(err) {
-     throw err;
-   }
+  SerializeUser = function(newUserInfo,hash) {
+    return new Users({
+      id: makeId(15),
+      name: newUserInfo._firstName,
+      phone: newUserInfo._phone,
+      email: newUserInfo._email,
+      chats: [],
+      img: null,
+      socketId: null,
+      password: hash,
+    });
   }
 
   async getAll() {
