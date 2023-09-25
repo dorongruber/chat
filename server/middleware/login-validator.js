@@ -1,16 +1,13 @@
 const minLength = 6;
 const maxLength= 12;
 
-module.exports.validateEmail = function validateEmail(email) {
-    // Regular expression for a valid email address
-    var emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-  
-    // Test the email against the regex
+function validateEmail(email) {
+    const emailRegex = /[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}/;
     return emailRegex.test(email);
 }
 
-module.exports.validatePassword = function validatePassword(password) {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,12})$/;
+function validatePassword(password) {
+    const passwordRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,12})/;
     password = password.trim();
     if(!password)
         return false;
@@ -21,10 +18,17 @@ module.exports.validatePassword = function validatePassword(password) {
     return passwordRegex.test(password);
 }
 
-module.exports.loginUserValidator = function loginUserValidator(req,res,next) {
-    if(!validateEmail(req.user._email))
+function loginUserValidator(req,res,next) {
+    const { isUser } = req.body;
+    if(!validateEmail(isUser._email)) 
         return res.sendStatus(401);
-    if(!validatePassword(req.user._password))
+    if(!validatePassword(isUser._password))
         return res.sendStatus(401);
     next();
+}
+
+module.exports = {
+    validateEmail,
+    validatePassword,
+    loginUserValidator
 }

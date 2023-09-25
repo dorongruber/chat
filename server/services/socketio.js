@@ -1,8 +1,6 @@
 const { msgService } = require('../services/message');
 const { chatService } = require('../services/chat');
 const { userService } = require('../services/user');
-const Chats = require('../models/Chats');
-const { ObjectId } = require('bson');
 const { formatService } = require('./format.js');
 const io = require('../config/socketio').getIO();
 class SocketServerService {
@@ -20,7 +18,7 @@ class SocketServerService {
         return true;
       } else if (checkUser.socketId !== socket.id) {
         socket.join(chatName);
-        const user = await userService.get(userId);
+        const user = await userService.getByCustomId(userId);
         user.socketId = socket.id;
         const updatedUser = await userService.update(user);
         if (!updatedUser) throw false;

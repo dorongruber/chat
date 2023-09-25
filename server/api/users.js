@@ -38,7 +38,7 @@ function Login(req,res,next) {
 
 function getUserById(req,res,next) {
   const { id } = req.params;
-  userService.get(id)
+  userService.getByCustomId(id)
   .then(user => {
     res.status(200).json(user);
   })
@@ -49,7 +49,6 @@ function getUserById(req,res,next) {
 }
 
 function saveUser(req,res,next) {
-
   const {newUser } = req.body;
   userService.save(newUser)
   .then(savedUser => {
