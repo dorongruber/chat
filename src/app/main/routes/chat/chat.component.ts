@@ -1,14 +1,17 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
 import { Message } from 'src/app/main/models/message';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 import { ChatInMenu } from '../../models/chat';
+import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
+import { takeUntil } from "rxjs/operators";
+import { User } from 'src/app/shared/models/user';
 
 const COMPONENT_BASE_ROUTE = '/main/chat';
 
@@ -17,9 +20,7 @@ const COMPONENT_BASE_ROUTE = '/main/chat';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
-  private subscription = new Subscription();
-  private subscriptions = new Subscription();
+export class ChatComponent implements OnInit, AfterViewInit {
   msgContent: string = '';
   messageFormat: Message = {};
   messages: Message[] = [];
@@ -30,15 +31,33 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
   lastMsgElement: Element | null = null;
   isLoading = false;
   selectedChat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
+  user!: User;
   constructor(
     private route: ActivatedRoute,
     private chatService: ChatService,
     private socketService: SocketService,
     private userService: UserService,
     private controllerService: ControllerService,
+    private subscriptionContolService: SubscriptionContolService,
     ) {
     this.chatId$ = new Observable<string>();
-    this.chatUsers = []
+    this.chatUsers = [];
+    this.userService.onUserChange
+      .pipe(takeUntil(this.subscriptionContolService.stop$))
+      .subscribe(
+        (user: User) => {
+          this.user = user;
+        },
+        (err) => {
+          console.log("errer ChatComponent ==> ", err); 
+        },
+      );
+
+    this.chatService.onChatChange
+      .pipe(takeUntil(this.subscriptionContolService.stop$))
+      .subscribe(chatData => {
+        this.selectedChat = chatData;
+      });
    }
 
   async ngOnInit(): Promise<void> {
@@ -46,49 +65,50 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
      return params.getAll('id');
    }))
 
-   this.subscription = this.chatId$.subscribe(async res => {
-     this.onLoadingChange();
-     this.chatId = res;
-     const formDb = await this.chatService.getChatMessages(this.chatId);
-     this.messages = formDb.reverse();
-     setTimeout(() => {
-      this.scrollToLastMsg();
-      this.scrollObservable();
-    });
+   this.chatId$
+   .pipe(takeUntil(this.subscriptionContolService.stop$), tap(async res => {
+      this.onLoadingChange();
+      this.chatId = res;
+      const formDb = await this.chatService.getChatMessages(this.chatId);
+      this.messages = formDb.reverse();
+      setTimeout(() => {
+        this.scrollToLastMsg();
+        this.scrollObservable();
+      });
+   }))
+   .subscribe(res => {
     this.onLoadingChange();
    });
-   this.subscriptions.add(this.subscription);
 
-   const user = this.userService.get();
-   this.socketService.connectToChat(user.id, user.name, this.chatId);
+   this.socketService.connectToChat(this.user.id, this.user.name, this.chatId);
 
-   this.subscription = this.chatService.usersInChat.subscribe(resUsers => {
+    this.chatService.usersInChat
+   .pipe(takeUntil(this.subscriptionContolService.stop$))
+   .subscribe(resUsers => {
     this.chatUsers = [...resUsers];
    })
-   this.subscriptions.add(this.subscription);
-   this.subscriptions = this.chatService.messages.subscribe(resMsg => {
-     this.onLoadingChange();
-     //this.messages.push(resMsg);
-     this.messages = [resMsg, ...this.messages];
-     setTimeout(() => {
-      this.scrollToLastMsg();
-    });
+   this.chatService.messages
+   .pipe(takeUntil(this.subscriptionContolService.stop$), tap(resMsg => {
+      this.onLoadingChange();
+      this.messages = [resMsg, ...this.messages];
+      setTimeout(() => {
+        this.scrollToLastMsg(); 
+      });
+    this.onLoadingChange();
+  }))
+   .subscribe(resMsg => {
     this.onLoadingChange();
    });
   }
 
   ngAfterViewInit(): void {
-    this.selectedChat = this.chatService.selectedChat;
-    this.chatService.onChatChange.subscribe(chatData => {
-      this.selectedChat = this.chatService.selectedChat;
-    });
     if ('scrollRestoration' in history) {
       window.history.scrollRestoration = 'manual';
     }
   }
 
   onLoadingChange() {
-    this.isLoading =!this.isLoading;
+    this.isLoading = !this.isLoading;
   }
 
   scrollObservable() {
@@ -137,14 +157,12 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
   }
 
   createMessage(msg: string): Message {
-    const userId = this.userService.get().id;
-    const userName = this.userService.get().name;
     const date = new Date();
     return  {
       message: msg,
-      userId: userId,
+      userId: this.user.id,
       chatId: this.chatId,
-      userName: userName,
+      userName: this.user.name,
       date: date,
       fromCurrentUser: true,
     };
@@ -157,19 +175,12 @@ export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
   async fixScrollOnFirstMsgOfDay() {
     const chatMsgsElement = document.querySelector('#msgs-container') as HTMLElement;
     const firstMsgContainer = (document.querySelectorAll('.single-msg') as NodeListOf<HTMLElement>)[0];
-    console.log('firstMsgContainer ==> ', firstMsgContainer.offsetTop, window.pageYOffset );
-
   }
 
   scrollToLastMsg() {
     const chatMsgsElement = document.querySelector('#msgs-container') as HTMLElement;
     if(chatMsgsElement)
       chatMsgsElement.scrollTop = 0;
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-    this.subscriptions.unsubscribe();
   }
 
 }

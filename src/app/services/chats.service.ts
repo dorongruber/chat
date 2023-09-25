@@ -41,9 +41,9 @@ export class ChatsService {
     }
     const url =`${URI}chats/`;
     return this.baseService.get<ChatInMenu[]>(url,userId)
-    .then(res => {
-      console.log('get chats  res -> ', res);
-      const incomingChats = res.map(c => {
+    .then(res => {      
+      const isEmpty = Object.keys(res).length == 0;
+      const incomingChats = isEmpty ? [] : res.map(c => {
         const chat = new ChatInMenu(c.id,c.name,c.img);
         chat.lastMsg = c.lastMsg;
         return chat;

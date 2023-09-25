@@ -1,17 +1,15 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { takeUntil, tap } from "rxjs/operators";
 import { mockUserList } from 'src/app/mockData/usersList';
-import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatsService } from 'src/app/services/chats.service';
 import { DeviceTypeService } from 'src/app/services/devicetype.service';
 import { RouterService } from 'src/app/services/router.service';
-import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/models/user';
 import { ChatInMenu } from '../../models/chat';
+import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 
 const COMPONENT_BASE_ROUTE = '/main/chats';
 
@@ -20,17 +18,14 @@ const COMPONENT_BASE_ROUTE = '/main/chats';
   templateUrl: './chatsmenu.component.html',
   styleUrls: ['./chatsmenu.component.scss']
 })
-export class ChatsmenuComponent implements OnInit,OnChanges {
+export class ChatsmenuComponent implements OnInit {
   isMobile = false;
 
   chats: ChatInMenu[] = [];
   users = mockUserList;
   ////////////
-  @Input() user: User | undefined;
-  subscription = new Subscription();
-  private subscriptions = new Subscription();
+  user!: User;
   constructor(
-    private socketService: SocketService,
     private routerService: RouterService,
     private userService: UserService,
     private deviceTypeService: DeviceTypeService,
@@ -38,20 +33,35 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
     private route: ActivatedRoute,
     private chatsService: ChatsService,
     private chatService: ChatService,
-    private controllerService: ControllerService,
-
-    ) {}
+    private subscriptionContolService: SubscriptionContolService,
+    ) {
+      this.userService.onUserChange
+      .pipe(
+        takeUntil(this.subscriptionContolService.stop$), tap((user: User) => {
+          this.user = user;
+            this.initMenu();
+        }))
+        .subscribe(
+          () => {},
+          (err) => {
+            console.log("errer delete chat component==> ", err); 
+          },
+        );
+    }
 
     ngOnInit() {
       this.isMobile = this.deviceTypeService.isMobile;
 
-      this.subscription = this.chatsService.onNewChat.subscribe(res => {
+      this.chatsService.onNewChat
+      .pipe(takeUntil(this.subscriptionContolService.stop$))
+      .subscribe(res => {
         const newChat = new ChatInMenu(res.id,res.name, res.img);
         this.chats.push(newChat);
       });
-
-      this.subscriptions.add(this.subscription);
-      this.subscription = this.chatService.newMenuMsg.subscribe(resMsg => {
+     
+      this.chatService.newMenuMsg
+      .pipe(takeUntil(this.subscriptionContolService.stop$))
+      .subscribe(resMsg => {
         if (resMsg && resMsg.chatId) {
           this.chats.find(c => {
             if (c.id === resMsg.chatId && resMsg.message) {
@@ -63,22 +73,17 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
           });
         }
       });
-      this.subscriptions.add(this.subscription);
     }
 
-  async ngOnChanges() {
-    if(this.user)
-      this.initMenu(this.user.id);
-  }
-
-  async initMenu(userId: string) {
-    const resChat = await this.chatsService.getChats(userId);
+  async initMenu() {
+    const resChat = await this.chatsService.getChats(this.user.id);
     this.chats = [...resChat];
-    this.subscription = this.routerService.onRouteChange.subscribe(currentURL => {
+    this.routerService.onRouteChange
+    .pipe(takeUntil(this.subscriptionContolService.stop$))
+    .subscribe(currentURL => {
       if (this.CheckInitRoute(currentURL))
         this.router.navigate(['./landingpage'], {relativeTo: this.route});
     });
-    this.subscriptions.add(this.subscription);
   }
 
   CheckInitRoute(currentURL: string) {
@@ -87,11 +92,6 @@ export class ChatsmenuComponent implements OnInit,OnChanges {
       this.chats.length &&
       !this.isMobile) return true;
     return false;
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-    this.subscriptions.unsubscribe();
   }
 
 }

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { User } from "../shared/models/user";
 import { BaseService } from "./base/base.service";
 
@@ -11,13 +11,11 @@ const EmptyFile = new File([],'emptyFile');
   providedIn: 'root'
 })
 export class UserService {
-  private user: User;
-  onUserChange = new Subject<User>();
+  private defaultUser = new User('','','','','', EmptyFile);
+  onUserChange = new BehaviorSubject<User>(this.defaultUser);
   constructor(
     private baseService: BaseService
-    ) {
-    this.user = new User('','','','','', EmptyFile);
-  }
+    ) {}
 
   getUserById(id: string) {
 
@@ -34,8 +32,8 @@ export class UserService {
         user.password,
         user.email,
         img,
-      )
-      this.set(currentUser);
+      );
+      this.onUserChange.next(currentUser);
       return currentUser;
     })
     .catch(err => err);
@@ -76,19 +74,10 @@ export class UserService {
         resUpdatedUser.password,
         resUpdatedUser.email,
         resUpdatedUser.img)
-      this.set(updatedUser);
       this.onUserChange.next(updatedUser);
     })
     .catch(err => {
       throw new Error(err)
     })
-  }
-
-  set(selectedUser: User) {
-    this.user = selectedUser;
-  }
-
-  get() {
-    return this.user;
   }
 }

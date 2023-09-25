@@ -8,7 +8,6 @@ import { User } from 'src/app/shared/models/user';
 })
 export class MenuComponent implements OnChanges {
   @Input() option: number = 0;
-  @Input() user: User | undefined;
   selectedMenuOption: number = 0;
   constructor() { }
 

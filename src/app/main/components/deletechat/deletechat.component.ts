@@ -1,54 +1,65 @@
-import { Component, Input, OnChanges } from '@angular/core';
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
+import { takeUntil, tap } from "rxjs/operators";
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatsService } from 'src/app/services/chats.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/models/user';
 import { Chat } from '../../models/chat';
+import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 
 @Component({
   selector: 'app-deletechat',
   templateUrl: './deletechat.component.html',
   styleUrls: ['./deletechat.component.scss']
 })
-export class DeletechatComponent implements OnChanges {
-  @Input() userId: string | undefined;
+export class DeletechatComponent implements OnInit {
+  userId: string | undefined;
   chats: Chat[] = [];
   filterOptions: Observable<Chat[]> = of([]);
-  deleteForm: UntypedFormGroup = new UntypedFormGroup({});
+  deleteForm: FormGroup = new FormGroup({});
   chatToDelete: Chat = new Chat('','', new File([],'emptyFile'));
   resMsg = '';
-  user: User;
   constructor(
     private chatService: ChatService,
     private userService: UserService,
     private chatsService: ChatsService,
     private controllerService: ControllerService,
+    private subscriptionContolService: SubscriptionContolService,
     ) {
-      this.user = this.userService.get();
-     }
-
-  ngOnChanges(): void {
-    if(this.userId) {
-      this.initChats();
-      this.deleteForm.controls['chatName'].valueChanges.subscribe(value => {
-        this.filterOptions = of(this._filter(value))
-      });
+      this.initForm();
+      this.userService.onUserChange
+      .pipe(
+        takeUntil(this.subscriptionContolService.stop$), tap((user: User) => {
+          this.userId = user.id;
+          this.initChats();
+        }))
+        .subscribe(
+          () => {},
+          (err) => {
+            console.log("errer delete chat component==> ", err); 
+          },
+        );
     }
-    this.initForm();
+
+  ngOnInit(): void {
+    this.deleteForm.controls['chatName'].valueChanges
+    .pipe(takeUntil(this.subscriptionContolService.stop$))
+    .subscribe(value => {
+      this.filterOptions = of(this._filter(value))
+    });
   }
 
   initForm() {
-    this.deleteForm = new UntypedFormGroup({
-      chatName: new UntypedFormControl('', Validators.required),
+    this.deleteForm = new FormGroup({
+      chatName: new FormControl('', Validators.required),
     });
   }
 
   async initChats() {
-    if(this.userId)
-      this.chats = await this.chatsService.getChats(this.userId);
+    this.chats = await this.chatsService.getChats(this.userId!);
     this.filterOptions = of([...this.chats]);
   }
 
@@ -62,7 +73,7 @@ export class DeletechatComponent implements OnChanges {
     this.chatToDelete = chat;
   }
 
-  async onSubmit(form: UntypedFormGroup) {
+  async onSubmit(form: FormGroup) {
     if(!form.valid) return;
     if( form.value.chatName === this.chatToDelete.name && this.userId)
       this.resMsg = await this.chatService.deleteChat(this.chatToDelete.id,this.userId)

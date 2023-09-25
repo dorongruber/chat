@@ -3,11 +3,12 @@ import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
 import { Chat, ChatInMenu } from "../main/models/chat";
 import { Message } from "../main/models/message";
-import { User } from "../main/models/user";
-import { User as FullUser } from "../shared/models/user";;
+import { takeUntil } from "rxjs/operators";
+import { User as FullUser, User } from "../shared/models/user";;
 import { BaseService } from "./base/base.service";
 import { SocketService } from "./socket.service";
 import { UserService } from "./user.service";
+import { SubscriptionContolService } from "./subscription-control.service";
 
 const DEV_URI = 'http://localhost:3000/api/chat/';
 const PROD_URI = 'https://pacific-sierra-73043.herokuapp.com/api/chat/';
@@ -21,12 +22,26 @@ export class ChatService {
   newMenuMsg = new Subject<Message>();
   onChatChange = new Subject<ChatInMenu>();
   chat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
+  userId!: string;
   constructor(
     private baseService: BaseService,
     private socketService: SocketService,
     private userService: UserService,
+    private subscriptionContolService: SubscriptionContolService,
     )
      {
+      this.userService.onUserChange
+      .pipe(
+        takeUntil(this.subscriptionContolService.stop$))
+        .subscribe(
+          (user: User) => {
+            this.userId = user.id;
+          },
+          (err) => {
+            console.log("errer ChatService ==> ", err); 
+          },
+        );
+
        this.usersInChat = socketService.getUsersinChat()
        .pipe(map(response => {
          console.log('usersInChat -> ', response);
@@ -44,7 +59,9 @@ export class ChatService {
          return response;
        })) as Subject<Message>;
 
-       this.onChatChange.subscribe(chatData => {
+       this.onChatChange
+       .pipe(takeUntil(this.subscriptionContolService.stop$))
+       .subscribe(chatData => {
         this.selectedChat = chatData;
       })
      }
@@ -86,7 +103,6 @@ export class ChatService {
         userId: string,
         message: string}[]>(url,id)
        .then(res => {
-        const user = this.userService.get();
         const msgFormat: Message[] = [];
         res.forEach(msg => {
           msgFormat.push({
@@ -95,7 +111,7 @@ export class ChatService {
             chatId: msg.chatId,
             userName: msg.userName,
             date: msg.date,
-            fromCurrentUser: user.id === msg.userId? true: false,
+            fromCurrentUser: this.userId === msg.userId? true: false,
           });
         })
          console.log('getChatMessages res => ', res);
@@ -114,7 +130,6 @@ export class ChatService {
         userId: string,
         message: string}[]>(url, args)
         .then(res => {
-          const user = this.userService.get();
           const msgFormat: Message[] = [];
           if(res)
             res.forEach(msg => {
@@ -124,7 +139,7 @@ export class ChatService {
                 chatId: msg.chatId,
                 userName: msg.userName,
                 date: msg.date,
-                fromCurrentUser: user.id === msg.userId? true: false,
+                fromCurrentUser: this.userId === msg.userId? true: false,
               });
             })
            console.log('getPrevDayMsgs res => ', res);

@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map, startWith, switchMap } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
+import { Observable, fromEvent } from 'rxjs';
+import { map, startWith, switchMap, tap } from 'rxjs/operators';
 import { RouterAnimations } from 'src/app/app.animation';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatsService } from 'src/app/services/chats.service';
@@ -11,6 +11,8 @@ import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/models/user';
 import { Chat } from '../../models/chat';
 import { ImageSnippet } from '../../models/imagesnippet.model';
+import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: 'app-newchat',
@@ -22,15 +24,13 @@ import { ImageSnippet } from '../../models/imagesnippet.model';
 })
 export class NewchatComponent implements OnInit {
   isLoading = false;
-  chatForm: UntypedFormGroup = new UntypedFormGroup({});
+  chatForm!: FormGroup;
   error: string | null = null;
   selectedFile: ImageSnippet | undefined = undefined;
-  sf = false;
-  temp: any;
   imgToShow: any = null;
   chatName = '';
   filteredOptions: Observable<User[]>[] = [];
-  currentUser: any;
+  currentUser!: User;
   allUsers: User[] = [];
   formControlUserReset: User = new User('','','','','',new File([],'emptyFile'));
 
@@ -38,34 +38,44 @@ export class NewchatComponent implements OnInit {
   chatId: string = '';
   chatusers: User[] = [];
   constructor(
-    private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
     private chatsService: ChatsService,
     private chatService: ChatService,
     private sanitizer: DomSanitizer,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
+    private subscriptionContolService: SubscriptionContolService,
   ) {
     this.InitForm();
+    this.userService.onUserChange
+      .pipe(
+        takeUntil(this.subscriptionContolService.stop$))
+        .subscribe(
+          (user: User) => {
+            this.currentUser = user;
+          },
+          (err) => {
+            console.log("errer NewchatComponent ==> ", err); 
+          },
+        );
    }
   //TODO on page reload need to pass user ID
   ngOnInit() {
-    this.currentUser = this.userService.get();
-
-    this.chatId$ = this.route.paramMap.pipe(switchMap(params => {
+    this.chatId$ = this.route.paramMap
+    .pipe(switchMap(params => {
       return params.getAll('id');
     }))
-    this.chatId$.subscribe(async (res) => {
+    this.chatId$
+    .pipe(takeUntil(this.subscriptionContolService.stop$), tap(async (res) => {
       this.chatId = res;
       const chat = (await this.chatService.getChatData(this.chatId) as Chat);
       this.chatName = chat.name;
       this.imgToShow = chat?.img ? (chat.img as any).data : null;
       this.chatusers = chat.users;
+    }))
+    .subscribe((res) => {
       this.InitEditForm();
-    })
-    // if (this.currentUser.name === '') {
-    //   this.currentUser = this.userService.getUserById()
-    // }
+    });
     this.setAutoOptions();
   }
 
@@ -78,34 +88,34 @@ export class NewchatComponent implements OnInit {
   }
 
   InitForm() {
-    this.chatForm = new UntypedFormGroup({
-      name: new UntypedFormControl(this.chatName, [Validators.required]),
-      users: new UntypedFormArray([this.fb.group({
-        user: new UntypedFormControl(null, Validators.required)
+    this.chatForm = this.fb.group({
+      name: this.fb.control(this.chatName, [Validators.required]),
+      users: this.fb.array([this.fb.group({
+        user: this.fb.control(null, Validators.required)
       })]),
-      image: new UntypedFormControl(null)
+      image: this.fb.control(null)
     });
   }
 
   InitEditForm() {
-    this.chatForm = new UntypedFormGroup({
-      name: new UntypedFormControl(this.chatName, [Validators.required]),
-      users: new UntypedFormArray([...this.chatusers.map(user => {
+    this.chatForm = this.fb.group({
+      name: this.fb.control(this.chatName, [Validators.required]),
+      users: this.fb.array([...this.chatusers.map(user => {
         return this.fb.group({
-              user: new UntypedFormControl(user, Validators.required)
+              user: this.fb.control(user, Validators.required)
             })
       })]),
-      image: new UntypedFormControl(null)
+      image: this.fb.control(null)
     });
   }
 
   get users() {
-    return this.chatForm.get('users') as UntypedFormArray;
+    return this.chatForm.get('users') as FormArray;
   }
 
   addUser() {
     let formGroup = this.fb.group({
-      user: new UntypedFormControl(null, Validators.required)
+      user: this.fb.control(null, Validators.required)
     });
     this.users.push(formGroup);
     this.ManageNameControl(this.users.length - 1);
@@ -113,11 +123,11 @@ export class NewchatComponent implements OnInit {
 
   async removeUser(i: number) {
     this.users.setControl(i,this.fb.group({
-      user: new UntypedFormControl(null, Validators.required)
+      user: this.fb.control(null, Validators.required)
     }));
   }
 
-  onSubmit(form: UntypedFormGroup) {
+  onSubmit(form: FormGroup) {
 
     if (!form.valid) {
       console.log('invalide form -> ', form);
@@ -141,16 +151,17 @@ export class NewchatComponent implements OnInit {
     const file: File = imageInput.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.addEventListener('load', (event: any) => {
+      fromEvent(reader, 'load')
+      .pipe(takeUntil(this.subscriptionContolService.stop$), tap((event: any) => {
         if (file) {
           const newfile = new File([file], file.name);
           this.selectedFile = new ImageSnippet(newfile);
-          this.sf = !this.sf;
         } else {
           const emptyFile = new File([], 'emptyfile');
           this.selectedFile = new ImageSnippet(emptyFile);
-          this.sf = false;
         }
+      }))
+      .subscribe((event: any) => {
         this.imgToShow = event.target.result;
       });
       reader.readAsDataURL(file);
@@ -167,7 +178,6 @@ export class NewchatComponent implements OnInit {
       const options = this.users.at(index).get('user')?.valueChanges
       .pipe(
       startWith<User>(this.formControlUserReset),
-      map(obj => obj),
       map(user => user && user.name ? this._filter(user.name) : this._filter(this.currentUser.name))
       );
       if(options) {

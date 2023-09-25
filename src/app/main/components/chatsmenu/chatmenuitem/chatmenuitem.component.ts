@@ -1,12 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 import { ChatInMenu } from '../../../models/chat';
-
+import { takeUntil } from "rxjs/operators";
+import { User } from 'src/app/shared/models/user';
+import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 @Component({
   selector: 'app-chatmenuitem',
   templateUrl: './chatmenuitem.component.html',
@@ -15,27 +16,39 @@ import { ChatInMenu } from '../../../models/chat';
 export class ChatmenuitemComponent implements OnInit {
   @Input() chat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
 
-  subscription = new Subscription();
-  private subscriptions = new Subscription();
+  user!: User;
   constructor(
     private userService: UserService,
     private controllerService: ControllerService,
     private socketService: SocketService,
     private sanitizer: DomSanitizer,
     private chatService: ChatService,
-  ) { }
+    private subscriptionContolService: SubscriptionContolService,
+  ) { 
+    this.userService.onUserChange
+      .pipe(
+        takeUntil(this.subscriptionContolService.stop$))
+        .subscribe(
+          (user: User) => {
+            this.user = user;
+          },
+          (err) => {
+            console.log("errer ChatmenuitemComponent ==> ", err); 
+          },
+        );
+  }
 
   ngOnInit(): void {
-    this.subscription = this.controllerService.onChatFocus.subscribe(chatId => {
+    this.controllerService.onChatFocus
+    .pipe(takeUntil(this.subscriptionContolService.stop$))
+    .subscribe(chatId => {
       this.resetMsgAndCount(chatId);
     });
-    this.subscriptions.add(this.subscription);
   }
 
   OnChatSelect(id: string) {
-    const user = this.userService.get();
-    const userName = user.name;
-    const userId = user.id;
+    const userName = this.user.name;
+    const userId = this.user.id;
     this.resetMsgAndCount(id);
     this.socketService.connectToChat(userId, userName, id);
   }

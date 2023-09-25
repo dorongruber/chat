@@ -5,11 +5,11 @@ import { UserService } from '../services/user.service';
 import { User } from 'src/app/shared/models/user';
 import { DeviceTypeService } from '../services/devicetype.service';
 import { ControllerService } from '../services/base/controller.service';
-import { Subscription } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
+import { SubscriptionContolService } from '../services/subscription-control.service';
+import { takeUntil, take, map } from "rxjs/operators";
 
 const COMPONENT_BASE_ROUTE = '/main';
-const ids = ['doron123', 'bar876'];
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -23,7 +23,6 @@ export class MainComponent implements OnInit {
   isMobile = false;
   isMenuOpen = false;
   menuOption = 3;
-  subscription = new Subscription();
   constructor(
     private router: Router,
     private userService: UserService,
@@ -31,6 +30,7 @@ export class MainComponent implements OnInit {
     private chatService: ChatsService,
     private deviceTypeService: DeviceTypeService,
     private controllerService: ControllerService,
+    private subscriptionContolService: SubscriptionContolService,
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -47,14 +47,16 @@ export class MainComponent implements OnInit {
       this.socketService
       .enterPool(this.user.id, this.user.name,this.chatService.GenerateId(),'generalPool');
 
-      this.subscription = this.controllerService.onMenuStateChange.subscribe(obj => {
+      this.controllerService.onMenuStateChange
+      .pipe(takeUntil(this.subscriptionContolService.stop$), take(1), map(obj => {
         if(this.isMobile) {
           this.setHeaderTitleOnMobile(obj.option);
           this.mobileMenuControl(obj);
         } else {
           this.descktopMenuControl(obj);
         }
-      })
+      }))
+      .subscribe();
       this.router.events.subscribe(res => {
         if(res instanceof NavigationEnd) {
           this.title = res.url.split('/')[2];
