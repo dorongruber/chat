@@ -20,7 +20,6 @@ export class MainComponent implements OnInit {
   title = "Landing page";
   baseRoute = COMPONENT_BASE_ROUTE;
   user: User | undefined;
-  isMobile = false;
   isMenuOpen = false;
   menuOption = 3;
   constructor(
@@ -31,74 +30,26 @@ export class MainComponent implements OnInit {
     private deviceTypeService: DeviceTypeService,
     private controllerService: ControllerService,
     private subscriptionContolService: SubscriptionContolService,
-  ) { }
+  ) {
+    this.controllerService.onMenuStateChange
+      .pipe(takeUntil(this.subscriptionContolService.stop$))
+      .subscribe(obj => {this.isMenuOpen = obj.state;});
+      this.router.events.subscribe(res => {
+        if(res instanceof NavigationEnd) {
+          this.title = res.url.split('/')[2];
+        }
+      });
+   }
 
   async ngOnInit(): Promise<void> {
-
-    let id: string = '';
     const authUser = JSON.parse(localStorage.getItem('userData') || '');
-    if(authUser)
-      id = authUser.id;
+    let id: string = authUser ? authUser.id : '';
 
-    this.isMobile = this.deviceTypeService.isMobile;
-    this.menuOption = this.isMobile? 0 : 3;
+    this.menuOption = this.deviceTypeService.isMobile? 0 : 3;
     this.user = await this.userService.getUserById(id);
     if (this.user)
       this.socketService
       .enterPool(this.user.id, this.user.name,this.chatService.GenerateId(),'generalPool');
 
-      this.controllerService.onMenuStateChange
-      .pipe(takeUntil(this.subscriptionContolService.stop$), take(1), map(obj => {
-        if(this.isMobile) {
-          this.setHeaderTitleOnMobile(obj.option);
-          this.mobileMenuControl(obj);
-        } else {
-          this.descktopMenuControl(obj);
-        }
-      }))
-      .subscribe();
-      this.router.events.subscribe(res => {
-        if(res instanceof NavigationEnd) {
-          this.title = res.url.split('/')[2];
-        }
-      })
   }
-
-  setHeaderTitleOnMobile(index: number) {
-    switch(index) {
-      case 0:
-        this.title = 'Landing page';
-        break;
-      case 2:
-        this.title = 'User Info';
-        break;
-      case 3:
-        this.title = 'Chats';
-        break;
-    }
-  }
-
-  mobileMenuControl(obj: {state: boolean, option: number}) {
-    if(obj.state){
-      this.isMenuOpen = obj.state;
-      this.menuOption = obj.option? obj.option: 3;
-    } else {
-      setTimeout(() => {
-        this.isMenuOpen = obj.state;
-      }, 1000);
-      this.menuOption = obj.option !== undefined? obj.option: 3;
-    }
-  }
-
-  descktopMenuControl(obj: {state: boolean, option: number}) {
-    this.isMenuOpen = obj.state;
-    if(this.isMenuOpen)
-      this.menuOption = obj.option? obj.option: 3;
-    else {
-      setTimeout(() => {
-        this.menuOption = obj.option ? obj.option: 3;
-      });
-    }
-  }
-
 }
