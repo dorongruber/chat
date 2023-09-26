@@ -1,8 +1,8 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 import { NavigationEnd, Router } from '@angular/router';
-import { takeUntil, take, map } from "rxjs/operators";
+import { takeUntil, map } from "rxjs/operators";
 import { DeviceTypeService } from 'src/app/services/devicetype.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { DeviceTypeService } from 'src/app/services/devicetype.service';
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss']
 })
-export class MenuComponent implements OnInit, OnChanges {
+export class MenuComponent implements OnInit {
   selectedMenuOption: number = 0;
   option = 3;
   title = "Landing page";
@@ -26,9 +26,7 @@ export class MenuComponent implements OnInit, OnChanges {
   ngOnInit(): void {
 
     this.controllerService.onMenuStateChange
-    .pipe(takeUntil(this.subscriptionContolService.stop$), map(obj => {
-      console.log("obj ==> ", obj);
-      
+    .pipe(takeUntil(this.subscriptionContolService.stop$), map(obj => {      
       if(this.deviceTypeService.isMobile) {
         this.setHeaderTitleOnMobile(obj.option);
         this.mobileMenuControl(obj);
@@ -42,12 +40,6 @@ export class MenuComponent implements OnInit, OnChanges {
         this.title = res.url.split('/')[2];
       }
     })
-  }
-
-  ngOnChanges(): void {
-     setTimeout(() => {
-       this.selectedMenuOption = this.option;
-     },1000)
   }
 
   setHeaderTitleOnMobile(index: number) {
