@@ -26,7 +26,9 @@ export class MenuComponent implements OnInit, OnChanges {
   ngOnInit(): void {
 
     this.controllerService.onMenuStateChange
-    .pipe(takeUntil(this.subscriptionContolService.stop$), take(1), map(obj => {
+    .pipe(takeUntil(this.subscriptionContolService.stop$), map(obj => {
+      console.log("obj ==> ", obj);
+      
       if(this.deviceTypeService.isMobile) {
         this.setHeaderTitleOnMobile(obj.option);
         this.mobileMenuControl(obj);
