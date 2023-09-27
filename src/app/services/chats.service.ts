@@ -26,7 +26,6 @@ export class ChatsService {
   {
     this.onNewChat = this.socketService.joinNewChat()
     .pipe(map((newChat: any) => {
-      console.log('new chat => ', newChat.chatName);
       const chatToSend = new Chat(newChat.chatId, newChat.chatName, newChat.img);
       this.chats.push(chatToSend);
       return chatToSend;
@@ -61,7 +60,8 @@ export class ChatsService {
   async addChat(chatId: string, name: string, users: User[], userId: string, img: File) {
     const id = chatId.length === 0? this.GenerateId(): chatId;
     const savedChat = await this.chatService.newChat(id,name,users,userId,img);
-    this.socketService.createChat(id,name,users, userId);
+    if(!(savedChat instanceof Error) && !savedChat)
+      this.socketService.createChat(id,name,users, userId);
   }
 
   GenerateId() {
