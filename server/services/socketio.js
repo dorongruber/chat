@@ -10,15 +10,14 @@ class SocketServerService {
   async EnterToPool(userId,userName,chatId,chatName,socket) {
     try{
       const checkUser = await chatService.getUserInPool(chatName,userId);
+      const user = await userService.getByCustomId(userId);
       if(!checkUser) {
         socket.join(chatName);
-        const user = await userService.get(userId);
         const isAdded = chatService.addUserToPool(user._id)
         if (!user) throw false;
         return true;
       } else if (checkUser.socketId !== socket.id) {
         socket.join(chatName);
-        const user = await userService.getByCustomId(userId);
         user.socketId = socket.id;
         const updatedUser = await userService.update(user);
         if (!updatedUser) throw false;
@@ -31,8 +30,8 @@ class SocketServerService {
 
   CreateChat(chatId, chatName, chatUsers,userId,socket) {
 
-    chatUsers.forEach(u => {
-      const connectedUser = userService.get(u._id);
+    chatUsers.forEach(async (u) => {
+      const connectedUser = await userService.getByCustomId(u._id);
       if(connectedUser) {
         io.to(connectedUser.socketId).emit('JoinChat',({chatName,chatId}));
       }
