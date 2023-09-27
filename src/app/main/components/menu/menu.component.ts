@@ -11,7 +11,6 @@ import { DeviceTypeService } from 'src/app/services/devicetype.service';
   styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent implements OnInit {
-  selectedMenuOption: number = 0;
   option = 3;
   title = "Landing page";
   constructor(
