@@ -56,7 +56,6 @@ class FormatService {
       id: user.id,
       name: user.name,
       phone: user.phone,
-      password: user.password,
       email: user.email,
       chats: user.chats,
       socketId: user.socketId,
