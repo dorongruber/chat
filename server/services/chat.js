@@ -43,9 +43,7 @@ class ChatService {
         user.chats.push(newChat._id);
         await userService.update(user);
     }
-    await newChat.save(function(err,chat) {
-      if(err) throw err;
-    });
+    await newChat.save();
     return newChat;
    } catch(err) {
      throw err;
@@ -70,12 +68,7 @@ class ChatService {
             await userService.update(user);
           }
       }
-      const saved = await chat.save(function(err,chat) {
-        if(err) {
-          throw err
-        };
-        return chat;
-      });
+      const saved = await chat.save();
       return saved;
     }catch(err) {
       throw new Error(err)
