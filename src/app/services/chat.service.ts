@@ -20,7 +20,7 @@ export class ChatService {
   usersInChat = new Subject<[{userId: string, userName: string, chatId: string}]>();
   messages = new Subject<Message>();
   newMenuMsg = new Subject<Message>();
-  onChatChange = new Subject<ChatInMenu>();
+  private onChatChange = new Subject<ChatInMenu>();
   chat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
   userId!: string;
   constructor(
@@ -58,12 +58,6 @@ export class ChatService {
        .pipe(map(response => {
          return response;
        })) as Subject<Message>;
-
-       this.onChatChange
-       .pipe(takeUntil(this.subscriptionContolService.stop$))
-       .subscribe(chatData => {
-        this.selectedChat = chatData;
-      })
      }
 
      async newChat(id: string,name: string, users: FullUser[], userId: string, img: File) {
@@ -88,7 +82,6 @@ export class ChatService {
      async getChatData(id: string) {
        return this.baseService.get<Chat>(URI,id)
        .then(chat => {
-         console.log('chat data => ', chat);
          return chat;
        })
        .catch(err => err);
@@ -153,12 +146,12 @@ export class ChatService {
       return this.baseService.delete(URI,ids)
      }
 
-     set selectedChat(chat: ChatInMenu) {
-      this.chat = chat;
+    setCurrentChat(chat: ChatInMenu) {
+      this.onChatChange.next(chat);
      }
 
-     get selectedChat() {
-       return this.chat;
+     getCurrentChat() {
+       return this.onChatChange;
      }
 
 }
