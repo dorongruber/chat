@@ -53,7 +53,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
         },
       );
 
-    this.chatService.onChatChange
+    this.chatService.getCurrentChat()
       .pipe(takeUntil(this.subscriptionContolService.stop$))
       .subscribe(chatData => {
         this.selectedChat = chatData;

@@ -55,7 +55,7 @@ export class ChatmenuitemComponent implements OnInit {
 
   resetMsgAndCount(id: string) {
     if(id === this.chat.id) {
-      this.chatService.onChatChange.next(this.chat);
+      this.chatService.setCurrentChat(this.chat);
       this.chat.newmsgscounter = 0;
     }
   }
