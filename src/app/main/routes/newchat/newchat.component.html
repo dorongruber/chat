@@ -1,9 +1,12 @@
-<div class="new-chat">
+<div class="new-chat" style="background-image: url('/doodles.png');">
+  <img src="/doodles.png" style="display: none;" alt="">
   <body class="container">
     <!-- <app-alert *ngIf="error"></app-alert> -->
     <header class="img-container">
       <ng-container *ngIf="selectedFile === undefined && !imgToShow else haveImg">
-        <div class="cyrcle-img img"></div>
+        <div style="background-image: url('/56.jpg');" class="cyrcle-img img">
+          <img src="/56.jpg" style="display: none;" alt="">
+        </div>
       </ng-container>
       <ng-template #haveImg>
         <img
@@ -34,7 +37,7 @@
     <div class="load-img-container">
       <label class="file-label" for="file">Image</label>
       <input
-      class="input file-input"
+      class="file-input"
       id="file"
       type="file"
       placeholder="image"
@@ -43,8 +46,8 @@
       accept="image/*"
       #fileInput>
     </div>
-
-    <div *ngIf="users && users.length > 0" class="form-array-container" formArrayName="users">
+    <br>
+    <ng-container *ngIf="users && users.length > 0" class="form-array-container" formArrayName="users">
       <ng-container *ngFor="let user of users.controls; let i=index;">
         <ng-container [formGroupName]="i">
           <mat-form-field
@@ -70,7 +73,7 @@
           </mat-autocomplete>
         </ng-container>
       </ng-container>
-    </div>
+    </ng-container>
 
     <div class="add-more-btn-container">
         <mat-icon class="add-icon" (click)="addUser()">add_circle</mat-icon>
