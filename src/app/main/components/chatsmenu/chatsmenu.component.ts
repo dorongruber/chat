@@ -94,4 +94,8 @@ export class ChatsmenuComponent implements OnInit {
     return false;
   }
 
+  chatTrackBy(index: number,chat: ChatInMenu) {
+    return chat.id;
+  }
+
 }
