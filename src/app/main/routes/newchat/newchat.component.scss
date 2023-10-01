@@ -1,25 +1,23 @@
 .new-chat {
-  display: flex;
-  justify-content: center;
   background-position: center;
-  background-size: contain;
-  height: 100vh;
+  background-repeat: round;
+  background-size: 11% 29%;
+  height: 100%;
   @media (max-width: 640px) {
     position: relative;
     width: 100%;
     background-size: 70%;
     background-position: unset;
-    background-color: hsl(223, 49%, 19%);
+    background-color: hsl(0, 0%, 15%);
     z-index: 1;
   }
 }
 
 .container {
-  margin: auto;
-  padding-top: 5vh;
-  @media (max-width: 640px) {
-    width: 50%;
-  }
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .img-container {
@@ -50,7 +48,6 @@
   align-items: center;
   text-align: center;
   width: fit-content;
-  margin: 5vh auto 0;
 }
 
 .btn-container {

@@ -5,7 +5,7 @@
     <header class="img-container">
       <ng-container *ngIf="selectedFile === undefined && !imgToShow else haveImg">
         <div style="background-image: url('/56.jpg');" class="cyrcle-img img">
-          <img src="/56.jpg" style="display: none;" alt="">
+          <img src="56.jpg" style="display: none;" alt="">
         </div>
       </ng-container>
       <ng-template #haveImg>
@@ -16,6 +16,7 @@
         width="103" height="103">
       </ng-template>
     </header>
+    <br>
   <form class="form-container"
   [formGroup]="chatForm"
   (ngSubmit)="onSubmit(chatForm)"
