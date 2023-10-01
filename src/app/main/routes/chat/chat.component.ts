@@ -1,8 +1,7 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { Message } from 'src/app/main/models/message';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
@@ -12,20 +11,22 @@ import { ChatInMenu } from '../../models/chat';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 import { takeUntil } from "rxjs/operators";
 import { User } from 'src/app/shared/models/user';
+import { MatSidenav } from '@angular/material/sidenav';
 
 const COMPONENT_BASE_ROUTE = '/main/chat';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.scss']
+  styleUrls: ['./chat.component.scss'],
+  providers: [ControllerService],
 })
 export class ChatComponent implements OnInit, AfterViewInit {
+  @ViewChild("chatSideNav") sidenav!: MatSidenav;
   msgContent: string = '';
   messageFormat: Message = {};
   messages: Message[] = [];
   chatId$: Observable<string>;
-  chatId: string = '';
   chatUsers: {userId: string, userName: string, chatId: string}[] ;
   baseRoute = COMPONENT_BASE_ROUTE;
   lastMsgElement: Element | null = null;
@@ -33,7 +34,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
   selectedChat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
   user!: User;
   constructor(
-    private route: ActivatedRoute,
     private chatService: ChatService,
     private socketService: SocketService,
     private userService: UserService,
@@ -54,33 +54,30 @@ export class ChatComponent implements OnInit, AfterViewInit {
       );
 
     this.chatService.getCurrentChat()
-      .pipe(takeUntil(this.subscriptionContolService.stop$))
-      .subscribe(chatData => {
-        this.selectedChat = chatData;
+      .pipe(takeUntil(this.subscriptionContolService.stop$), tap(async res => {
+        this.onLoadingChange();
+        this.selectedChat = res!;
+        
+        const formDb = await this.chatService.getChatMessages(this.selectedChat.id);
+        this.messages = formDb.reverse();
+        setTimeout(() => {
+          this.scrollToLastMsg();
+          this.scrollObservable();
+        });
+     }))
+      .subscribe(() => {
+        this.onLoadingChange();
       });
    }
 
   async ngOnInit(): Promise<void> {
-   this.chatId$ = this.route.paramMap.pipe(switchMap(params => {
-     return params.getAll('id');
-   }))
 
-   this.chatId$
-   .pipe(takeUntil(this.subscriptionContolService.stop$), tap(async res => {
-      this.onLoadingChange();
-      this.chatId = res;
-      const formDb = await this.chatService.getChatMessages(this.chatId);
-      this.messages = formDb.reverse();
-      setTimeout(() => {
-        this.scrollToLastMsg();
-        this.scrollObservable();
-      });
-   }))
-   .subscribe(res => {
-    this.onLoadingChange();
-   });
-
-   this.socketService.connectToChat(this.user.id, this.user.name, this.chatId);
+  this.controllerService.onMenuStateChange
+    .pipe(takeUntil(this.subscriptionContolService.stop$), map(obj => {    
+      this.sidenav.toggle();  
+    })).subscribe();
+   
+   this.socketService.connectToChat(this.user.id, this.user.name, this.selectedChat.id);
 
     this.chatService.usersInChat
    .pipe(takeUntil(this.subscriptionContolService.stop$))
@@ -136,7 +133,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     if(entires[0].intersectionRatio === 1) {
       const currentDate = this.messages[0]?.date? this.messages[0]?.date: null;
       if(currentDate)
-        prevDayMsgs = await this.chatService.getPrevDayMsgs(this.chatId,currentDate);
+        prevDayMsgs = await this.chatService.getPrevDayMsgs(this.selectedChat.id,currentDate);
         if (prevDayMsgs && prevDayMsgs.length) {
           this.messages = [...this.messages,...prevDayMsgs];
         } else {
@@ -161,7 +158,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     return  {
       message: msg,
       userId: this.user.id,
-      chatId: this.chatId,
+      chatId: this.selectedChat.id,
       userName: this.user.name,
       date: date,
       fromCurrentUser: true,
@@ -169,7 +166,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
 
   FocusOnChat() {
-    this.controllerService.onChatFocusChange(this.chatId);
+    this.controllerService.onChatFocusChange(this.selectedChat.id);
   }
 
   async fixScrollOnFirstMsgOfDay() {

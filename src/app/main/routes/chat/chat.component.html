@@ -1,25 +1,37 @@
-<body id="chat" class="chat-container main-background-img" (click)="FocusOnChat()">
-  <app-header [relatedToRoute]="baseRoute" [title]="chatId" [chat]="selectedChat"></app-header>
-  <section id="msgs-container" class="messages-container msgs" *ngIf="!isLoading else ShowSpinner">
-    <ng-container *ngFor="let message of messages; let i=index;">
-      <app-message class="single-msg" [msgFromat]="message"></app-message>
-    </ng-container>
-    <div id="chat-top-indicator"></div>
-  </section>
-  <ng-template #ShowSpinner>
-    <div class="messages-container spinner">
-      <app-loading-spinner></app-loading-spinner>
-    </div>
-  </ng-template>
-  <footer class="form-footer">
-    <form #messageForm="ngForm" (ngSubmit)="onMessageSubmit(messageForm)">
-      <div class="input-container">
-        <!-- <input [(ngModel)]="message" required name="message" class="message-input" type="text" placeholder="send message"> -->
-        <textarea [(ngModel)]="msgContent" required name="message" id="message" cols="5" rows="10" placeholder="send message" class="message-input"></textarea>
-        <button class="send-message-btn btn-flex" type="submit">
-          <mat-icon class="send-icon">send</mat-icon>
-        </button>
-      </div>
-    </form>
-  </footer>
-</body>
+<mat-sidenav-container style="height: 100%;">
+  <mat-sidenav class="sidenav" position="end" #chatSideNav mode="side">
+    
+      <section>
+        chat option side nav
+        <button (click)="chatSideNav.toggle()">close</button>
+      </section>
+    
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <body id="chat" class="chat-container main-background-img" (click)="FocusOnChat()">
+      <app-header [relatedToRoute]="baseRoute" [title]="selectedChat.id" [chat]="selectedChat"></app-header>
+      <section id="msgs-container" class="messages-container msgs" *ngIf="!isLoading else ShowSpinner">
+        <ng-container *ngFor="let message of messages; let i=index;">
+          <app-message class="single-msg" [msgFromat]="message"></app-message>
+        </ng-container>
+        <div id="chat-top-indicator"></div>
+      </section>
+      <ng-template #ShowSpinner>
+        <div class="messages-container spinner">
+          <app-loading-spinner></app-loading-spinner>
+        </div>
+      </ng-template>
+      <footer class="form-footer">
+        <form #messageForm="ngForm" (ngSubmit)="onMessageSubmit(messageForm)">
+          <div class="input-container">
+            <textarea [(ngModel)]="msgContent" required name="message" id="message" cols="5" rows="10" placeholder="send message" class="message-input"></textarea>
+            <button class="send-message-btn btn-flex" type="submit">
+              <mat-icon class="send-icon">send</mat-icon>
+            </button>
+          </div>
+        </form>
+      </footer>
+    </body>
+  </mat-sidenav-content>
+</mat-sidenav-container>

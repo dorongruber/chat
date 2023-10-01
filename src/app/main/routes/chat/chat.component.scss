@@ -1,16 +1,8 @@
+@use "src/global.scss" as global;
+
 .chat-container {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 10;
-  background-color: hsl(223, 49%, 19%);
-  @media (min-width: 640px) {
-    width: 80% ;
-    background-color: transparent;
-    z-index: 1;
-  }
+  background-color: hsl(0, 0%, 12%);
+
 }
 
 .main-background-img {
@@ -23,11 +15,11 @@
 }
 
 .form-footer {
-  // position: absolute;
-  // bottom: 0;
-  // left: 0;
-  // right: 0;
-  margin: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: global.$sendMessageFooterHeight;
+  background-color: global.$headerBackroundColor;
 }
 
 .input-container {
@@ -41,12 +33,12 @@
 .message-input {
   width: 90%;
   border-radius: 5px;
-  height: 20px;
+  height: global.$messageInputHeight;
   font-family: 'Roboto';
   padding-left: 10px;
+  box-sizing: border-box;
   @media (max-width: 640px) {
     width: 75%;
-    height: 30px;
   }
 }
 
@@ -78,19 +70,10 @@
   }
 }
 
-// @media screen and (min-width: 640px) {
-//   .chat-container {
-//     width: 50%;
-//   }
-// }
-
 .messages-container {
-  height: 90.5%;
-  overflow-y: scroll;
+  height: calc(100% - (global.$headerHeight + global.$sendMessageFooterHeight));
+  overflow-y: auto;
   transform: rotateZ(180deg);
-  @media (max-width: 640px) {
-    height: calc(92% - 100px);
-  }
 }
 
 .single-msg {
@@ -110,4 +93,11 @@
 
 .chat-top-indecator {
   display: none;
+}
+
+.sidenav {
+  width: 30%;
+  @media screen and (max-width: 640px) {
+    width: 100%;
+  }
 }
