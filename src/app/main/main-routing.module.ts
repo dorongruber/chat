@@ -8,6 +8,7 @@ import { ChatComponent } from './routes/chat/chat.component';
 
 import { LandingpageComponent } from './routes/landingpage/landingpage.component';
 import { NewchatComponent } from './routes/newchat/newchat.component';
+import { MenuComponent } from './components/menu/menu.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'landingpage', pathMatch: 'full'},
@@ -16,7 +17,9 @@ const routes: Routes = [
     {path: 'newchat', component: NewchatComponent, data: {animation: 'Chat'}},
     {path: 'newchat/:id', component: NewchatComponent, data: {animation: 'Chat'}},
     {path: 'chat/:id', component: ChatComponent, data: {animation: 'Chat'}},
-  ]}
+    {path: 'menu', component: MenuComponent, data: {animation: 'Chat'}},
+  ]},
+  
 ];
 
 @NgModule({
