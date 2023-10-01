@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Subject } from "rxjs";
+import { Subject, BehaviorSubject } from "rxjs";
 import { map } from "rxjs/operators";
 import { Chat, ChatInMenu } from "../main/models/chat";
 import { Message } from "../main/models/message";
@@ -20,7 +20,7 @@ export class ChatService {
   usersInChat = new Subject<[{userId: string, userName: string, chatId: string}]>();
   messages = new Subject<Message>();
   newMenuMsg = new Subject<Message>();
-  private onChatChange = new Subject<ChatInMenu>();
+  private onChatChange = new BehaviorSubject<ChatInMenu | null>(null);
   chat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
   userId!: string;
   constructor(
@@ -44,7 +44,6 @@ export class ChatService {
 
        this.usersInChat = socketService.getUsersinChat()
        .pipe(map(response => {
-         console.log('usersInChat -> ', response);
          return response
        })) as Subject<[{userId: string, userName: string, chatId: string}]>
 
@@ -70,7 +69,6 @@ export class ChatService {
       formData.append('image', img);
       try {
          const res = await this.baseService.post(url, formData);
-         console.log('new chat res => ', res);
          return res;
        } catch (err: any) {
          if (err)
@@ -107,7 +105,6 @@ export class ChatService {
             fromCurrentUser: this.userId === msg.userId? true: false,
           });
         })
-         console.log('getChatMessages res => ', res);
          return msgFormat;
        })
        .catch(err => {throw err});
@@ -135,7 +132,6 @@ export class ChatService {
                 fromCurrentUser: this.userId === msg.userId? true: false,
               });
             })
-           console.log('getPrevDayMsgs res => ', res);
            return msgFormat;
          })
         .catch(err => {throw err});
