@@ -1,18 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { takeUntil, map } from "rxjs/operators";
 import { DeviceTypeService } from 'src/app/services/devicetype.service';
+import { MatSidenav } from '@angular/material/sidenav';
+
+const COMPONENT_BASE_ROUTE = '/main';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss']
+  styleUrls: ['./menu.component.scss'],
+  providers: [ControllerService],
 })
 export class MenuComponent implements OnInit {
+  @ViewChild("menuSideNav") sidenav!: MatSidenav;
   option = 3;
   title = "Landing page";
+  baseRoute = COMPONENT_BASE_ROUTE;
   constructor(
     private router: Router,
     private controllerService: ControllerService,
@@ -25,13 +31,10 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
 
     this.controllerService.onMenuStateChange
-    .pipe(takeUntil(this.subscriptionContolService.stop$), map(obj => {      
-      if(this.deviceTypeService.isMobile) {
+    .pipe(takeUntil(this.subscriptionContolService.stop$), map(obj => {    
+      this.sidenav.toggle();  
         this.setHeaderTitleOnMobile(obj.option);
-        this.mobileMenuControl(obj);
-      } else {
-        this.descktopMenuControl(obj);
-      }
+        this.menuControl(obj);
     }))
     .subscribe();
     this.router.events.subscribe(res => {
@@ -55,15 +58,9 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  mobileMenuControl(obj: {state: boolean, option: number}) {
-    if(obj.state){
-      this.option = obj.option? obj.option: 3;
-    } else {
-      this.option = obj.option !== undefined? obj.option: 3;
-    }
-  }
 
-  descktopMenuControl(obj: {state: boolean, option: number}) {
+
+  menuControl(obj: {state: boolean, option: number}) {
       setTimeout(() => {
         this.option = obj.option ? obj.option: 3;
       });

@@ -1,21 +1,25 @@
-<section class="menu-container">
-  <div class="sidenav-menu-container image-background" [ngClass]="{'show': option === 1}">
-    <ng-container *ngIf="option === 1">
-      <div class="component-container">
-        <app-deletechat></app-deletechat>
-      </div>
-    </ng-container>
-  </div>
-  <div class="sidenav-menu-container image-background" [ngClass]="{'show': option === 2}">
-    <ng-container *ngIf="option === 2">
-      <div class="component-container">
-        <app-userinfo></app-userinfo>
-      </div>
-    </ng-container>
-  </div>
-  <div class="sidenav-menu-container regular-background" [ngClass]="{'show': option === 3}">
-    <ng-container *ngIf="option === 3">
-      <app-chatsmenu></app-chatsmenu>
-    </ng-container>
-  </div>
-</section>
+<mat-sidenav-container style="height: 100%;">
+  <mat-sidenav #menuSideNav mode="side" style="width: 100%;">
+    
+      <ng-container *ngIf="option === 1">
+        <div class="component-container">
+          <app-deletechat></app-deletechat>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="option === 2">
+        <div class="component-container">
+          <app-userinfo></app-userinfo>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="option == 5">
+        <div class="component-container">
+          <app-chat></app-chat>
+        </div>
+      </ng-container>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <app-header [relatedToRoute]="baseRoute" [title]="title"></app-header>
+    <app-chatsmenu></app-chatsmenu>
+  </mat-sidenav-content>
+</mat-sidenav-container>
