@@ -8,6 +8,7 @@ import { ChatInMenu } from '../../../models/chat';
 import { takeUntil } from "rxjs/operators";
 import { User } from 'src/app/shared/models/user';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
+import { LocationSevice } from 'src/app/services/location.service';
 @Component({
   selector: 'app-chatmenuitem',
   templateUrl: './chatmenuitem.component.html',
@@ -24,6 +25,7 @@ export class ChatmenuitemComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private chatService: ChatService,
     private subscriptionContolService: SubscriptionContolService,
+    private locationService: LocationSevice,
   ) { 
     this.userService.onUserChange
       .pipe(
@@ -46,11 +48,16 @@ export class ChatmenuitemComponent implements OnInit {
     });
   }
 
-  OnChatSelect(id: string) {
+  OnChatSelect(id: string, event: any) {
     const userName = this.user.name;
     const userId = this.user.id;
     this.resetMsgAndCount(id);
     this.socketService.connectToChat(userId, userName, id);
+    //this.router.navigate(['/main/chat', this.chat.id]);
+
+    this.locationService.enableNavigation(`/main/chat/${this.chat.id}`);
+    //this.controllerService.onStateChange(5);
+    
   }
 
   resetMsgAndCount(id: string) {
@@ -67,5 +74,9 @@ export class ChatmenuitemComponent implements OnInit {
   Transform(img: any) {
     const imgURL = img.data.data.includes('data:image/')? img.data.data : 'data:image/*;base64,' + img.data.data;
     return this.sanitizer.bypassSecurityTrustResourceUrl(imgURL);
+  }
+
+  stopPropagation(event: any) {
+    event.stopPropagation();
   }
 }
