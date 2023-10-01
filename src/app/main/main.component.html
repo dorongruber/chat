@@ -1,5 +1,13 @@
 <body class="main-container">
-  <app-header [relatedToRoute]="baseRoute" [title]="title"></app-header>
-  <app-menu [ngClass]="{'show': isMenuOpen}"></app-menu>
-<router-outlet></router-outlet>
+  <section class="main-content-container">
+    <section class="chat-content-view">
+      <section style="height: inherit;">
+        <router-outlet></router-outlet>
+      </section>
+    </section>
+    
+    <section class="general-content-view">
+      <app-menu></app-menu>
+    </section>
+  </section>
 </body>
