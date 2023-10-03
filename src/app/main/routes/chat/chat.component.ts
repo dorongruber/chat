@@ -12,6 +12,8 @@ import { SubscriptionContolService } from 'src/app/services/subscription-control
 import { takeUntil } from "rxjs/operators";
 import { User } from 'src/app/shared/models/user';
 import { MatSidenav } from '@angular/material/sidenav';
+import { chatMenuOptions } from 'src/app/mockData/menuoptionslists';
+
 
 const COMPONENT_BASE_ROUTE = '/main/chat';
 
@@ -33,6 +35,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
   isLoading = false;
   selectedChat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
   user!: User;
+  menuOPtions = chatMenuOptions;
+  type = "ChatComponent";
   constructor(
     private chatService: ChatService,
     private socketService: SocketService,
@@ -40,6 +44,11 @@ export class ChatComponent implements OnInit, AfterViewInit {
     private controllerService: ControllerService,
     private subscriptionContolService: SubscriptionContolService,
     ) {
+      this.controllerService.onMenuStateChange
+      .pipe(takeUntil(this.subscriptionContolService.stop$), tap(() => {
+        this.sidenav.toggle();
+      }))
+      .subscribe();
     this.chatId$ = new Observable<string>();
     this.chatUsers = [];
     this.userService.onUserChange
@@ -71,11 +80,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
    }
 
   async ngOnInit(): Promise<void> {
-
-  this.controllerService.onMenuStateChange
-    .pipe(takeUntil(this.subscriptionContolService.stop$), map(obj => {    
-      this.sidenav.toggle();  
-    })).subscribe();
    
    this.socketService.connectToChat(this.user.id, this.user.name, this.selectedChat.id);
 
@@ -136,9 +140,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
         prevDayMsgs = await this.chatService.getPrevDayMsgs(this.selectedChat.id,currentDate);
         if (prevDayMsgs && prevDayMsgs.length) {
           this.messages = [...this.messages,...prevDayMsgs];
-        } else {
-          await this.fixScrollOnFirstMsgOfDay();
-        }
+        } 
     }
   }
 
@@ -169,10 +171,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
     this.controllerService.onChatFocusChange(this.selectedChat.id);
   }
 
-  async fixScrollOnFirstMsgOfDay() {
-    const chatMsgsElement = document.querySelector('#msgs-container') as HTMLElement;
-    const firstMsgContainer = (document.querySelectorAll('.single-msg') as NodeListOf<HTMLElement>)[0];
-  }
 
   scrollToLastMsg() {
     const chatMsgsElement = document.querySelector('#msgs-container') as HTMLElement;

@@ -4,13 +4,14 @@
       <section>
         chat option side nav
         <button (click)="chatSideNav.toggle()">close</button>
+        <app-newchat></app-newchat>
       </section>
     
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <body id="chat" class="chat-container main-background-img" (click)="FocusOnChat()">
-      <app-header [relatedToRoute]="baseRoute" [title]="selectedChat.id" [chat]="selectedChat"></app-header>
+    <main id="chat" class="chat-container main-background-img" (click)="FocusOnChat()">
+      <app-header [menuOptions]="menuOPtions" [title]="selectedChat.id" [type]="type"></app-header>
       <section id="msgs-container" class="messages-container msgs" *ngIf="!isLoading else ShowSpinner">
         <ng-container *ngFor="let message of messages; let i=index;">
           <app-message class="single-msg" [msgFromat]="message"></app-message>
@@ -32,6 +33,6 @@
           </div>
         </form>
       </footer>
-    </body>
+    </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
