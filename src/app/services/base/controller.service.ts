@@ -4,27 +4,17 @@ import { Subject } from "rxjs";
 @Injectable()
 export class ControllerService {
   isMenuOpen = false;
-  onMenuStateChange = new Subject<{state: boolean, option: number}>();
+  onMenuStateChange = new Subject<string>();
   onChatFocus = new Subject<string>();
 
-  onStateChange(index = 0) {
-    if(!index)
-      this.setFlag(false);
-    else
-      this.setFlag(true);
+  onStateChange(value?: string) {
     //this.isMenuOpen = !this.isMenuOpen;
-    const obj = {
-      state: this.isMenuOpen,
-      option: index,
-    }
-    this.onMenuStateChange.next(obj);
+    
+    this.onMenuStateChange.next(value);
   }
 
   onChatFocusChange(chatId: string) {
     this.onChatFocus.next(chatId);
   }
 
-  setFlag(state: boolean) {
-    this.isMenuOpen = state;
-  }
 }
