@@ -1,14 +1,16 @@
+@use "src/global.scss" as global;
+
 .new-chat {
   background-position: center;
   background-repeat: round;
   background-size: 11% 29%;
-  height: 100%;
+  height: calc(100% - global.$headerHeight);
   @media (max-width: 640px) {
     position: relative;
     width: 100%;
     background-size: 70%;
     background-position: unset;
-    background-color: hsl(0, 0%, 15%);
+    background-color: global.$backgroudColor;
     z-index: 1;
   }
 }

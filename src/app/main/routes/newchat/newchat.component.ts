@@ -83,16 +83,23 @@ export class NewchatComponent implements OnInit {
     this.userService.getAllUsers()
     .then(resData => {
       this.allUsers = [...resData.filter(u => u.id !== this.currentUser.id)];
-      this.ManageNameControl(0);
     });
+  }
+
+  onSelectedChange(isSelected: boolean, user: User) {
+    if(isSelected) {
+      const newControl = this.fb.control<User>(user);
+      this.users.push(newControl);     
+    } else {
+      let index = this.users.controls.findIndex(u => u.value == user);
+      this.users.removeAt(index);
+    }
   }
 
   InitForm() {
     this.chatForm = this.fb.group({
       name: this.fb.control(this.chatName, [Validators.required]),
-      users: this.fb.array([this.fb.group({
-        user: this.fb.control(null, Validators.required)
-      })]),
+      users: this.fb.array([], Validators.required),
       image: this.fb.control(null)
     });
   }
@@ -100,10 +107,8 @@ export class NewchatComponent implements OnInit {
   InitEditForm() {
     this.chatForm = this.fb.group({
       name: this.fb.control(this.chatName, [Validators.required]),
-      users: this.fb.array([...this.chatusers.map(user => {
-        return this.fb.group({
-              user: this.fb.control(user, Validators.required)
-            })
+      users: this.fb.array([this.chatusers.map(user => {
+        return this.fb.control(user, Validators.required)
       })]),
       image: this.fb.control(null)
     });
@@ -111,20 +116,6 @@ export class NewchatComponent implements OnInit {
 
   get users() {
     return this.chatForm.get('users') as FormArray;
-  }
-
-  addUser() {
-    let formGroup = this.fb.group({
-      user: this.fb.control(null, Validators.required)
-    });
-    this.users.push(formGroup);
-    this.ManageNameControl(this.users.length - 1);
-  }
-
-  async removeUser(i: number) {
-    this.users.setControl(i,this.fb.group({
-      user: this.fb.control(null, Validators.required)
-    }));
   }
 
   onSubmit(form: FormGroup) {
@@ -135,8 +126,8 @@ export class NewchatComponent implements OnInit {
     }
     this.isLoading = true;
     let reqUsers: any[] = [];
-    for(const formgroup of this.users.value) {
-      reqUsers.push(formgroup.user);
+    for(const control of this.users.value) {
+      reqUsers.push(control.value);
     }
     reqUsers.push(this.currentUser)
     let name = form.value.name;
@@ -173,26 +164,8 @@ export class NewchatComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustResourceUrl(imgURL);
   }
 
-  ManageNameControl(index: number) {
-    if(this.users && this.users.length) {
-      const options = this.users.at(index).get('user')?.valueChanges
-      .pipe(
-      startWith<User>(this.formControlUserReset),
-      map(user => user && user.name ? this._filter(user.name) : this._filter(this.currentUser.name))
-      );
-      if(options) {
-        this.filteredOptions[index] = options;
-      }
-    }
-  }
-
   displayFn(user?: User): string {
     return user ? user.name : '';
-  }
-
-  private _filter(name: string): User[] {
-    const filterValue = name.toLowerCase();
-    return this.allUsers.filter(user => user.name !== filterValue);
   }
 }
 
