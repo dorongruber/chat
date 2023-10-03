@@ -1,18 +1,16 @@
+@use "src/global.scss" as global;
+
+main {
+  height: calc(100% - global.$headerHeight);
+  background-color: global.$backgroudColor;
+}
 .header-container, .form-container {
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 10;
-}
-
-h3 {
-  color: #000000;
-  font-weight: 500;
-  font-size: xx-large;
-  border-bottom: 3px solid black;
-  font-family: fantasy;
+  padding-top: 30px;
+  box-sizing: border-box;
 }
 
 .icon-container {
@@ -56,31 +54,6 @@ h3 {
 }
 
 
-:host ::ng-deep mat-form-field {
-
-  .mat-form-field-appearance-outline .mat-form-field-outline {
-    color: #193C50 !important;
-  }
-
-  .mat-form-field-outline {
-    color: #193C50 !important;
-  }
-
-  .mat-form-field-outline-thick {
-    color: cadetblue !important;
-  }
-
-  .mat-form-field-label {
-    color: #000 !important;
-    font-weight: 600;
-  }
-
-  .mat-form-field-invalid .mat-input-elemen {
-
-  }
-}
-
-
 .load-img-container {
   display: flex;
   flex-direction: column;
@@ -103,7 +76,5 @@ h3 {
 }
 
 .image-preview {
-  // width: 100%;
-  // height: inherit;
   border-radius: inherit;
 }

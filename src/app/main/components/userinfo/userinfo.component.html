@@ -1,8 +1,6 @@
-<body class="userInfo-container">
-  <header class="header-container">
-    <div class="close-btn">
-      <mat-icon (click)="closeWindow()">close</mat-icon>
-    </div>
+<app-header [title]="'user Info'"></app-header>
+<main class="userInfo-container">
+  <section class="header-container">
     <div class="icon-container">
       <ng-container *ngIf="user.img.name === 'emptyFile' && selectedFile === undefined else haveImg">
         <mat-icon class="icon">person_outline</mat-icon>
@@ -16,10 +14,8 @@
         width="103" height="103">
       </ng-template>
     </div>
-    <h3>user Info</h3>
-  </header>
-<!-- <app-alert *ngIf="error"></app-alert> -->
-<form class="form-container" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm)" *ngIf="!isLoading">
+  </section>
+  <form class="form-container" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm)" *ngIf="!isLoading">
 
   <mat-form-field
   class="form-content"
@@ -60,39 +56,6 @@
   </mat-form-field>
   <br>
 
-  <!-- <div formGroupName="passform">
-    <mat-form-field
-    class="form-content"
-    appearance="outline">
-      <mat-label>Password </mat-label>
-      <input
-      matInput
-      type="password"
-      formControlName="password"
-      placeholder="Password"
-      name="password"
-      matTooltip="password needs to have at lest one Uppercase, Lowercase, number"
-      >
-    </mat-form-field>
-    <br>
-
-    <mat-form-field
-    class="form-content"
-    appearance="outline">
-      <mat-label>Password Confireming </mat-label>
-      <input
-      matInput
-      type="password"
-      formControlName="confirmpassword"
-      placeholder="confirmation password"
-      name="confirmpassword"
-      matTooltip="passwoed needs to have at lest one Uppercase, Lowercase, number"
-      >
-    </mat-form-field>
-
-
-  </div> -->
-
   <div class="load-img-container">
     <label class="file-label" for="file">Image</label>
     <input
@@ -118,4 +81,4 @@
   <app-loading-spinner></app-loading-spinner>
 </ng-container>
 
-</body>
+</main>
