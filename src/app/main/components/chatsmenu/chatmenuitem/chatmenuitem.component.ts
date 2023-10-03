@@ -1,46 +1,33 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { SocketService } from 'src/app/services/socket.service';
-import { UserService } from 'src/app/services/user.service';
 import { ChatInMenu } from '../../../models/chat';
 import { takeUntil } from "rxjs/operators";
 import { User } from 'src/app/shared/models/user';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
-import { LocationSevice } from 'src/app/services/location.service';
+import { DeviceTypeService } from 'src/app/services/devicetype.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-chatmenuitem',
   templateUrl: './chatmenuitem.component.html',
   styleUrls: ['./chatmenuitem.component.scss']
 })
-export class ChatmenuitemComponent implements OnInit {
+export class ChatmenuitemComponent implements OnChanges {
   @Input() chat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
 
-  user!: User;
+  @Input()user!: User;
+  asImage!: boolean;
   constructor(
-    private userService: UserService,
+    private router: Router,
     private controllerService: ControllerService,
     private socketService: SocketService,
     private sanitizer: DomSanitizer,
     private chatService: ChatService,
     private subscriptionContolService: SubscriptionContolService,
-    private locationService: LocationSevice,
+    private deviceTypeService: DeviceTypeService,
   ) { 
-    this.userService.onUserChange
-      .pipe(
-        takeUntil(this.subscriptionContolService.stop$))
-        .subscribe(
-          (user: User) => {
-            this.user = user;
-          },
-          (err) => {
-            console.log("errer ChatmenuitemComponent ==> ", err); 
-          },
-        );
-  }
-
-  ngOnInit(): void {
     this.controllerService.onChatFocus
     .pipe(takeUntil(this.subscriptionContolService.stop$))
     .subscribe(chatId => {
@@ -48,16 +35,23 @@ export class ChatmenuitemComponent implements OnInit {
     });
   }
 
-  OnChatSelect(id: string, event: any) {
+  ngOnChanges(): void {
+    this.asImage = this.checkImage(this.chat.img);
+  }
+
+  OnChatSelect(id: string) {
     const userName = this.user.name;
     const userId = this.user.id;
     this.resetMsgAndCount(id);
     this.socketService.connectToChat(userId, userName, id);
-    //this.router.navigate(['/main/chat', this.chat.id]);
 
-    this.locationService.enableNavigation(`/main/chat/${this.chat.id}`);
-    //this.controllerService.onStateChange(5);
-    
+    if(this.deviceTypeService.isMobile) {
+      this.controllerService.onStateChange('open');
+      
+    }
+    else {
+      this.router.navigate(['./main/chat', this.chat.id]);
+    }
   }
 
   resetMsgAndCount(id: string) {

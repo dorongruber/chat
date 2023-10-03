@@ -1,10 +1,10 @@
-<li class="chat-contaienr"  (click)="OnChatSelect(chat.id, $event)">
-  <div class="chat-img-container" [ngClass]="{'remove-border': checkImage(chat.img)}">
-    <ng-container *ngIf="checkImage(chat.img) else NotFound">
-      <img class="chat-img" [src]="Transform(chat.img)" alt="">
+<li class="chat-contaienr"  (click)="OnChatSelect(chat.id)">
+  <div class="chat-img-container" [ngClass]="{'remove-border': asImage}">
+    <ng-container *ngIf="asImage else NotFound">
+      <img [src]="Transform(chat.img)" alt="">
     </ng-container>
     <ng-template #NotFound>
-      <mat-icon class="icon">group</mat-icon>
+      <mat-icon >group</mat-icon>
     </ng-template>
   </div>
 
@@ -44,7 +44,7 @@
     </ng-container>
   </h4>
       <div class="chatItemMenu item2" >
-        <mat-icon (click)="stopPropagation($event)" class="keyboard_arrow_down" [matMenuTriggerFor]="chatMenu">keyboard_arrow_down</mat-icon>
+        <mat-icon (click)="stopPropagation($event)" [matMenuTriggerFor]="chatMenu">keyboard_arrow_down</mat-icon>
         <mat-menu #chatMenu="matMenu" xPosition="before">
           
           <button mat-menu-item> aaaa</button>
