@@ -6,12 +6,10 @@ import { User } from 'src/app/shared/models/user';
 import { DeviceTypeService } from '../services/devicetype.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
-
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
-
 })
 export class MainComponent implements OnInit {
   title = "Landing page";
@@ -35,6 +33,9 @@ export class MainComponent implements OnInit {
       if(this.deviceTypeService.isMobile) {
         this.router.navigate(["menu"], {relativeTo: this.route.parent});
       } 
+      // else {
+      //   this.router.navigate(["landingpage"], {relativeTo: this.route.parent});
+      // }
    }
 
   async ngOnInit(): Promise<void> {

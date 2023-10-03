@@ -1,4 +1,4 @@
-
+@use "src/global.scss" as global;
 
 .main-container {
   display: flex;
@@ -24,19 +24,22 @@
 .chat-content-view {
   width: 70%; 
   height: 100%; 
-  background-color: hsla(0, 0%, 12%); 
+  background-color: global.$backgroudColor; 
   float: right;
   @media screen and (max-width: 600px) {
     width: 100%;
   }
+  border-left: 1px solid hsl(0, 0%, 19%);
+  box-sizing: border-box;
 }
 
 .general-content-view {
   width: 30%; 
   height: 100%; 
-  background-color: hsl(0, 0%, 12%); 
+  background-color: global.$backgroudColor; 
   float: right;
   @media screen and (max-width: 600px) {
     display: none;
   }
+  box-sizing: border-box;
 }
