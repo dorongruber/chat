@@ -14,8 +14,8 @@ const routes: Routes = [
   {path: '', redirectTo: 'landingpage', pathMatch: 'full'},
   {path: '', component: MainComponent, canActivate: [AuthGurd] ,children: [
     {path: 'landingpage', component: LandingpageComponent},
-    {path: 'newchat', component: NewchatComponent, data: {animation: 'Chat'}},
-    {path: 'newchat/:id', component: NewchatComponent, data: {animation: 'Chat'}},
+    {path: 'new', component: NewchatComponent, data: {animation: 'Chat'}},
+    {path: 'chatinfo', component: NewchatComponent, data: {animation: 'Chat'}},
     {path: 'chat/:id', component: ChatComponent, data: {animation: 'Chat'}},
     {path: 'menu', component: MenuComponent, data: {animation: 'Chat'}},
   ]},
