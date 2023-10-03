@@ -1,17 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil, tap } from "rxjs/operators";
 import { mockUserList } from 'src/app/mockData/usersList';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatsService } from 'src/app/services/chats.service';
 import { DeviceTypeService } from 'src/app/services/devicetype.service';
-import { RouterService } from 'src/app/services/router.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/models/user';
 import { ChatInMenu } from '../../models/chat';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
-
-const COMPONENT_BASE_ROUTE = '/main/chats';
 
 @Component({
   selector: 'app-chatsmenu',
@@ -26,11 +22,8 @@ export class ChatsmenuComponent implements OnInit {
   ////////////
   user!: User;
   constructor(
-    private routerService: RouterService,
     private userService: UserService,
     private deviceTypeService: DeviceTypeService,
-    private router: Router,
-    private route: ActivatedRoute,
     private chatsService: ChatsService,
     private chatService: ChatService,
     private subscriptionContolService: SubscriptionContolService,
@@ -78,20 +71,6 @@ export class ChatsmenuComponent implements OnInit {
   async initMenu() {
     const resChat = await this.chatsService.getChats(this.user.id);
     this.chats = [...resChat];
-    this.routerService.onRouteChange
-    .pipe(takeUntil(this.subscriptionContolService.stop$))
-    .subscribe(currentURL => {
-      if (this.CheckInitRoute(currentURL))
-        this.router.navigate(['./landingpage'], {relativeTo: this.route});
-    });
-  }
-
-  CheckInitRoute(currentURL: string) {
-    if (
-      currentURL === COMPONENT_BASE_ROUTE &&
-      this.chats.length &&
-      !this.isMobile) return true;
-    return false;
   }
 
   chatTrackBy(index: number,chat: ChatInMenu) {

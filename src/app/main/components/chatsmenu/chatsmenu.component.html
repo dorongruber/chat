@@ -1,6 +1,6 @@
 <ul>
   <ng-container *ngFor="let chat of chats; let i = index; trackBy: chatTrackBy"  >
-    <app-chatmenuitem [chat]="chat"></app-chatmenuitem>
+    <app-chatmenuitem [chat]="chat" [user]="user"></app-chatmenuitem>
   </ng-container>
 </ul>
 
