@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
-import { NavigationEnd, Router } from '@angular/router';
-import { takeUntil, map } from "rxjs/operators";
+import { ActivatedRoute, Router } from '@angular/router';
 import { DeviceTypeService } from 'src/app/services/devicetype.service';
 import { MatSidenav } from '@angular/material/sidenav';
+import { mainMenuOptions } from 'src/app/mockData/menuoptionslists';
+import { takeUntil, tap } from 'rxjs/operators';
 
 const COMPONENT_BASE_ROUTE = '/main';
 
@@ -16,53 +17,29 @@ const COMPONENT_BASE_ROUTE = '/main';
 })
 export class MenuComponent implements OnInit {
   @ViewChild("menuSideNav") sidenav!: MatSidenav;
-  option = 3;
+  option: string = '';
   title = "Landing page";
   baseRoute = COMPONENT_BASE_ROUTE;
+  menuOptions = mainMenuOptions;
+  type =  "MenuComponent";
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private controllerService: ControllerService,
     private subscriptionContolService: SubscriptionContolService,
     private deviceTypeService: DeviceTypeService,
     ) {
-      this.option = this.deviceTypeService.isMobile? 0 : 3;
+      this.controllerService.onMenuStateChange
+      .pipe(takeUntil(this.subscriptionContolService.stop$), tap((res) => {
+        console.log("res===> ", res);
+        
+        this.option = res?.split('/')[2];
+        this.sidenav.toggle();
+      }))
+      .subscribe();
     }
 
   ngOnInit(): void {
-
-    this.controllerService.onMenuStateChange
-    .pipe(takeUntil(this.subscriptionContolService.stop$), map(obj => {    
-      this.sidenav.toggle();  
-        this.setHeaderTitleOnMobile(obj.option);
-        this.menuControl(obj);
-    }))
-    .subscribe();
-    this.router.events.subscribe(res => {
-      if(res instanceof NavigationEnd) {
-        this.title = res.url.split('/')[2];
-      }
-    })
   }
 
-  setHeaderTitleOnMobile(index: number) {
-    switch(index) {
-      case 0:
-        this.title = 'Landing page';
-        break;
-      case 2:
-        this.title = 'User Info';
-        break;
-      case 3:
-        this.title = 'Chats';
-        break;
-    }
-  }
-
-
-
-  menuControl(obj: {state: boolean, option: number}) {
-      setTimeout(() => {
-        this.option = obj.option ? obj.option: 3;
-      });
-  }
 }
