@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { LocationSevice } from 'src/app/services/location.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -8,13 +7,9 @@ import { LocationSevice } from 'src/app/services/location.service';
 })
 export class LandingpageComponent implements OnInit {
   title = 'Welcome to chat Project';
-  constructor(private locationService: LocationSevice) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
 
-
-  goto() {
-    this.locationService.enableNavigation('./main/newchat');
-  }
 }

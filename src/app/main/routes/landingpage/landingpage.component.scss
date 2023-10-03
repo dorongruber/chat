@@ -1,9 +1,12 @@
+@use "src/global.scss" as global;
+
 .landing-page-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
+  background-color: global.$backgroudColor;
   @media (max-width: 640px) {
     position: absolute;
     top: 0;
@@ -13,8 +16,6 @@
     width: unset;
     height: unset;
     margin-top: 50px;
-    background-color: hsl(0, 0%, 12%);
-
     justify-content: center;
   }
 }
@@ -22,9 +23,7 @@
 .circle-img-container {
   width: 300px;
   height: 300px;
-  border: 1px solid #ffffff;
   border-radius: 50%;
-  padding: 5px;
   background-image: url('../../assets/images/front.png');
   background-position: center;
   background-size: cover;
