@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { takeUntil, tap } from "rxjs/operators";
-import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatsService } from 'src/app/services/chats.service';
 import { UserService } from 'src/app/services/user.service';
@@ -26,7 +25,6 @@ export class DeletechatComponent implements OnInit {
     private chatService: ChatService,
     private userService: UserService,
     private chatsService: ChatsService,
-    private controllerService: ControllerService,
     private subscriptionContolService: SubscriptionContolService,
     ) {
       this.initForm();
@@ -84,10 +82,6 @@ export class DeletechatComponent implements OnInit {
       .catch(err => {
         throw new Error(err);
       });
-  }
-
-  closeWindow() {
-    this.controllerService.onStateChange(undefined);
   }
 
 }
