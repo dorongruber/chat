@@ -4,8 +4,10 @@ import { SubscriptionContolService } from 'src/app/services/subscription-control
 import { ActivatedRoute, Router } from '@angular/router';
 import { DeviceTypeService } from 'src/app/services/devicetype.service';
 import { MatSidenav } from '@angular/material/sidenav';
-import { mainMenuOptions } from 'src/app/mockData/menuoptionslists';
+import { mainMenuOptions } from 'src/app/main/consts/menuoptionslists';
 import { takeUntil, tap } from 'rxjs/operators';
+import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
+import { Header1Component } from '../headers/header1/header1.component';
 
 const COMPONENT_BASE_ROUTE = '/main';
 
@@ -21,7 +23,8 @@ export class MenuComponent implements OnInit {
   title = "Landing page";
   baseRoute = COMPONENT_BASE_ROUTE;
   menuOptions = mainMenuOptions;
-  type =  "MenuComponent";
+  headerComponentRef = new DynamicComponentRef(Header1Component);
+  sidenavComponentRef?: DynamicComponentRef;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -30,10 +33,8 @@ export class MenuComponent implements OnInit {
     private deviceTypeService: DeviceTypeService,
     ) {
       this.controllerService.onMenuStateChange
-      .pipe(takeUntil(this.subscriptionContolService.stop$), tap((res) => {
-        console.log("res===> ", res);
-        
-        this.option = res?.split('/')[2];
+      .pipe(takeUntil(this.subscriptionContolService.stop$), tap((res) => {        
+        this.sidenavComponentRef = res?.componentRef;
         this.sidenav.toggle();
       }))
       .subscribe();

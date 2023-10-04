@@ -1,30 +1,12 @@
 <mat-sidenav-container style="height: 100%;">
   <mat-sidenav #menuSideNav mode="side" style="width: 100%;">
-
-      <ng-container *ngIf="option === 'new'">
-        <div class="component-container">
-          <app-newchat></app-newchat>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="option === 'delete'">
-        <div class="component-container">
-          <app-deletechat></app-deletechat>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="option === 'userinfo'">
-        <div class="component-container">
-          <app-userinfo></app-userinfo>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="option == 'open'">
-        <div class="component-container">
-          <app-chat></app-chat>
-        </div>
-      </ng-container>
+      <div class="component-container">
+        <app-sidenavselector [componentRef]="sidenavComponentRef"></app-sidenavselector>
+      </div>
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <app-header [menuOptions]="menuOptions" [title]="title" [type]="type"></app-header>
+    <app-header [menuOptions]="menuOptions" [title]="title" [componentRef]="headerComponentRef"></app-header>
     <app-chatsmenu></app-chatsmenu>
   </mat-sidenav-content>
 </mat-sidenav-container>

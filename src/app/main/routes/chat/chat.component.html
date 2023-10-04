@@ -2,16 +2,14 @@
   <mat-sidenav class="sidenav" position="end" #chatSideNav mode="side">
     
       <section>
-        chat option side nav
-        <button (click)="chatSideNav.toggle()">close</button>
-        <app-newchat></app-newchat>
+        <app-sidenavselector [componentRef]="sidenavComponentRef"></app-sidenavselector>
       </section>
     
   </mat-sidenav>
 
   <mat-sidenav-content>
     <main id="chat" class="chat-container main-background-img" (click)="FocusOnChat()">
-      <app-header [menuOptions]="menuOPtions" [title]="selectedChat.id" [type]="type"></app-header>
+      <app-header [menuOptions]="menuOPtions" [title]="selectedChat.id" [componentRef]="componentRef"></app-header>
       <section id="msgs-container" class="messages-container msgs" *ngIf="!isLoading else ShowSpinner">
         <ng-container *ngFor="let message of messages; let i=index;">
           <app-message class="single-msg" [msgFromat]="message"></app-message>

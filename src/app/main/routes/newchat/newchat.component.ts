@@ -13,6 +13,8 @@ import { Chat } from '../../models/chat';
 import { ImageSnippet } from '../../models/imagesnippet.model';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 import { takeUntil } from "rxjs/operators";
+import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
+import { Header2Component } from '../../components/headers/header2/header2.component';
 
 @Component({
   selector: 'app-newchat',
@@ -37,6 +39,7 @@ export class NewchatComponent implements OnInit {
   chatId$: Observable<string>= new Observable<string>();
   chatId: string = '';
   chatusers: User[] = [];
+  componentRef = new DynamicComponentRef(Header2Component);
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,

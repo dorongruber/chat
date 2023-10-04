@@ -8,6 +8,8 @@ import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/models/user';
 import { Chat } from '../../models/chat';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
+import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
+import { Header2Component } from '../headers/header2/header2.component';
 
 @Component({
   selector: 'app-deletechat',
@@ -21,6 +23,7 @@ export class DeletechatComponent implements OnInit {
   deleteForm: FormGroup = new FormGroup({});
   chatToDelete: Chat = new Chat('','', new File([],'emptyFile'));
   resMsg = '';
+  componentRef = new DynamicComponentRef(Header2Component);
   constructor(
     private chatService: ChatService,
     private userService: UserService,

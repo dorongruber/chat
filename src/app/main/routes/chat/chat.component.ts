@@ -12,7 +12,9 @@ import { SubscriptionContolService } from 'src/app/services/subscription-control
 import { takeUntil } from "rxjs/operators";
 import { User } from 'src/app/shared/models/user';
 import { MatSidenav } from '@angular/material/sidenav';
-import { chatMenuOptions } from 'src/app/mockData/menuoptionslists';
+import { chatMenuOptions } from 'src/app/main/consts/menuoptionslists';
+import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
+import { Header2Component } from '../../components/headers/header2/header2.component';
 
 
 const COMPONENT_BASE_ROUTE = '/main/chat';
@@ -36,7 +38,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
   selectedChat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
   user!: User;
   menuOPtions = chatMenuOptions;
-  type = "ChatComponent";
+  componentRef = new DynamicComponentRef(Header2Component);
+  sidenavComponentRef?: DynamicComponentRef;
   constructor(
     private chatService: ChatService,
     private socketService: SocketService,
@@ -45,7 +48,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
     private subscriptionContolService: SubscriptionContolService,
     ) {
       this.controllerService.onMenuStateChange
-      .pipe(takeUntil(this.subscriptionContolService.stop$), tap(() => {
+      .pipe(takeUntil(this.subscriptionContolService.stop$), tap((res) => {
+        this.sidenavComponentRef = res?.componentRef;
         this.sidenav.toggle();
       }))
       .subscribe();
