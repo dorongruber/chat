@@ -1,13 +1,14 @@
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
+import { HeaderMenuOption } from "src/app/main/models/header-menu-option";
 
 @Injectable()
 export class ControllerService {
   isMenuOpen = false;
-  onMenuStateChange = new Subject<string>();
+  onMenuStateChange = new Subject<HeaderMenuOption>();
   onChatFocus = new Subject<string>();
 
-  onStateChange(value?: string) {
+  onStateChange(value?: HeaderMenuOption) {
     //this.isMenuOpen = !this.isMenuOpen;
     
     this.onMenuStateChange.next(value);
