@@ -60,8 +60,11 @@ export class ChatsService {
   async addChat(chatId: string, name: string, users: User[], userId: string, img: File) {
     const id = chatId.length === 0? this.GenerateId(): chatId;
     const savedChat = await this.chatService.newChat(id,name,users,userId,img);
-    if(!(savedChat instanceof Error) && !savedChat)
+    if(!(savedChat instanceof Error) && !savedChat) {
       this.socketService.createChat(id,name,users, userId);
+      return true;
+    }
+    return false;
   }
 
   GenerateId() {
