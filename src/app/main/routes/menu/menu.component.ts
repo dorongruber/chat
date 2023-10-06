@@ -7,7 +7,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { mainMenuOptions } from 'src/app/main/consts/menuoptionslists';
 import { takeUntil, tap } from 'rxjs/operators';
 import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
-import { Header1Component } from '../headers/header1/header1.component';
+import { Header1Component } from '../../components/headers/header1/header1.component';
 
 const COMPONENT_BASE_ROUTE = '/main';
 
@@ -30,7 +30,6 @@ export class MenuComponent implements OnInit {
     private route: ActivatedRoute,
     private controllerService: ControllerService,
     private subscriptionContolService: SubscriptionContolService,
-    private deviceTypeService: DeviceTypeService,
     ) {
       this.controllerService.onMenuStateChange
       .pipe(takeUntil(this.subscriptionContolService.stop$), tap((res) => {        
