@@ -4,13 +4,10 @@ import { HeaderMenuOption } from "src/app/main/models/header-menu-option";
 
 @Injectable()
 export class ControllerService {
-  isMenuOpen = false;
   onMenuStateChange = new Subject<HeaderMenuOption>();
   onChatFocus = new Subject<string>();
 
-  onStateChange(value?: HeaderMenuOption) {
-    //this.isMenuOpen = !this.isMenuOpen;
-    
+  onStateChange(value?: HeaderMenuOption) {    
     this.onMenuStateChange.next(value);
   }
 
