@@ -1,0 +1,34 @@
+<app-header [title]="'new chat'" [componentRef]="componentRef"></app-header>
+<div class="new-chat" style="background-color: hsl(0, 0%, 15%);">
+  <body >
+    
+    <form style="padding: 0 15px; box-sizing: border-box;"
+    [formGroup]="chatForm"
+    (ngSubmit)="onSubmit(chatForm)"
+    *ngIf="!isLoading">
+
+      <header class="img-container">
+          <app-select-image [form]="chatForm"></app-select-image>
+      </header>
+
+      <app-form-input [form]="chatForm" [placeholder]="'Name'" [name]="'name'" [formControlName]="'name'" [label]="'Name'"></app-form-input>
+      <br>
+
+      <ul>
+        <ng-container *ngFor="let user of listUsers; let i = index; trackBy: userTrackBy;">
+          <app-list-item [listItem]="user" (onSelectedItem)="onSelectedUser($event)"></app-list-item>
+        </ng-container>
+      </ul>
+
+      <div class='btn-container'>
+        <button
+        class="create-btn"
+        type="submit"
+        [disabled]="!chatForm.valid"
+        mat-raised-button> Create Chat </button>
+      </div>
+    </form>
+  </body>
+</div>
+
+

@@ -8,7 +8,7 @@ import { ImageSnippet } from '../../models/imagesnippet.model';
 import { takeUntil, tap } from "rxjs/operators";
 import { fromEvent } from 'rxjs';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
-import { Header2Component } from '../headers/header2/header2.component';
+import { Header2Component } from '../../components/headers/header2/header2.component';
 import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
 
 @Component({

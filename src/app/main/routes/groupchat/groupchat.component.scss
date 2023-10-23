@@ -1,0 +1,59 @@
+@use "src/global.scss" as global;
+
+.new-chat {
+  background-position: center;
+  background-repeat: round;
+  background-size: 11% 29%;
+  height: calc(100% - global.$headerHeight);
+  @media (max-width: 640px) {
+    position: relative;
+    width: 100%;
+    background-size: 70%;
+    background-position: unset;
+    background-color: global.$backgroudColor;
+    z-index: 1;
+  }
+}
+
+.img-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-block-start: 2rem;
+  box-sizing: border-box;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+}
+
+.create-btn {
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 10px;
+  line-height: 24px;
+}
+
+:host ::ng-deep mat-icon {
+  .mat-icon {
+    color: #fff;
+  }
+}
+
+ul {
+  background-color: global.$backgroudColor;
+  height: calc(100% - global.$headerHeight);
+  margin: 0;
+  padding: 10px 0 0 0;
+  box-sizing: border-box;
+}
+
+
+
+
+
+
+
+

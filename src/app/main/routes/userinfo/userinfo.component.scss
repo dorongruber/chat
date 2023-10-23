@@ -1,0 +1,31 @@
+@use "src/global.scss" as global;
+
+main {
+  height: calc(100% - global.$headerHeight);
+  background-color: global.$backgroudColor;
+}
+
+
+header {
+  padding-block-start: 2rem;
+  box-sizing: border-box;
+}
+
+ul {
+  padding-inline-start: 1.5rem;
+}
+
+li {
+  list-style: none;
+}
+
+.close-btn {
+  cursor: pointer;
+  margin-right: auto;
+}
+
+.btn-container {
+  text-align: center;
+  cursor: pointer;
+  border-radius: 5px;
+}

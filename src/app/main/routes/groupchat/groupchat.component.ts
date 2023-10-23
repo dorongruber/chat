@@ -15,28 +15,33 @@ import { SubscriptionContolService } from 'src/app/services/subscription-control
 import { takeUntil } from "rxjs/operators";
 import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
 import { Header2Component } from '../../components/headers/header2/header2.component';
+import { ControllerService } from 'src/app/services/base/controller.service';
+import { ListItem } from '../../models/list-item';
 
 @Component({
   selector: 'app-groupchat',
   templateUrl: './groupchat.component.html',
   styleUrls: ['./groupchat.component.scss']
 })
-export class GroupchatComponent {
+export class GroupchatComponent implements OnInit {
   isLoading = false;
-  chatForm!: FormGroup;
+  chatForm: FormGroup = new FormGroup({});
   error: string | null = null;
   selectedFile: ImageSnippet | undefined = undefined;
   imgToShow: any = null;
   chatName = '';
   filteredOptions: Observable<User[]>[] = [];
   currentUser!: User;
-  allUsers: User[] = [];
   formControlUserReset: User = new User('','','','','',new File([],'emptyFile'));
 
   chatId$: Observable<string>= new Observable<string>();
   chatId: string = '';
   chatusers: User[] = [];
   componentRef = new DynamicComponentRef(Header2Component);
+
+  usersItemFormat: ListItem[] = [];
+  usersById: {[key: string]: User} = {};
+  listUsers: ListItem[] = [];
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
@@ -44,9 +49,10 @@ export class GroupchatComponent {
     private chatService: ChatService,
     private sanitizer: DomSanitizer,
     private fb: FormBuilder,
+    private controllerService: ControllerService,
     private subscriptionContolService: SubscriptionContolService,
   ) {
-    this.InitForm();
+    
     this.userService.onUserChange
       .pipe(
         takeUntil(this.subscriptionContolService.stop$))
@@ -61,6 +67,7 @@ export class GroupchatComponent {
    }
   //TODO on page reload need to pass user ID
   ngOnInit() {
+    
     this.chatId$ = this.route.paramMap
     .pipe(switchMap(params => {
       return params.getAll('id');
@@ -76,23 +83,32 @@ export class GroupchatComponent {
     .subscribe((res) => {
       this.InitEditForm();
     });
+    this.InitForm();
     this.setAutoOptions();
   }
 
   setAutoOptions() {
     this.userService.getAllUsers()
-    .then(resData => {
-      this.allUsers = [...resData.filter(u => u.id !== this.currentUser.id)];
+    .then(resData => resData.filter(u => u.id !== this.currentUser.id))
+    .then(filteredData => {
+      for (let i = 0; i < filteredData.length; i++) {
+        const user = filteredData[i];
+        const formatUser = new ListItem(user.id, user.name,user.phone,{_img: user.img, _icon: 'account_circle'});
+        this.usersItemFormat.push(formatUser);
+        this.usersById[user.id] = user;
+      }
+      this.listUsers = this.usersItemFormat;
     });
   }
 
-  onSelectedChange(isSelected: boolean, user: User) {
-    if(isSelected) {
-      const newControl = this.fb.control<User>(user);
-      this.users.push(newControl);     
-    } else {
-      let index = this.users.controls.findIndex(u => u.value == user);
+  onSelectedUser(selected: ListItem) {
+    const selectedUser = this.usersById[selected.id];
+    let index = this.users.controls.findIndex(u => u.value == selectedUser);
+    if(index > -1) {
       this.users.removeAt(index);
+    } else {
+      const newControl = this.fb.control<User>(selectedUser);
+      this.users.push(newControl);
     }
   }
 
@@ -160,11 +176,20 @@ export class GroupchatComponent {
   }
 
   Transform() {
-    const imgURL = this.imgToShow.includes('data:image/')? this.imgToShow : 'data:image/*;base64,' + this.imgToShow;
-    return this.sanitizer.bypassSecurityTrustResourceUrl(imgURL);
+    if( this.imgToShow) {
+      const imgURL = this.imgToShow.includes('data:image/')? this.imgToShow : 'data:image/*;base64,' + this.imgToShow;
+      return this.sanitizer.bypassSecurityTrustResourceUrl(imgURL);
+    }      
+    return '';
   }
 
   displayFn(user?: User): string {
     return user ? user.name : '';
+  }
+
+  
+
+  userTrackBy(index: number,listItem: ListItem) {
+    return listItem.id;
   }
 }
