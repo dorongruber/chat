@@ -25,9 +25,7 @@ export class ListItemComponent implements OnChanges {
     this.onSelectedItem.emit(listItem);
   }
 
-  checkImage(img?: File): boolean {
-    console.log(img);
-    
+  checkImage(img?: File): boolean {    
     return img && (img as any).data?.data;
   }
 
