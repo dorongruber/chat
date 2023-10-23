@@ -22,11 +22,11 @@ import { ControllerService } from 'src/app/services/base/controller.service';
 export class NewchatComponent implements OnInit {
 
   currentUser!: User;
-  userItemFormat: ListItem[] = [];
-  users: {[key: string]: User} = {};
-
+  usersItemFormat: ListItem[] = [];
+  usersById: {[key: string]: User} = {};
+  listUsers: ListItem[] = [];
   componentRef = new DynamicComponentRef(Header2Component);
-  newGroup: ListItem = new ListItem('','new group chat','',{_icon: 'supervised_user_circle'});
+  
   constructor(
     private route: ActivatedRoute,
     private chatsService: ChatsService,
@@ -46,17 +46,13 @@ export class NewchatComponent implements OnInit {
           },
         );
    }
-  //TODO on page reload need to pass user ID
+
   ngOnInit() {
     this.setAutoOptions();
   }
 
-  onSelectedOption(value: ListItem) {
-    console.log("onSelectedOption ==> ", value);
-  }
-
   onSelectedUser(selected: ListItem) {
-    const selectedUser = this.users[selected.id];
+    const selectedUser = this.usersById[selected.id];
     const res = this.chatsService.addChat('',selected.name,[selectedUser, this.currentUser],this.currentUser.id,selected.img);
     this.controllerService.onStateChange(undefined);
   }
@@ -65,12 +61,22 @@ export class NewchatComponent implements OnInit {
     this.userService.getAllUsers()
     .then(resData => resData.filter(u => u.id !== this.currentUser.id))
     .then(filteredData => {
-      for(let user of filteredData) {
+      for (let i = 0; i < filteredData.length; i++) {
+        const user = filteredData[i];
         const formatUser = new ListItem(user.id, user.name,user.phone,{_img: user.img, _icon: 'account_circle'});
-        this.userItemFormat.push(formatUser);
-        this.users[user.id] = user;
+        this.usersItemFormat.push(formatUser);
+        this.usersById[user.id] = user;
       }
+      this.listUsers = this.usersItemFormat;
     });
+  }
+
+  FilterUsers(inputValue: string) {
+    this.listUsers = this.usersItemFormat.filter(user => user.name.includes(inputValue));    
+  }
+
+  userTrackBy(index: number,listItem: ListItem) {
+    return listItem.id;
   }
 
 }
