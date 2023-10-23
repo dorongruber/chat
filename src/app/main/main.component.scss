@@ -43,3 +43,7 @@
   }
   box-sizing: border-box;
 }
+
+:host ::ng-deep .mat-drawer-content{
+  overflow: hidden !important;
+}
