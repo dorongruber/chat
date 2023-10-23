@@ -1,10 +1,12 @@
 @use "src/global.scss" as global;
 ul {
   background-color: global.$backgroudColor;
-  height: calc(100% - global.$headerHeight);
+  height: calc(100% - (global.$headerHeight + var(--search-input-container-height)) );
+  //height: 100%;
   margin: 0;
   padding: 10px 0 0 0;
   box-sizing: border-box;
+  overflow: auto;
 }
 
 

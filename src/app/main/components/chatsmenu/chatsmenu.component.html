@@ -1,5 +1,10 @@
+<section class="search-input-container">
+  <div class="search-input">
+    <app-search-input (onInputValueChane)="FilterUsers($event)"></app-search-input>
+  </div>
+ </section>
 <ul>
-  <ng-container *ngFor="let chat of chats; let i = index; trackBy: chatTrackBy"  >
+  <ng-container *ngFor="let chat of fliteredChats; let i = index; trackBy: chatTrackBy"  >
     <app-chatmenuitem [chat]="chat" [user]="user"></app-chatmenuitem>
   </ng-container>
 </ul>

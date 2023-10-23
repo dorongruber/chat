@@ -18,6 +18,7 @@ export class ChatsmenuComponent implements OnInit {
   isMobile = false;
 
   chats: ChatInMenu[] = [];
+  fliteredChats: ChatInMenu[] = [];
   users = mockUserList;
   ////////////
   user!: User;
@@ -42,35 +43,40 @@ export class ChatsmenuComponent implements OnInit {
         );
     }
 
-    ngOnInit() {
-      this.isMobile = this.deviceTypeService.isMobile;
+  ngOnInit() {
+    this.isMobile = this.deviceTypeService.isMobile;
 
-      this.chatsService.onNewChat
-      .pipe(takeUntil(this.subscriptionContolService.stop$))
-      .subscribe(res => {
-        const newChat = new ChatInMenu(res.id,res.name, res.img);
-        this.chats.push(newChat);
-      });
-     
-      this.chatService.newMenuMsg
-      .pipe(takeUntil(this.subscriptionContolService.stop$))
-      .subscribe(resMsg => {
-        if (resMsg && resMsg.chatId) {
-          this.chats.find(c => {
-            if (c.id === resMsg.chatId && resMsg.message) {
-              c.lastMsg = resMsg;
-              c.newmsgscounter = c.newmsgscounter + 1;
-              c.onMsgChange.next(resMsg);
-              c.onCounterChange.next(c.newmsgscounter);
-            }
-          });
-        }
-      });
-    }
+    this.chatsService.onNewChat
+    .pipe(takeUntil(this.subscriptionContolService.stop$))
+    .subscribe(res => {
+      const newChat = new ChatInMenu(res.id,res.name, res.img);
+      this.chats.push(newChat);
+      this.fliteredChats.push(newChat);
+    });
+    
+    this.chatService.newMenuMsg
+    .pipe(takeUntil(this.subscriptionContolService.stop$))
+    .subscribe(resMsg => {
+      if (resMsg && resMsg.chatId) {
+        this.chats.find(c => {
+          if (c.id === resMsg.chatId && resMsg.message) {
+            c.lastMsg = resMsg;
+            c.newmsgscounter = c.newmsgscounter + 1;
+            c.onMsgChange.next(resMsg);
+            c.onCounterChange.next(c.newmsgscounter);
+          }
+        });
+      }
+    });
+  }
+
+  FilterUsers(inputValue: string) {
+    this.fliteredChats = this.chats.filter(chat => chat.name.includes(inputValue));    
+  }
 
   async initMenu() {
     const resChat = await this.chatsService.getChats(this.user.id);
-    this.chats = [...resChat];
+    this.chats = this.fliteredChats = [...resChat];
   }
 
   chatTrackBy(index: number,chat: ChatInMenu) {
