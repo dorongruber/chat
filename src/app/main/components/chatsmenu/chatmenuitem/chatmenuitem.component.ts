@@ -46,7 +46,7 @@ export class ChatmenuitemComponent implements OnChanges {
     this.socketService.connectToChat(userId, userName, id);
 
     if(this.deviceTypeService.isMobile) {
-      this.controllerService.onStateChange('open');
+      //this.controllerService.onStateChange('open');
       
     }
     else {

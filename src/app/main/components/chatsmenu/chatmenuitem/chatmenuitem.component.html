@@ -1,59 +1,63 @@
 <li class="chat-contaienr"  (click)="OnChatSelect(chat.id)">
-  <div class="chat-img-container" [ngClass]="{'remove-border': asImage}">
+  <div class="chat-img-container">
     <ng-container *ngIf="asImage else NotFound">
       <img [src]="Transform(chat.img)" alt="">
     </ng-container>
     <ng-template #NotFound>
-      <mat-icon >group</mat-icon>
+      <mat-icon >supervised_user_circle</mat-icon>
     </ng-template>
   </div>
 
-  <div class="group1">
-    <h2 class="chat-name item1">
-      {{chat.name}}
-      <ng-container *ngIf="(chat.onCounterChange | async)">
-        <ng-container *ngIf="chat.newmsgscounter > 0">
-          <div class="new-masgs-counter-badge">
-            <div class="count">
-              {{chat.newmsgscounter}}
+  <div class="groups-content">
+    <div class="group1">
+      <h2 class="chat-name item1">
+        {{chat.name}}
+        <ng-container *ngIf="(chat.onCounterChange | async)">
+          <ng-container *ngIf="chat.newmsgscounter > 0">
+            <div class="new-masgs-counter-badge">
+              <div class="count">
+                {{chat.newmsgscounter}}
+              </div>
             </div>
-          </div>
+          </ng-container>
         </ng-container>
-      </ng-container>
-    </h2>
-    <p class="msg item2" [ngClass]="{'last-msg-color':  chat.newmsgscounter === 0}"> 
-      <ng-container *ngIf="(chat.onMsgChange | async) || chat.lastMsg ">
-        
+      </h2>
+      <p class="msg item2" [ngClass]="{'last-msg-color':  chat.newmsgscounter === 0}"> 
+        <ng-container *ngIf="(chat.onMsgChange | async) || chat.lastMsg ">
+          
+            <span >
+              {{ chat.lastMsg.userName }}
+          </span>: 
           <span >
-            {{ chat.lastMsg.userName }}
-        </span>: 
-        <span >
-          {{ chat.lastMsg.message }}
-        </span>
-      
+            {{ chat.lastMsg.message }}
+          </span>
+        
+        </ng-container>
+    </p>
+    </div>
+  
+    <div class="group2">
+      <h4 class="time item1 last-msg-color">
+  
+      <ng-container *ngIf="(chat.onMsgChange | async) || chat.lastMsg ">
+          {{ chat.lastMsg.date | date: 'shortDate'}}
+        
       </ng-container>
-  </p>
+    </h4>
+        <div class="chatItemMenu item2" >
+          <mat-icon (click)="stopPropagation($event)" [matMenuTriggerFor]="chatMenu">keyboard_arrow_down</mat-icon>
+          <mat-menu #chatMenu="matMenu" xPosition="before">
+            
+            <button mat-menu-item> aaaa</button>
+            <button mat-menu-item> bbb</button>
+            <button mat-menu-item> ccc</button>
+            <button mat-menu-item> xxx</button>
+            <button mat-menu-item> rrrr</button>
+            
+          </mat-menu>
+        </div>
+    </div>
+    
   </div>
-
-  <div class="group2">
-    <h4 class="time item1 last-msg-color">
-
-    <ng-container *ngIf="(chat.onMsgChange | async) || chat.lastMsg ">
-        {{ chat.lastMsg.date | date: 'shortDate'}}
-      
-    </ng-container>
-  </h4>
-      <div class="chatItemMenu item2" >
-        <mat-icon (click)="stopPropagation($event)" [matMenuTriggerFor]="chatMenu">keyboard_arrow_down</mat-icon>
-        <mat-menu #chatMenu="matMenu" xPosition="before">
-          
-          <button mat-menu-item> aaaa</button>
-          <button mat-menu-item> bbb</button>
-          <button mat-menu-item> ccc</button>
-          <button mat-menu-item> xxx</button>
-          <button mat-menu-item> rrrr</button>
-          
-        </mat-menu>
-      </div>
-  </div>
+  <span style="grid-row: 1/3; width: 15px;"></span>
   </li>
