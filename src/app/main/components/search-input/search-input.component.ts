@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-search-input',
@@ -6,5 +6,16 @@ import { Component } from '@angular/core';
   styleUrls: ['./search-input.component.scss']
 })
 export class SearchInputComponent {
+  @Output() onInputValueChane: EventEmitter<string>;
+  public inputValue: string;
 
+  constructor() {
+    this.inputValue = '';
+    this.onInputValueChane = new EventEmitter<string>();
+  }
+
+  public handleDebouncedKeyUp(event: any): void {
+    this.inputValue = event.target.value;
+    this.onInputValueChane.emit(this.inputValue);
+  }
 }
