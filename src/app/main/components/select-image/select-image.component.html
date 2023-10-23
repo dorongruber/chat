@@ -1,0 +1,16 @@
+<ng-container [formGroup]="form">
+    <div style="position: relative;" class="cyrcle-img img">
+        <label for="file" class="drop-container" [ngClass]="{'drop-container-init': selectedFile == undefined}" id="dropcontainer">
+          <span class="drop-title" >Select Image</span>
+          <input type="file"  id="file" placeholder="image" name="file" formControlName="image"
+           autocomplete="off" accept="image/*" (change)="ProcessFile($event)" #fileInput/>
+        </label>
+        <ng-container *ngIf="selectedFile != undefined">
+          <img
+          [src]="Transform()"
+          alt="Image Preview"
+          class="image-preview"
+          >
+        </ng-container>
+    </div>
+</ng-container>

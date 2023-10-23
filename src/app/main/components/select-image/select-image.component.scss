@@ -1,0 +1,70 @@
+.cyrcle-img {
+    width: 150px;
+    height: 150px;
+    margin: auto;
+    border: 2px solid rgb(122, 118, 118);
+    border-radius: 50%;
+  
+    &:hover .drop-container {
+      display: flex;
+    }
+}
+  
+.img {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#file {
+    visibility: hidden;
+    display: none;
+}
+
+.image-preview {
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    width: inherit;
+    height: inherit;
+    object-fit: cover;
+    // width: 100%;
+    // height: inherit;
+    border-radius: 50%;
+    border: 2px solid rgb(122, 118, 118);
+    box-sizing: border-box;
+}
+    
+.drop-container {
+    position: relative;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    color: #444;
+    cursor: pointer;
+    transition: background .2s ease-in-out, border .2s ease-in-out;
+    box-sizing: border-box;
+    z-index: 10;
+    &:hover .drop-title {
+        display: inline;
+    }
+    &:hover {
+        background: hsl(0, 0%, 63%);
+        border-color: #111;
+    }
+}
+
+.drop-title {
+    color: #444;
+    font-size: 18px;
+    text-align: center;
+    transition: color .2s ease-in-out;
+}
+
+.drop-container-init {
+    display: flex;
+}
