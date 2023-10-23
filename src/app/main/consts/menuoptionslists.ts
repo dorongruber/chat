@@ -1,6 +1,6 @@
 import { DeletechatComponent } from "../components/deletechat/deletechat.component";
-import { GroupchatComponent } from "../components/groupchat/groupchat.component";
-import { UserinfoComponent } from "../components/userinfo/userinfo.component";
+import { GroupchatComponent } from "../routes/groupchat/groupchat.component";
+import { UserinfoComponent } from "../routes/userinfo/userinfo.component";
 import { DynamicComponentRef } from "../directives/dynamic-component.ref.directive";
 import { HeaderMenuOption } from "../models/header-menu-option";
 import { NewchatComponent } from "../routes/newchat/newchat.component";
