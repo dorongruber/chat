@@ -69,8 +69,4 @@ export class ChatmenuitemComponent implements OnChanges {
     const imgURL = img.data.data.includes('data:image/')? img.data.data : 'data:image/*;base64,' + img.data.data;
     return this.sanitizer.bypassSecurityTrustResourceUrl(imgURL);
   }
-
-  stopPropagation(event: any) {
-    event.stopPropagation();
-  }
 }
