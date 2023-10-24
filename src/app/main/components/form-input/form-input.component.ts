@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 @Component({
@@ -6,7 +6,7 @@ import { FormGroup } from '@angular/forms';
   templateUrl: './form-input.component.html',
   styleUrls: ['./form-input.component.scss']
 })
-export class FormInputComponent {
+export class FormInputComponent implements OnChanges {
   @Input() form!: FormGroup;
   @Input() type: string = "text";
   @Input() placeholder!: string;
@@ -14,4 +14,10 @@ export class FormInputComponent {
   @Input() formControlName!: string;
   @Input() autocomplete: "on" | "off" = "off";
   @Input() label!: string;
+  @Input() enableRadonly: boolean = false;
+  isReadOnly: boolean = false;
+
+  ngOnChanges(): void {
+      this.isReadOnly = this.enableRadonly;
+  }
 }

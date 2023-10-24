@@ -1,9 +1,15 @@
-<ng-container [formGroup]="form">
+<div [formGroup]="form" class="input-container">
     <div class="form__group">
-        <input [type]="type" class="form__field"
+        <input [toggleReadonly]="isReadOnly" [type]="type" class="form__field"
         [placeholder]="placeholder" [name]="name"
         [formControlName]="formControlName"
         [autocomplete]="autocomplete"/>
         <label [for]="name" class="form__label">{{ label }}</label>
     </div>
-</ng-container>
+    <ng-container *ngIf="enableRadonly">
+        <button type="button"  (click)="isReadOnly = !isReadOnly">
+            <mat-icon>edit</mat-icon>
+        </button>
+    </ng-container>
+    
+</div>
