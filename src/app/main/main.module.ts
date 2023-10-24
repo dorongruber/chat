@@ -28,6 +28,8 @@ import { SearchInputComponent } from './components/search-input/search-input.com
 import { DebounceKeyupDirective } from './directives/debounce-keyup.directive';
 import { FormInputComponent } from './components/form-input/form-input.component';
 import { SelectImageComponent } from './components/select-image/select-image.component';
+import { ToggleReadonlyDirective } from './directives/toggle-readonly.directive';
+import { ChatInfoComponent } from './routes/chat-info/chat-info.component';
 
 
 @NgModule({
@@ -54,6 +56,8 @@ import { SelectImageComponent } from './components/select-image/select-image.com
     DebounceKeyupDirective,
     FormInputComponent,
     SelectImageComponent,
+    ToggleReadonlyDirective,
+    ChatInfoComponent,
   ],
   imports: [
     CommonModule,
