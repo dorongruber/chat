@@ -33,6 +33,7 @@ class FormatService {
       id: chat.id,
       name: chat.name,
       users: chat.users,
+      messages: chat.messages,
       img: {
         contentType: chat?.img && chat?.img.contentType ? chat.img.contentType : null,
         data: chat?.img && chat?.img.data ? chat.img.data.toString('base64') : null,
@@ -89,7 +90,7 @@ class FormatService {
      message: msgState.message,
      userId: msgState.Fid,
      chatId: msgState.Cid,
-     userName: userName,
+     userName: msgState.Fname,
      date: msgState.date
    };
    return msg;

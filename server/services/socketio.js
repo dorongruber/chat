@@ -58,7 +58,7 @@ class SocketServerService {
       const msgId = `${userId}${chatId}${date}`;
       const msgState = await msgService.save(message,msgId,userId,chatId,chatId,date,userName);
       const chatState = await chatService.addMessageToChat(msgState)
-      const newMesg = formatService.messageFormat(msgState,userName);
+      const newMesg = formatService.messageFormat(msgState);
 
       this.sendMessageToUsersNotConnectedToSocket(chatId,newMesg);
       socket.to(chatId).emit('newMessage', (newMesg));

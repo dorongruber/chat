@@ -11,7 +11,9 @@ class ChatService {
   constructor() {}
 
   getById = async function(id) {
-    const chat = await Chats.findOne({id}).populate('users');
+    const chat = await Chats.findOne({id: id})
+    .populate('users', 'id name phone email socketId img')
+    .populate('messages');
     if (!chat) return new Error('404');
     //console.log('get chat by id chat -> ', chat.name);
     return formatService.singleChatResponseFormat(chat);
@@ -176,9 +178,8 @@ class ChatService {
       year: refDate.getUTCFullYear()
     }
     const index = chatMsgs.findIndex(m => this.checkDate(lastMsgDate,m.date));
-    console.log('index -> ', index);
     if (index !== -1 && index !== 0) {
-      chatMsgs = chatMsgs.slice(0, index -1);
+      chatMsgs = chatMsgs.slice(0, index);
       chatMsgs = this.getMessagesFromLastDate(chatMsgs);
       const formatedMessages = formatService.requestMsgFormat(chatMsgs);
       return formatedMessages;
