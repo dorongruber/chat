@@ -7,14 +7,18 @@
 
   <ul>
     <li>
-      <app-form-input [form]="userForm" 
+      <app-form-input 
+      [enableRadonly]="true"
+      [form]="userForm" 
       [placeholder]="'Name'" 
       [name]="'name'" 
       [formControlName]="'name'" 
       [label]="'Name'"></app-form-input>
     </li>
     <li>
-      <app-form-input [form]="userForm" 
+      <app-form-input 
+      [enableRadonly]="true"
+      [form]="userForm" 
       [type]="'email'" 
       [placeholder]="'Email'" 
       [name]="'email'" 
@@ -22,7 +26,9 @@
       [label]="'Email'"></app-form-input>
     </li>
     <li>
-      <app-form-input [form]="userForm" 
+      <app-form-input 
+      [enableRadonly]="true"
+      [form]="userForm" 
       [type]="'tel'" 
       [placeholder]="'Phone'" 
       [name]="'phone'" 
