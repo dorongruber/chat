@@ -30,7 +30,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
   msgContent: string = '';
   messageFormat: Message = {};
   messages: Message[] = [];
-  chatId$: Observable<string>;
   chatUsers: {userId: string, userName: string, chatId: string}[] ;
   baseRoute = COMPONENT_BASE_ROUTE;
   lastMsgElement: Element | null = null;
@@ -53,7 +52,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
         this.sidenav.toggle();
       }))
       .subscribe();
-    this.chatId$ = new Observable<string>();
     this.chatUsers = [];
     this.userService.onUserChange
       .pipe(takeUntil(this.subscriptionContolService.stop$))
@@ -70,6 +68,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
       .pipe(takeUntil(this.subscriptionContolService.stop$), tap(async res => {
         this.onLoadingChange();
         this.selectedChat = res!;
+        const chat = await this.chatService.getChatData(this.selectedChat.id);
+        console.log("chat ==> ", chat);
         
         const formDb = await this.chatService.getChatMessages(this.selectedChat.id);
         this.messages = formDb.reverse();
