@@ -4,7 +4,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, fromEvent } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { RouterAnimations } from 'src/app/app.animation';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatsService } from 'src/app/services/chats.service';
 import { UserService } from 'src/app/services/user.service';
@@ -15,7 +14,6 @@ import { SubscriptionContolService } from 'src/app/services/subscription-control
 import { takeUntil } from "rxjs/operators";
 import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
 import { Header2Component } from '../../components/headers/header2/header2.component';
-import { ControllerService } from 'src/app/services/base/controller.service';
 import { ListItem } from '../../models/list-item';
 
 @Component({
@@ -49,10 +47,9 @@ export class GroupchatComponent implements OnInit {
     private chatService: ChatService,
     private sanitizer: DomSanitizer,
     private fb: FormBuilder,
-    private controllerService: ControllerService,
     private subscriptionContolService: SubscriptionContolService,
   ) {
-    
+    this.InitForm();
     this.userService.onUserChange
       .pipe(
         takeUntil(this.subscriptionContolService.stop$))
@@ -83,7 +80,6 @@ export class GroupchatComponent implements OnInit {
     .subscribe((res) => {
       this.InitEditForm();
     });
-    this.InitForm();
     this.setAutoOptions();
   }
 
@@ -153,41 +149,6 @@ export class GroupchatComponent implements OnInit {
     this.InitForm();
     this.isLoading = false;
   }
-
-  ProcessFile(imageInput: any) {
-    const file: File = imageInput.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      fromEvent(reader, 'load')
-      .pipe(takeUntil(this.subscriptionContolService.stop$), tap((event: any) => {
-        if (file) {
-          const newfile = new File([file], file.name);
-          this.selectedFile = new ImageSnippet(newfile);
-        } else {
-          const emptyFile = new File([], 'emptyfile');
-          this.selectedFile = new ImageSnippet(emptyFile);
-        }
-      }))
-      .subscribe((event: any) => {
-        this.imgToShow = event.target.result;
-      });
-      reader.readAsDataURL(file);
-    }
-  }
-
-  Transform() {
-    if( this.imgToShow) {
-      const imgURL = this.imgToShow.includes('data:image/')? this.imgToShow : 'data:image/*;base64,' + this.imgToShow;
-      return this.sanitizer.bypassSecurityTrustResourceUrl(imgURL);
-    }      
-    return '';
-  }
-
-  displayFn(user?: User): string {
-    return user ? user.name : '';
-  }
-
-  
 
   userTrackBy(index: number,listItem: ListItem) {
     return listItem.id;
