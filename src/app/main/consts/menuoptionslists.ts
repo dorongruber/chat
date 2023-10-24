@@ -4,9 +4,10 @@ import { UserinfoComponent } from "../routes/userinfo/userinfo.component";
 import { DynamicComponentRef } from "../directives/dynamic-component.ref.directive";
 import { HeaderMenuOption } from "../models/header-menu-option";
 import { NewchatComponent } from "../routes/newchat/newchat.component";
+import { ChatInfoComponent } from "../routes/chat-info/chat-info.component";
 
 export const chatMenuOptions = [
-  new HeaderMenuOption('chat info', 'info', new DynamicComponentRef(NewchatComponent)),
+  new HeaderMenuOption('chat info', 'info', new DynamicComponentRef(ChatInfoComponent)),
   new HeaderMenuOption('exit chat', 'chevron_right'),
 ];
 export const mainMenuOptions = [
