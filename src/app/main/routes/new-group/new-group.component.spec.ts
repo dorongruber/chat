@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GroupchatComponent } from './groupchat.component';
+import { GroupchatComponent } from './new-group.component';
 
 describe('GroupchatComponent', () => {
   let component: GroupchatComponent;

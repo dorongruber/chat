@@ -13,8 +13,8 @@ import { Header2Component } from '../headers/header2/header2.component';
 
 @Component({
   selector: 'app-deletechat',
-  templateUrl: './deletechat.component.html',
-  styleUrls: ['./deletechat.component.scss']
+  templateUrl: './delete-chat.component.html',
+  styleUrls: ['./delete-chat.component.scss']
 })
 export class DeletechatComponent implements OnInit {
   userId: string | undefined;

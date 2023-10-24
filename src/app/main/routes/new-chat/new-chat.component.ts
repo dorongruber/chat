@@ -13,8 +13,8 @@ import { ControllerService } from 'src/app/services/base/controller.service';
 
 @Component({
   selector: 'app-newchat',
-  templateUrl: './newchat.component.html',
-  styleUrls: ['./newchat.component.scss'],
+  templateUrl: './new-chat.component.html',
+  styleUrls: ['./new-chat.component.scss'],
   animations: [
     RouterAnimations.routeSlide
   ]
@@ -56,7 +56,7 @@ export class NewchatComponent implements OnInit {
     const res = this.chatsService.addChat('',selected.name,[selectedUser, this.currentUser],this.currentUser.id,selected.img);
     this.controllerService.onStateChange(undefined);
   }
-
+  // smae as in group chat component
   setAutoOptions() {
     this.userService.getAllUsers()
     .then(resData => resData.filter(u => u.id !== this.currentUser.id))
@@ -74,7 +74,7 @@ export class NewchatComponent implements OnInit {
   FilterUsers(inputValue: string) {
     this.listUsers = this.usersItemFormat.filter(user => user.name.includes(inputValue));    
   }
-
+  // smae as in group chat component
   userTrackBy(index: number,listItem: ListItem) {
     return listItem.id;
   }

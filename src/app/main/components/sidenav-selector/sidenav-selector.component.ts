@@ -4,8 +4,8 @@ import { ComponentDirective } from '../../directives/component.directive';
 
 @Component({
   selector: 'app-sidenavselector',
-  templateUrl: './sidenavselector.component.html',
-  styleUrls: ['./sidenavselector.component.scss']
+  templateUrl: './sidenav-selector.component.html',
+  styleUrls: ['./sidenav-selector.component.scss']
 })
 export class SidenavselectorComponent implements OnChanges {
   @Input() componentRef?: DynamicComponentRef | undefined;

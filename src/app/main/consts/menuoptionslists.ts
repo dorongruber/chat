@@ -1,9 +1,9 @@
-import { DeletechatComponent } from "../components/deletechat/deletechat.component";
-import { GroupchatComponent } from "../routes/groupchat/groupchat.component";
-import { UserinfoComponent } from "../routes/userinfo/userinfo.component";
+import { DeletechatComponent } from "../components/delete-chat/delete-chat.component";
+import { GroupchatComponent } from "../routes/new-group/new-group.component";
+import { UserinfoComponent } from "../routes/user-info/user-info.component";
 import { DynamicComponentRef } from "../directives/dynamic-component.ref.directive";
 import { HeaderMenuOption } from "../models/header-menu-option";
-import { NewchatComponent } from "../routes/newchat/newchat.component";
+import { NewchatComponent } from "../routes/new-chat/new-chat.component";
 import { ChatInfoComponent } from "../routes/chat-info/chat-info.component";
 
 export const chatMenuOptions = [

@@ -11,8 +11,8 @@ import { DeviceTypeService } from 'src/app/services/devicetype.service';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-chatmenuitem',
-  templateUrl: './chatmenuitem.component.html',
-  styleUrls: ['./chatmenuitem.component.scss']
+  templateUrl: './chat-menu-item.component.html',
+  styleUrls: ['./chat-menu-item.component.scss']
 })
 export class ChatmenuitemComponent implements OnChanges {
   @Input() chat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));

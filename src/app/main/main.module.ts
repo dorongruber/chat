@@ -7,22 +7,21 @@ import { ChatComponent } from './routes/chat/chat.component';
 import { HeaderComponent } from './components/headers/header/header.component';
 import { MessageComponent } from './components/message/message.component';
 import { SharedModule } from '../shared/shared.module';
-import { LandingpageComponent } from './routes/landingpage/landingpage.component';
+import { LandingpageComponent } from './routes/landing-page/landing-page.component';
 import { MenuComponent } from './routes/menu/menu.component';
 import { ChatsmenuComponent } from './components/chatsmenu/chatsmenu.component';
-import { NewchatComponent } from './routes/newchat/newchat.component';
-import { DeletechatComponent } from './components/deletechat/deletechat.component';
-import { UserinfoComponent } from './routes/userinfo/userinfo.component';
-import { ChatmenuitemComponent } from './components/chatsmenu/chatmenuitem/chatmenuitem.component';
-import { DynamicheightDirective } from './directives/dynamicheight.directive';
+import { NewchatComponent } from './routes/new-chat/new-chat.component';
+import { DeletechatComponent } from './components/delete-chat/delete-chat.component';
+import { UserinfoComponent } from './routes/user-info/user-info.component';
+import { ChatmenuitemComponent } from './components/chatsmenu/chat-menu-item/chat-menu-item.component';
 
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import { Header1Component } from './components/headers/header1/header1.component';
 import { Header2Component } from './components/headers/header2/header2.component';
 import { ComponentDirective } from './directives/component.directive';
-import { SidenavselectorComponent } from './components/sidenavselector/sidenavselector.component';
-import { GroupchatComponent } from './routes/groupchat/groupchat.component';
+import { SidenavselectorComponent } from './components/sidenav-selector/sidenav-selector.component';
+import { GroupchatComponent } from './routes/new-group/new-group.component';
 import { ListItemComponent } from './components/list-item/list-item.component';
 import { SearchInputComponent } from './components/search-input/search-input.component';
 import { DebounceKeyupDirective } from './directives/debounce-keyup.directive';
@@ -45,7 +44,6 @@ import { ChatInfoComponent } from './routes/chat-info/chat-info.component';
     DeletechatComponent,
     UserinfoComponent,
     ChatmenuitemComponent,
-    DynamicheightDirective,
     Header1Component,
     Header2Component,
     ComponentDirective,

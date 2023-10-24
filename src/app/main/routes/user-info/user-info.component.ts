@@ -13,8 +13,8 @@ import { DynamicComponentRef } from '../../directives/dynamic-component.ref.dire
 
 @Component({
   selector: 'app-userinfo',
-  templateUrl: './userinfo.component.html',
-  styleUrls: ['./userinfo.component.scss']
+  templateUrl: './user-info.component.html',
+  styleUrls: ['./user-info.component.scss']
 })
 export class UserinfoComponent {
   userForm: FormGroup = new FormGroup({});

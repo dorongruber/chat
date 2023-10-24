@@ -17,9 +17,9 @@ import { Header2Component } from '../../components/headers/header2/header2.compo
 import { ListItem } from '../../models/list-item';
 
 @Component({
-  selector: 'app-groupchat',
-  templateUrl: './groupchat.component.html',
-  styleUrls: ['./groupchat.component.scss']
+  selector: 'app-new-group',
+  templateUrl: './new-group.component.html',
+  styleUrls: ['./new-group.component.scss']
 })
 export class GroupchatComponent implements OnInit {
   isLoading = false;
@@ -45,7 +45,6 @@ export class GroupchatComponent implements OnInit {
     private userService: UserService,
     private chatsService: ChatsService,
     private chatService: ChatService,
-    private sanitizer: DomSanitizer,
     private fb: FormBuilder,
     private subscriptionContolService: SubscriptionContolService,
   ) {

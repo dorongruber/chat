@@ -6,8 +6,8 @@ import { AuthGurd } from '../auth/models/auth-gurd';
 import { MainComponent } from './main.component';
 import { ChatComponent } from './routes/chat/chat.component';
 
-import { LandingpageComponent } from './routes/landingpage/landingpage.component';
-import { NewchatComponent } from './routes/newchat/newchat.component';
+import { LandingpageComponent } from './routes/landing-page/landing-page.component';
+import { NewchatComponent } from './routes/new-chat/new-chat.component';
 import { MenuComponent } from './routes/menu/menu.component';
 
 const routes: Routes = [
