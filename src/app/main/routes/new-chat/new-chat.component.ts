@@ -53,7 +53,7 @@ export class NewchatComponent implements OnInit {
 
   onSelectedUser(selected: ListItem) {
     const selectedUser = this.usersById[selected.id];
-    const res = this.chatsService.addChat('',selected.name,[selectedUser, this.currentUser],this.currentUser.id,selected.img);
+    const res = this.chatsService.addChat('',selected.name,[selectedUser, this.currentUser],this.currentUser.id,selected.img, "private");
     this.controllerService.onStateChange(undefined);
   }
   // smae as in group chat component
