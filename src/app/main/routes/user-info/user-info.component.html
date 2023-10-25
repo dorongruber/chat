@@ -2,7 +2,7 @@
 <main class="userInfo-container">
   <form [formGroup]="userForm" (ngSubmit)="onSubmit(userForm)" *ngIf="!isLoading">
     <header>
-      <app-select-image [form]="userForm"></app-select-image>
+      <app-select-image [form]="userForm" (onImageFileChange)="initImg($event)"></app-select-image>
   </header>
 
     <ul>

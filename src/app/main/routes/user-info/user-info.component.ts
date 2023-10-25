@@ -35,7 +35,6 @@ export class UserinfoComponent {
         takeUntil(this.subscriptionContolService.stop$), tap((user: User) => {
           this.onLoadingChange(this.isLoading);
           this.user = user;
-          this.initImg();
           this.initForm();
         }))
         .subscribe(
@@ -57,14 +56,8 @@ export class UserinfoComponent {
     })
   }
 
-  initImg() {
-    if(Object.keys(this.user.img).includes('data')) {
-      this.imgToShow = (this.user.img as any).data;
-      this.selectedFile = new ImageSnippet(
-        new File([(this.user.img as any).data],
-       (this.user.img as any).filename)
-      )
-    }
+  initImg(file: ImageSnippet) {
+    this.selectedFile = file;
   }
 
   onSubmit(form: FormGroup) {
@@ -86,31 +79,5 @@ export class UserinfoComponent {
 
   closeWindow() {
     this.controllerService.onStateChange(undefined);
-  }
-
-  ProcessFile(imageInput: any) {
-    const file: File = imageInput.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      fromEvent(reader, 'load')
-      .pipe(takeUntil(this.subscriptionContolService.stop$), tap(() => {
-        if (file) {
-          const newfile = new File([file], file.name);
-          this.selectedFile = new ImageSnippet(newfile);
-        } else {
-          const emptyFile = new File([], 'emptyfile');
-          this.selectedFile = new ImageSnippet(emptyFile);
-        }
-      }))
-      .subscribe((event: any) => {
-        this.imgToShow = event.target.result;
-      });
-      reader.readAsDataURL(file);
-    }
-  }
-  
-  Transform() {
-    const imgURL = this.imgToShow.includes('data:image/')? this.imgToShow : 'data:image/*;base64,' + this.imgToShow;
-    return this.sanitizer.bypassSecurityTrustResourceUrl(imgURL);
   }
 }
