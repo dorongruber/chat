@@ -8,7 +8,7 @@
     *ngIf="!isLoading">
 
       <header class="img-container">
-          <app-select-image [form]="chatForm"></app-select-image>
+          <app-select-image [form]="chatForm" (onImageFileChange)="initImg($event)"></app-select-image>
       </header>
 
       <app-form-input [form]="chatForm" [placeholder]="'Name'" [name]="'name'" [formControlName]="'name'" [label]="'Name'"></app-form-input>

@@ -129,6 +129,10 @@ export class GroupchatComponent implements OnInit {
     return this.chatForm.get('users') as FormArray;
   }
 
+  initImg(file: ImageSnippet) {
+    this.selectedFile = file;
+  }
+
   onSubmit(form: FormGroup) {
 
     if (!form.valid) {
@@ -143,7 +147,7 @@ export class GroupchatComponent implements OnInit {
     reqUsers.push(this.currentUser)
     let name = form.value.name;
     let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
-    this.chatsService.addChat(this.chatId,name,reqUsers,this.currentUser.id,img);
+    this.chatsService.addChat(this.chatId,name,reqUsers,this.currentUser.id,img, "group");
     form.reset();
     this.InitForm();
     this.isLoading = false;
