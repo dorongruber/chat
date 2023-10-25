@@ -85,7 +85,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
   async ngOnInit(): Promise<void> {
    
-   this.socketService.connectToChat(this.user.id, this.user.name, this.selectedChat.id);
 
     this.chatService.usersInChat
    .pipe(takeUntil(this.subscriptionContolService.stop$))
