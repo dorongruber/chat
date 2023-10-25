@@ -59,7 +59,7 @@ export class ChatService {
        })) as Subject<Message>;
      }
 
-     async newChat(id: string,name: string, users: FullUser[], userId: string, img: File) {
+     async newChat(id: string,name: string, users: FullUser[], userId: string, img: File, type: string) {
       const formData = new FormData();
       const url = `${URI}newchat`;
       formData.append('id', id);
@@ -67,6 +67,7 @@ export class ChatService {
       formData.append('users',  JSON.stringify(users.map(u => u.id)));
       formData.append('uId', userId);
       formData.append('image', img);
+      formData.append('type', type);
       try {
          const res = await this.baseService.post(url, formData);
          return res;

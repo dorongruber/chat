@@ -37,6 +37,7 @@ class ChatService {
     const newChat = new Chats({
       id: newChatInfo.id,
       name: newChatInfo.name,
+      chatType: newChatInfo.type,
       users: [...users.map(u => u._id)],
       img: image,
     });
@@ -79,7 +80,7 @@ class ChatService {
 
   getSingalePopulatedField = async function(id, fieldToPopulate) {
     try {
-      const chat = await Chats.findOne({id})
+      const chat = await Chats.findOne({id: id})
       .populate({
         path: fieldToPopulate
       })

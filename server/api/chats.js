@@ -18,9 +18,9 @@ router.delete('/:chatId/:userId', AuthenticationToken, deleteUserById);
 module.exports = router;
 
 function addChat(req,res,next) {
-  const {id,name,users} = req.body;
+  const {id,name,users,type} = req.body;
   const img = req.file;
-  chatService.createChat({id,name,users,img})
+  chatService.createChat({id,name,users,img,type})
   .then(newChat => {
     res.status(200).json(newChat);
   })
