@@ -41,7 +41,7 @@ class SocketServerService {
   async ConnectToChat(newuser, socket) {
     try {
       const {userId, userName, chatId } = {...newuser};
-      let user = chatService.getSingleChatUserById(chatId,userId);
+      let user = userService.getByCustomId(userId);
       if (!user) {
         const savedUser = chatService.addUserToChat(user);
       }
