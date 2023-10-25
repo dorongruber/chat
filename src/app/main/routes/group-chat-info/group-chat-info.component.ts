@@ -7,11 +7,12 @@ import { DynamicComponentRef } from '../../directives/dynamic-component.ref.dire
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ListItem } from '../../models/list-item';
 import { User } from 'src/app/shared/models/user';
+import { ImageSnippet } from '../../models/imagesnippet.model';
 
 @Component({
   selector: 'app-chat-info',
-  templateUrl: './chat-info.component.html',
-  styleUrls: ['./chat-info.component.scss']
+  templateUrl: './group-chat-info.component.html',
+  styleUrls: ['./group-chat-info.component.scss']
 })
 export class ChatInfoComponent implements OnInit {
     
@@ -21,7 +22,7 @@ export class ChatInfoComponent implements OnInit {
   usersById: {[key: string]: User} = {};
   usersItemFormat: ListItem[] = [];
   listUsers: ListItem[] = [];
-
+  selectedFile: ImageSnippet | undefined;
   componentRef = new DynamicComponentRef(Header2Component);
   constructor(
     private fb: FormBuilder,
@@ -63,6 +64,10 @@ export class ChatInfoComponent implements OnInit {
     return this.form.get('users') as FormArray;
   }
 
+  initImg(file: ImageSnippet) {
+    this.selectedFile = file;
+  }
+
   onSubmit(form: FormGroup) {
 
     if (!form.valid) {
@@ -94,10 +99,6 @@ export class ChatInfoComponent implements OnInit {
       const newControl = this.fb.control<User>(selectedUser);
       this.users.push(newControl);
     }
-  }
-
-  userTrackBy(index: number,listItem: ListItem) {
-    return listItem.id;
   }
 
   onLoadingChange() {

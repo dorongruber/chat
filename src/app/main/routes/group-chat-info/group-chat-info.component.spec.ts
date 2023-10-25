@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ChatInfoComponent } from './chat-info.component';
+import { ChatInfoComponent } from './group-chat-info.component';
 
 describe('ChatInfoComponent', () => {
   let component: ChatInfoComponent;

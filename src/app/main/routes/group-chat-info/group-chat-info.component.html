@@ -6,7 +6,7 @@
     *ngIf="!isLoading && chat else Loading">
 
       <header class="img-container">
-          <app-select-image [form]="form"></app-select-image>
+          <app-select-image [form]="form" (onImageFileChange)="initImg($event)"></app-select-image>
 
           <app-form-input 
           [form]="form" 
@@ -18,7 +18,7 @@
       </header>
 
       <ul>
-        <ng-container *ngFor="let user of listUsers; let i = index; trackBy: userTrackBy;">
+        <ng-container *ngFor="let user of listUsers; let i = index;">
           <app-list-item [listItem]="user" (onSelectedItem)="onSelectedUser($event)"></app-list-item>
         </ng-container>
       </ul>
