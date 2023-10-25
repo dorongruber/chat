@@ -28,7 +28,7 @@ import { DebounceKeyupDirective } from './directives/debounce-keyup.directive';
 import { FormInputComponent } from './components/form-input/form-input.component';
 import { SelectImageComponent } from './components/select-image/select-image.component';
 import { ToggleReadonlyDirective } from './directives/toggle-readonly.directive';
-import { ChatInfoComponent } from './routes/chat-info/chat-info.component';
+import { ChatInfoComponent } from './routes/group-chat-info/group-chat-info.component';
 
 
 @NgModule({
