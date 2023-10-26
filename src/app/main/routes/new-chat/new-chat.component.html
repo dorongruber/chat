@@ -8,7 +8,7 @@
  <br>
  <section>
   <ul>
-    <ng-container *ngFor="let user of listUsers; let i = index; trackBy: userTrackBy;">
+    <ng-container *ngFor="let user of listUsers; let i = index;">
       <app-list-item [listItem]="user" (onSelectedItem)="onSelectedUser($event)"></app-list-item>
     </ng-container>
     <ng-container *ngIf="listUsers.length == 0">

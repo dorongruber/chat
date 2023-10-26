@@ -1,14 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
-import { Observable, fromEvent } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { ChatService } from 'src/app/services/chat.service';
+import { Observable } from 'rxjs';
 import { ChatsService } from 'src/app/services/chats.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/models/user';
-import { Chat } from '../../models/chat';
 import { ImageSnippet } from '../../models/imagesnippet.model';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 import { takeUntil } from "rxjs/operators";
@@ -41,10 +36,8 @@ export class GroupchatComponent implements OnInit {
   usersById: {[key: string]: User} = {};
   listUsers: ListItem[] = [];
   constructor(
-    private route: ActivatedRoute,
     private userService: UserService,
     private chatsService: ChatsService,
-    private chatService: ChatService,
     private fb: FormBuilder,
     private subscriptionContolService: SubscriptionContolService,
   ) {
@@ -63,22 +56,6 @@ export class GroupchatComponent implements OnInit {
    }
   //TODO on page reload need to pass user ID
   ngOnInit() {
-    
-    this.chatId$ = this.route.paramMap
-    .pipe(switchMap(params => {
-      return params.getAll('id');
-    }))
-    this.chatId$
-    .pipe(takeUntil(this.subscriptionContolService.stop$), tap(async (res) => {
-      this.chatId = res;
-      const chat = (await this.chatService.getChatData(this.chatId) as Chat);
-      this.chatName = chat.name;
-      this.imgToShow = chat?.img ? (chat.img as any).data : null;
-      this.chatusers = chat.users;
-    }))
-    .subscribe((res) => {
-      this.InitEditForm();
-    });
     this.setAutoOptions();
   }
 
@@ -115,16 +92,6 @@ export class GroupchatComponent implements OnInit {
     });
   }
 
-  InitEditForm() {
-    this.chatForm = this.fb.group({
-      name: this.fb.control(this.chatName, [Validators.required]),
-      users: this.fb.array([this.chatusers.map(user => {
-        return this.fb.control(user, Validators.required)
-      })]),
-      image: this.fb.control(null)
-    });
-  }
-
   get users() {
     return this.chatForm.get('users') as FormArray;
   }
@@ -153,7 +120,4 @@ export class GroupchatComponent implements OnInit {
     this.isLoading = false;
   }
 
-  userTrackBy(index: number,listItem: ListItem) {
-    return listItem.id;
-  }
 }

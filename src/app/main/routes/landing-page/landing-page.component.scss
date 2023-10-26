@@ -1,12 +1,10 @@
-@use "src/global.scss" as global;
-
 .landing-page-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-color: global.$backgroudColor;
+  background-color: var(--prime-backgroud-color);
   @media (max-width: 640px) {
     position: absolute;
     top: 0;
@@ -24,7 +22,7 @@
   width: 300px;
   height: 300px;
   border-radius: 50%;
-  background-image: url('../../assets/images/front.png');
+  background-image: var(--landing-page-image);
   background-position: center;
   background-size: cover;
   box-sizing: border-box;
@@ -39,7 +37,8 @@
   text-align: center;
   color: #ffffff;
   font-weight: 300;
-
+  padding: 0;
+  box-sizing: border-box;
 }
 
 
@@ -65,6 +64,4 @@
   border-radius: 50%;
   background-color: hsl(223, 49%, 19%);
   color: #ffffff;
-  //border: 1px solid hsla(0, 0%, 100%, 0.651);
-  //transform: scale(.8);
 }

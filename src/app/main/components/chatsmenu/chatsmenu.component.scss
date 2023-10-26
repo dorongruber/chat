@@ -1,7 +1,6 @@
-@use "src/global.scss" as global;
 ul {
-  background-color: global.$backgroudColor;
-  height: calc(100% - (global.$headerHeight + var(--search-input-container-height)) );
+  background-color: var(--prime-backgroud-color);
+  height: calc(100% - (var(--header-height) + var(--search-input-container-height)) );
   //height: 100%;
   margin: 0;
   padding: 10px 0 0 0;

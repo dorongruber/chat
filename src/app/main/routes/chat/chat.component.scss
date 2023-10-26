@@ -1,8 +1,6 @@
-@use "src/global.scss" as global;
-
 .chat-container {
   height: 100%;
-  background-color: global.$backgroudColor;
+  background-color: var(--prime-backgroud-color);
 
 }
 
@@ -19,8 +17,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: global.$sendMessageFooterHeight;
-  background-color: global.$headerBackroundColor;
+  height: var(--send-message-footer-height);
+  background-color: var(--header-backround-color);
 }
 
 .input-container {
@@ -34,7 +32,7 @@
 .message-input {
   width: 90%;
   border-radius: 5px;
-  height: global.$messageInputHeight;
+  height: var(--message-input-height);
   font-family: 'Roboto';
   padding-left: 10px;
   box-sizing: border-box;
@@ -72,7 +70,7 @@
 }
 
 .messages-container {
-  height: calc(100% - (global.$headerHeight + global.$sendMessageFooterHeight));
+  height: calc(100% - (var(--header-height) + var(--send-message-footer-height)));
   overflow-y: auto;
   transform: rotateZ(180deg);
 }

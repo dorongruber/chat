@@ -1,8 +1,6 @@
-@use "src/global.scss" as global;
-
 main {
-  height: calc(100% - global.$headerHeight);
-  background-color: global.$backgroudColor;
+  height: calc(100% - var(--header-height));
+  background-color: var(--prime-backgroud-color);
 }
 
 

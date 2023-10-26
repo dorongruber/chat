@@ -74,10 +74,6 @@ export class NewchatComponent implements OnInit {
   FilterUsers(inputValue: string) {
     this.listUsers = this.usersItemFormat.filter(user => user.name.includes(inputValue));    
   }
-  // smae as in group chat component
-  userTrackBy(index: number,listItem: ListItem) {
-    return listItem.id;
-  }
 
 }
 

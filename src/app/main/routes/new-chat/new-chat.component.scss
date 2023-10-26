@@ -1,23 +1,21 @@
-@use "src/global.scss" as global;
-
 .new-chat {
   background-position: center;
   background-repeat: round;
   background-size: 11% 29%;
-  height: calc(100% - global.$headerHeight);
+  height: calc(100% - var(--header-height));
   @media (max-width: 640px) {
     position: relative;
     width: 100%;
     background-size: 70%;
     background-position: unset;
-    background-color: global.$backgroudColor;
+    background-color: var(--prime-backgroud-color);
     z-index: 1;
   }
 }
 
 ul {
-  background-color: global.$backgroudColor;
-  height: calc(100% - global.$headerHeight);
+  background-color: var(--prime-backgroud-color);
+  height: calc(100% - var(--header-height));
   margin: 0;
   padding: 10px 0 0 0;
   box-sizing: border-box;

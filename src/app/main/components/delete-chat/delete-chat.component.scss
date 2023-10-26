@@ -1,10 +1,8 @@
-@use "src/global.scss" as global;
-
 main {
-  height: calc(100% - global.$headerHeight);
+  height: calc(100% - var(--header-height));
 }
 .delete-chat-container {
-  background-color: global.$backgroudColor;
+  background-color: var(--prime-backgroud-color);
 }
 
 .delete-chat-container, .btn-container {
