@@ -20,8 +20,8 @@ export class ChatService {
   usersInChat = new Subject<[{userId: string, userName: string, chatId: string}]>();
   messages = new Subject<Message>();
   newMenuMsg = new Subject<Message>();
-  private onChatChange = new BehaviorSubject<ChatInMenu | null>(null);
-  chat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
+  private onChatChange = new BehaviorSubject<any | null>(null);
+  chat: any;
   userId!: string;
   constructor(
     private baseService: BaseService,
@@ -143,8 +143,9 @@ export class ChatService {
       return this.baseService.delete(URI,ids)
      }
 
-    setCurrentChat(chat: ChatInMenu) {
-      this.onChatChange.next(chat);
+    async setCurrentChat(chat: ChatInMenu) {
+      const chatData = await this.getChatData(chat.id);
+      this.onChatChange.next(chatData);
      }
 
      getCurrentChat() {
