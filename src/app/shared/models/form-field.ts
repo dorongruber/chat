@@ -33,7 +33,7 @@ const ContrllerMostHaveValidator: ValidatorFn = (control:
 export class CustomControl extends CustomBasicControl {
 
   constructor(label: string, type:string
-    , validators: CustomValidators = new CustomValidators(["defualt validator"],[ContrllerMostHaveValidator], ["most difine validator"]),
+    , validators?: CustomValidators,
     { value = "", toolTip = undefined} :
     { value?: string, toolTip?: string} = {},
      ) {
@@ -44,7 +44,7 @@ export class CustomControl extends CustomBasicControl {
   }
 
   ToRelatedFormFormat(fb: FormBuilder): AbstractControl<any, any> {
-    this.control = fb.control(this.properties["value"], this.validators!.validatorFn);
+    this.control = fb.control(this.properties["value"], this.validators?.validatorFn);
     return this.control;
   }
 
@@ -98,4 +98,33 @@ export class CustomGroup extends CustomBasicControl {
      this.childrens.splice(index,1);
   }
 
+}
+
+
+export class CustomArray extends  CustomGroup {
+  constructor(label: string, {validators = undefined, childrens = []} :
+    {validators?: CustomValidators, childrens?: CustomBasicControl[]}
+    = {}) {
+      super(label, {validators: validators, childrens: childrens});
+  }
+
+  ToRelatedFormFormat(fb: FormBuilder): AbstractControl<any, any> {
+    const formControls: AbstractControl[] = [];
+    this.childrens.forEach(child => {
+        formControls.push(child.ToRelatedFormFormat(fb));
+
+    });
+    this.control = fb.array(formControls, {validators: this.validators?.validatorFn},);
+    return this.control;
+  }
+
+  Add(control: CustomBasicControl): void {
+    control.parent = this;
+    this.childrens.push(control);
+  }
+
+  Remove(control: CustomBasicControl): void {
+    const index = this.childrens.findIndex(c => c == control);
+    this.childrens.splice(index,1);
+ }
 }
