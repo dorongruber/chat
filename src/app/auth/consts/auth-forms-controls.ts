@@ -4,13 +4,13 @@ import { ConfirmationPasswordParams, EmailParams, PasswordParams, PhoneParams, U
 import { CustomValidators } from "../../shared/models/custom-validator";
 import { PassValidator } from "./form-validators";
 
-const emailLeaf = new CustomControl(EmailParams["label"],EmailParams["type"],
+const emailControl = new CustomControl(EmailParams["label"],EmailParams["type"],
 new CustomValidators(
   ["required", "email"],
   [Validators.required,Validators.email],
    [`Field is Required`,`Invalid ${EmailParams["label"]} Format`])
 ,);
-const passwordLeaf = new CustomControl(PasswordParams["label"], PasswordParams["type"],
+const passwordControl = new CustomControl(PasswordParams["label"], PasswordParams["type"],
 new CustomValidators(
   ["required", "minlength","maxlength","pattern"],
   [Validators.required,
@@ -24,27 +24,27 @@ new CustomValidators(
 );
 
 const loginFormStructure = new CustomGroup("main group");
-loginFormStructure.Add(emailLeaf);
-loginFormStructure.Add(passwordLeaf);
+loginFormStructure.Add(emailControl);
+loginFormStructure.Add(passwordControl);
 
-const userNameLeaf = new CustomControl(UserNameParams["label"],UserNameParams["type"] ,
+const userNameControl = new CustomControl(UserNameParams["label"],UserNameParams["type"] ,
 new CustomValidators(
   ["required"],
   [Validators.required],
    [`Field is Required`])
 );
-const phoneLeaf = new CustomControl(PhoneParams["label"],PhoneParams["type"],
+const phoneControl = new CustomControl(PhoneParams["label"],PhoneParams["type"],
 new CustomValidators(
   ["required"],
   [Validators.required],
   [`Field is Required`])
 ,);
 const registrationFormStracture = new CustomGroup("main group");
-registrationFormStracture.Add(userNameLeaf);
-registrationFormStracture.Add(emailLeaf);
-registrationFormStracture.Add(phoneLeaf);
+registrationFormStracture.Add(userNameControl);
+registrationFormStracture.Add(emailControl);
+registrationFormStracture.Add(phoneControl);
 
-const passVerificationLeaf = new CustomControl(ConfirmationPasswordParams["label"],
+const passVerificationControl = new CustomControl(ConfirmationPasswordParams["label"],
 ConfirmationPasswordParams["type"],
 new CustomValidators(
   ["required"],
@@ -54,12 +54,12 @@ new CustomValidators(
 const confirmPasswordNode = new CustomGroup("passform", {validators:
   new CustomValidators(
     ["NotEqualPasswords"],
-    [PassValidator(passVerificationLeaf)],
+    [PassValidator(passVerificationControl)],
     [`password dont match`])
 
   });
-confirmPasswordNode.Add(passwordLeaf);
-confirmPasswordNode.Add(passVerificationLeaf);
+confirmPasswordNode.Add(passwordControl);
+confirmPasswordNode.Add(passVerificationControl);
 registrationFormStracture.Add(confirmPasswordNode);
 
 export {
