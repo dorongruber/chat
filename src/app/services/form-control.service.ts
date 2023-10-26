@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
 //import { FormField } from "../models/form-field";
 import { FormBuilder, FormControl, FormGroup, ValidatorFn } from "@angular/forms";
-import { CustomBasicControl } from "../models/form-field";
+import { CustomBasicControl } from "../shared/models/form-field";
 
 @Injectable({
   providedIn: "root"
 })
-export class AuthFormControlService {
+export class FormControlService {
   private fb: FormBuilder;
   constructor(formBuilder: FormBuilder) {
     this.fb = formBuilder;
