@@ -8,6 +8,9 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ListItem } from '../../models/list-item';
 import { User } from 'src/app/shared/models/user';
 import { ImageSnippet } from '../../models/imagesnippet.model';
+import { CustomBasicControl } from 'src/app/shared/models/form-field';
+import { FormControlService } from 'src/app/services/form-control.service';
+import { chatFormStructure } from '../../consts/group-form';
 
 @Component({
   selector: 'app-chat-info',
@@ -18,26 +21,29 @@ export class ChatInfoComponent implements OnInit {
     
   isLoading: boolean = false;
   chat: any;
-  form: FormGroup = new FormGroup({});  
+  form: FormGroup;  
   usersById: {[key: string]: User} = {};
   usersItemFormat: ListItem[] = [];
   listUsers: ListItem[] = [];
   selectedFile: ImageSnippet | undefined;
   componentRef = new DynamicComponentRef(Header2Component);
+
+  customFormFields: CustomBasicControl[];
   constructor(
+    private controlService: FormControlService,
     private fb: FormBuilder,
     private chatService: ChatService,
     private subscriptionContolService: SubscriptionContolService,
   ) {
-    
+    this.customFormFields = this.controlService.GetFlattedList(chatFormStructure);
+    this.form = this.controlService.InstantiateForm(chatFormStructure);
   }
 
   ngOnInit(): void {
     this.chatService.getCurrentChat()
     .pipe(takeUntil(this.subscriptionContolService.stop$), tap(async res => {
       this.onLoadingChange();
-      this.chat = await this.chatService.getChatData(res!.id);
-      this.InitForm();
+      this.chat = res;
       for (let index = 0; index < this.chat.users.length; index++) {
         const user = this.chat.users[index];
         this.usersById[user.id] = user;
@@ -53,13 +59,6 @@ export class ChatInfoComponent implements OnInit {
     });
   }
 
-  InitForm() {
-    this.form = this.fb.group({
-      name: this.fb.control(this.chat.name, [Validators.required]),
-      users: this.fb.array([], Validators.required),
-      image: this.fb.control(null)
-    });
-  }
   get users() {
     return this.form.get('users') as FormArray;
   }
