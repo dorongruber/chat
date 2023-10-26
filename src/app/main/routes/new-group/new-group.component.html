@@ -11,7 +11,11 @@
           <app-select-image [form]="chatForm" (onImageFileChange)="initImg($event)"></app-select-image>
       </header>
 
-      <app-form-input [form]="chatForm" [placeholder]="'Name'" [name]="'name'" [formControlName]="'name'" [label]="'Name'"></app-form-input>
+      <app-form-input 
+      [form]="chatForm" 
+      [placeholder]="customFormFields[0].properties['label']!" 
+      [name]="customFormFields[0].properties['label']!.toLowerCase()" 
+      [label]="customFormFields[0].properties['label']!"></app-form-input>
       <br>
 
       <ul>

@@ -10,30 +10,27 @@
         <app-form-input 
         [enableRadonly]="true"
         [form]="userForm" 
-        [placeholder]="'Name'" 
-        [name]="'name'" 
-        [formControlName]="'name'" 
-        [label]="'Name'"></app-form-input>
+        [placeholder]="customFormFields[0].properties['label']!" 
+        [name]="customFormFields[0].properties['label']!.toLowerCase()" 
+        [label]="customFormFields[0].properties['label']!"></app-form-input>
       </li>
       <li>
         <app-form-input 
         [enableRadonly]="true"
         [form]="userForm" 
-        [type]="'email'" 
-        [placeholder]="'Email'" 
-        [name]="'email'" 
-        [formControlName]="'email'" 
-        [label]="'Email'"></app-form-input>
+        [type]="customFormFields[1].properties['type']!" 
+        [placeholder]="customFormFields[1].properties['label']!" 
+        [name]="customFormFields[1].properties['label']!.toLowerCase()" 
+        [label]="customFormFields[1].properties['label']!"></app-form-input>
       </li>
       <li>
         <app-form-input 
         [enableRadonly]="true"
         [form]="userForm" 
-        [type]="'tel'" 
-        [placeholder]="'Phone'" 
-        [name]="'phone'" 
-        [formControlName]="'phone'" 
-        [label]="'Phone'"></app-form-input>
+        [type]="customFormFields[2].properties['type']!" 
+        [placeholder]="customFormFields[2].properties['label']!" 
+        [name]="customFormFields[2].properties['label']!.toLowerCase()" 
+        [label]="customFormFields[2].properties['label']!"></app-form-input>
       </li>
     </ul>
 

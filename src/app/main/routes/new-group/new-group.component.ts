@@ -10,6 +10,9 @@ import { takeUntil } from "rxjs/operators";
 import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
 import { Header2Component } from '../../components/headers/header2/header2.component';
 import { ListItem } from '../../models/list-item';
+import { CustomBasicControl } from 'src/app/shared/models/form-field';
+import { FormControlService } from 'src/app/services/form-control.service';
+import { chatFormStructure } from '../../consts/group-form';
 
 @Component({
   selector: 'app-new-group',
@@ -18,7 +21,6 @@ import { ListItem } from '../../models/list-item';
 })
 export class GroupchatComponent implements OnInit {
   isLoading = false;
-  chatForm: FormGroup = new FormGroup({});
   error: string | null = null;
   selectedFile: ImageSnippet | undefined = undefined;
   imgToShow: any = null;
@@ -35,13 +37,19 @@ export class GroupchatComponent implements OnInit {
   usersItemFormat: ListItem[] = [];
   usersById: {[key: string]: User} = {};
   listUsers: ListItem[] = [];
+
+  chatForm: FormGroup;
+  customFormFields: CustomBasicControl[];
+
   constructor(
+    private controlService: FormControlService,
     private userService: UserService,
     private chatsService: ChatsService,
     private fb: FormBuilder,
     private subscriptionContolService: SubscriptionContolService,
   ) {
-    this.InitForm();
+    this.customFormFields = this.controlService.GetFlattedList(chatFormStructure);
+    this.chatForm = this.controlService.InstantiateForm(chatFormStructure);
     this.userService.onUserChange
       .pipe(
         takeUntil(this.subscriptionContolService.stop$))
@@ -84,14 +92,6 @@ export class GroupchatComponent implements OnInit {
     }
   }
 
-  InitForm() {
-    this.chatForm = this.fb.group({
-      name: this.fb.control(this.chatName, [Validators.required]),
-      users: this.fb.array([], Validators.required),
-      image: this.fb.control(null)
-    });
-  }
-
   get users() {
     return this.chatForm.get('users') as FormArray;
   }
@@ -116,7 +116,6 @@ export class GroupchatComponent implements OnInit {
     let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
     this.chatsService.addChat(this.chatId,name,reqUsers,this.currentUser.id,img, "group");
     form.reset();
-    this.InitForm();
     this.isLoading = false;
   }
 
