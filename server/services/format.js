@@ -14,6 +14,7 @@ class FormatService {
       formatedChats.push({
         id: chat.id,
         name: chat.name,
+        type: chat.chatType,
         lastMsg:  lastMsg ? this.requestMsgFormat(lastMsg)[0] : lastMsg,
         img: {
           contentType: chat?.img && chat?.img.contentType ? chat.img.contentType : null,
