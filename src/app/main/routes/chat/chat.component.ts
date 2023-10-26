@@ -67,9 +67,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     this.chatService.getCurrentChat()
       .pipe(takeUntil(this.subscriptionContolService.stop$), tap(async res => {
         this.onLoadingChange();
-        this.selectedChat = res!;
-        const chat = await this.chatService.getChatData(this.selectedChat.id);
-        console.log("chat ==> ", chat);
+        this.selectedChat = res;       
         
         const formDb = await this.chatService.getChatMessages(this.selectedChat.id);
         this.messages = formDb.reverse();
