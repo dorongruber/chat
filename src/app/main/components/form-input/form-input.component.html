@@ -1,8 +1,12 @@
 <div [formGroup]="form" class="input-container">
     <div class="form__group">
-        <input [toggleReadonly]="isReadOnly" [type]="type" class="form__field"
-        [placeholder]="placeholder" [name]="name"
-        [formControlName]="formControlName"
+        <input 
+        [id]="name"
+        [toggleReadonly]="isReadOnly" 
+        [type]="type" class="form__field"
+        [placeholder]="placeholder" 
+        [name]="name"
+        [formControlName]="name"
         [autocomplete]="autocomplete"/>
         <label [for]="name" class="form__label">{{ label }}</label>
     </div>

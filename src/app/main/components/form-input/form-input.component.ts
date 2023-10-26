@@ -11,7 +11,6 @@ export class FormInputComponent implements OnChanges {
   @Input() type: string = "text";
   @Input() placeholder!: string;
   @Input() name!: string;
-  @Input() formControlName!: string;
   @Input() autocomplete: "on" | "off" = "off";
   @Input() label!: string;
   @Input() enableRadonly: boolean = false;
