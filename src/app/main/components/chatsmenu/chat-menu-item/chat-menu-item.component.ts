@@ -39,10 +39,10 @@ export class ChatmenuitemComponent implements OnChanges {
     this.asImage = this.checkImage(this.chat.img);
   }
 
-  OnChatSelect(id: string) {
+  async OnChatSelect(id: string) {
     const userName = this.user.name;
     const userId = this.user.id;
-    this.resetMsgAndCount(id);
+    await this.resetMsgAndCount(id);
     this.socketService.connectToChat(userId, userName, id);
 
     if(this.deviceTypeService.isMobile) {
@@ -54,9 +54,9 @@ export class ChatmenuitemComponent implements OnChanges {
     }
   }
 
-  resetMsgAndCount(id: string) {
+  async resetMsgAndCount(id: string) {
     if(id === this.chat.id) {
-      this.chatService.setCurrentChat(this.chat);
+      await this.chatService.setCurrentChat(this.chat);
       this.chat.newmsgscounter = 0;
     }
   }
