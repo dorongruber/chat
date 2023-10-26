@@ -1,5 +1,5 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
-import { CustomBasicControl } from "../models/form-field";
+import { CustomBasicControl } from "../../shared/models/form-field";
 import { ConfirmationPasswordParams, PasswordParams } from "./forms-fields-params";
 
 export function PassValidator(controlLeaf: CustomBasicControl): ValidatorFn {

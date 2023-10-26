@@ -6,9 +6,9 @@ import { takeUntil } from "rxjs/operators";
 import { AuthService } from 'src/app/services/auth.service';
 import { AuthResponseData } from '../../models/auth-response';
 import { BaseUser } from '../../models/newuser';
-import { CustomBasicControl } from '../../models/form-field';
+import { CustomBasicControl } from '../../../shared/models/form-field';
 import { loginFormStructure } from '../../consts/auth-forms-controls';
-import { AuthFormControlService } from '../../services/auth-form-control.service';
+import { FormControlService } from '../../../services/form-control.service';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 
 @Component({
@@ -25,14 +25,14 @@ export class LoginComponent {
 
   constructor(
     private authService: AuthService,
-    private authFormControlService: AuthFormControlService,
+    private controlService: FormControlService,
     private subscriptionContolService: SubscriptionContolService,
     private router: Router,
     private route: ActivatedRoute
   ) {
      this.error = null;
-     this.loginFormFields = this.authFormControlService.GetFlattedList(loginFormStructure);
-     this.authForm = this.authFormControlService.InstantiateForm(loginFormStructure);
+     this.loginFormFields = this.controlService.GetFlattedList(loginFormStructure);
+     this.authForm = this.controlService.InstantiateForm(loginFormStructure);
    }
 
   onSubmit(form: FormGroup) {

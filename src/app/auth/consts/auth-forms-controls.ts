@@ -1,7 +1,7 @@
 import { Validators } from "@angular/forms";
-import { CustomControl, CustomGroup } from "../models/form-field";
+import { CustomControl, CustomGroup } from "../../shared/models/form-field";
 import { ConfirmationPasswordParams, EmailParams, PasswordParams, PhoneParams, UserNameParams } from "./forms-fields-params";
-import { CustomValidators } from "../models/custom-validator";
+import { CustomValidators } from "../../shared/models/custom-validator";
 import { PassValidator } from "./form-validators";
 
 const emailLeaf = new CustomControl(EmailParams["label"],EmailParams["type"],

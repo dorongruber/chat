@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { CustomBasicControl } from '../../models/form-field';
+import { CustomBasicControl } from '../../../shared/models/form-field';
 
 @Component({
   selector: 'app-dynamic-authform-input',

@@ -4,9 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { RegisterUser } from '../../models/newuser';
-import { CustomBasicControl } from '../../models/form-field';
+import { CustomBasicControl } from '../../../shared/models/form-field';
 import { registrationFormStracture,  } from '../../consts/auth-forms-controls';
-import { AuthFormControlService } from '../../services/auth-form-control.service';
+import { FormControlService } from '../../../services/form-control.service';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 import { takeUntil } from 'rxjs/operators';
 
@@ -23,13 +23,13 @@ export class RegisterComponent {
 
   constructor(
     private authService: AuthService,
-    private authFormControlService: AuthFormControlService,
+    private controlService: FormControlService,
     private subscriptionContolService: SubscriptionContolService,
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.registrationFormFieldsStracture = this.authFormControlService.GetFlattedList(registrationFormStracture);
-    this.authForm = this.authFormControlService.InstantiateForm(registrationFormStracture);
+    this.registrationFormFieldsStracture = this.controlService.GetFlattedList(registrationFormStracture);
+    this.authForm = this.controlService.InstantiateForm(registrationFormStracture);
   }
 
   onSubmit(form: FormGroup) {
