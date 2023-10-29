@@ -13,7 +13,7 @@ import { User } from 'src/app/shared/models/user';
 import { MatSidenav } from '@angular/material/sidenav';
 import { chatMenuOptions } from 'src/app/main/consts/menuoptionslists';
 import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
-import { Header2Component } from '../../components/headers/header2/header2.component';
+import { Header1Component } from '../../components/headers/header1/header1.component';
 
 const COMPONENT_BASE_ROUTE = '/main/chat';
 
@@ -34,7 +34,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   selectedChat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
   user!: User;
   menuOPtions = chatMenuOptions;
-  componentRef = new DynamicComponentRef(Header2Component);
+  componentRef = new DynamicComponentRef(Header1Component);
   sidenavComponentRef?: DynamicComponentRef;
   constructor(
     private chatService: ChatService,
