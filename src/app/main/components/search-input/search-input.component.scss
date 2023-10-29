@@ -3,9 +3,6 @@
     height: var(--search-input-container-height);
     padding: 13px 10px;
     box-sizing: border-box;
-    &:focus-within {
-        border: 1px solid red;
-    }
 }
 
 .input-content {
