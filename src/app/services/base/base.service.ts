@@ -19,7 +19,7 @@ export class BaseService {
     return this.http.post<Type>(`${url}`,obj).toPromise();
   }
 
-  put<Type>(url: string, obj: Type) {
+  put<Type>(url: string, obj: FormData) {
     return this.http.put<Type>(`${url}`,obj).toPromise();
   }
 
