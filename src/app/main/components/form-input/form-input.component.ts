@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 @Component({
@@ -13,10 +13,22 @@ export class FormInputComponent implements OnChanges {
   @Input() name!: string;
   @Input() autocomplete: "on" | "off" = "off";
   @Input() label!: string;
-  @Input() enableRadonly: boolean = false;
-  isReadOnly: boolean = false;
+  @Input() editMode: boolean = true;
+  @Input() isReadOnly: boolean = false;
+  value: string | undefined;
 
-  ngOnChanges(): void {
-      this.isReadOnly = this.enableRadonly;
+  @Output() onValueChange: EventEmitter<string> = new EventEmitter<string>();
+
+  ngOnChanges(changes: SimpleChanges): void {
+      this.value = this.form.get(this.name)?.value;
+  }
+
+  toggleEditMode() {
+    this.editMode = !this.editMode;
+  }
+
+  onChange() {
+    this.toggleEditMode();
+    this.onValueChange.emit(this.name);
   }
 }

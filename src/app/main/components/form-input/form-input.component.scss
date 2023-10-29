@@ -7,71 +7,79 @@ $gray: #9b9b9b;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  height: var(--main-input-field-height);
 }
 .form__group {
-    position: relative;
-    padding: 15px 0 0;
-    margin-top: 10px;
-    width: 80%;
-  }
+  display: flex;
+  border-bottom: 2px solid $gray;
+  align-items: center;
+  position: relative;
+  padding: 15px 0 0;
+  margin-top: 10px;
+  width: 80%;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: aqua;
+}
+}
   
-  .form__field {
-    font-family: inherit;
-    width: 100%;
-    border: 0;
-    border-bottom: 2px solid $gray;
-    outline: 0;
+.form__field {
+  font-family: inherit;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  font-size: 1rem;
+  color: $white;
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+
+  &::placeholder {
+    color: transparent;
+  }
+
+  &:placeholder-shown ~ .form__label {
     font-size: 1rem;
-    color: $white;
-    padding: 7px 0;
-    background: transparent;
-    transition: border-color 0.2s;
-  
-    &::placeholder {
-      color: transparent;
-    }
-  
-    &:placeholder-shown ~ .form__label {
-      font-size: 1rem;
-      cursor: text;
-      top: 20px;
-    }
+    cursor: text;
+    top: 20px;
   }
-  
-  .form__label {
+}
+
+.form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 1rem;
+  color: $gray;
+}
+
+.form__field:focus {
+  ~ .form__label {
     position: absolute;
     top: 0;
     display: block;
-    transition: 0.2s;
-    font-size: 1rem;
-    color: $gray;
+    color: aqua; 
   }
-  
-  .form__field:focus {
-    ~ .form__label {
-      position: absolute;
-      top: 0;
-      display: block;
-      transition: 0.2s;
-      font-size: 1rem;
-      font-weight:700;    
-    }
-    padding-bottom: 6px;  
-    border-width: 3px;
-    border-image-slice: 1;
-  }
-  /* reset input */
-  .form__field{
-    &:required,&:invalid { box-shadow:none; }
-  }
+}
+/* reset input */
+.form__field{
+  &:required,&:invalid { box-shadow:none; }
+}
 
-  button {
-    border-radius: 50%;
-    border: transparent;
-    background: transparent;
-  }
+button {
+  border-radius: 50%;
+  border: transparent;
+  background: transparent;
+}
 
-  mat-icon {
-    cursor: pointer;
-    color: aqua;
-  }
+mat-icon {
+  cursor: pointer;
+  color: aqua;
+}
+
+.icon-check {
+  padding-inline-end: .5rem;
+  box-sizing: content-box;
+}

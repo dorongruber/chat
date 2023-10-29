@@ -1,19 +1,31 @@
 <div [formGroup]="form" class="input-container">
-    <div class="form__group">
-        <input 
-        [id]="name"
-        [toggleReadonly]="isReadOnly" 
-        [type]="type" class="form__field"
-        [placeholder]="placeholder" 
-        [name]="name"
-        [formControlName]="name"
-        [autocomplete]="autocomplete"/>
-        <label [for]="name" class="form__label">{{ label }}</label>
-    </div>
-    <ng-container *ngIf="enableRadonly">
-        <button type="button"  (click)="isReadOnly = !isReadOnly">
-            <mat-icon>edit</mat-icon>
-        </button>
+    <ng-container *ngIf="!isReadOnly else ReadOnly">
+        <ng-container *ngIf="!editMode">
+            <div class="form__group">
+                <mat-icon (click)="onChange()" class="icon-check">check</mat-icon>
+                <input 
+                [id]="name"
+                [type]="type" class="form__field"
+                [placeholder]="placeholder" 
+                [name]="name"
+                [formControlName]="name"
+                [autocomplete]="autocomplete"/>
+                <label [for]="name" class="form__label">{{ label }}</label>
+                
+            </div>
+        </ng-container>
+        
+        <ng-container *ngIf="editMode">
+            <span>{{value}}</span>
+    
+            <button type="button"  (click)="toggleEditMode()">
+                <mat-icon>edit</mat-icon>
+            </button>
+        </ng-container>
     </ng-container>
+
+    <ng-template #ReadOnly>
+        <span>{{value}}</span>
+    </ng-template>
     
 </div>
