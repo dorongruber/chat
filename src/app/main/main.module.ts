@@ -20,7 +20,7 @@ import {MatListModule} from '@angular/material/list';
 import { Header1Component } from './components/headers/header1/header1.component';
 import { Header2Component } from './components/headers/header2/header2.component';
 import { ComponentDirective } from './directives/component.directive';
-import { SidenavselectorComponent } from './components/sidenav-selector/sidenav-selector.component';
+import { DynamicComponent } from './components/dynamic-component/dynamic-component.component';
 import { GroupchatComponent } from './routes/new-group/new-group.component';
 import { ListItemComponent } from './components/list-item/list-item.component';
 import { SearchInputComponent } from './components/search-input/search-input.component';
@@ -48,7 +48,7 @@ import { ShowImageComponent } from './components/show-image/show-image.component
     Header1Component,
     Header2Component,
     ComponentDirective,
-    SidenavselectorComponent,
+    DynamicComponent,
     GroupchatComponent,
     ListItemComponent,
     SearchInputComponent,

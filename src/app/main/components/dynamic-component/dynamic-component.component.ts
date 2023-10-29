@@ -3,11 +3,11 @@ import { DynamicComponentRef } from '../../directives/dynamic-component.ref.dire
 import { ComponentDirective } from '../../directives/component.directive';
 
 @Component({
-  selector: 'app-sidenavselector',
-  templateUrl: './sidenav-selector.component.html',
-  styleUrls: ['./sidenav-selector.component.scss']
+  selector: 'app-dynamic-component',
+  templateUrl: './dynamic-component.component.html',
+  styleUrls: ['./dynamic-component.component.scss']
 })
-export class SidenavselectorComponent implements OnChanges {
+export class DynamicComponent implements OnChanges {
   @Input() componentRef?: DynamicComponentRef | undefined;
   @ViewChild(ComponentDirective, { static: true}) bodyHost?: ComponentDirective;
 
