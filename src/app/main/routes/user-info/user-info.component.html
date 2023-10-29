@@ -1,45 +1,23 @@
 <app-header [title]="'user Info'" [componentRef]="componentRef"></app-header>
 <main class="userInfo-container">
-  <form [formGroup]="userForm" (ngSubmit)="onSubmit(userForm)" *ngIf="!isLoading">
+  <form [formGroup]="form" *ngIf="!isLoading">
     <header>
-      <app-select-image [form]="userForm" (onImageFileChange)="initImg($event)"></app-select-image>
+      <app-select-image [form]="form" [type]="'group'" (onImageFileChange)="initImg($event)"></app-select-image>
   </header>
 
     <ul>
-      <li>
-        <app-form-input 
-        [enableRadonly]="true"
-        [form]="userForm" 
-        [placeholder]="customFormFields[0].properties['label']!" 
-        [name]="customFormFields[0].properties['label']!.toLowerCase()" 
-        [label]="customFormFields[0].properties['label']!"></app-form-input>
-      </li>
-      <li>
-        <app-form-input 
-        [enableRadonly]="true"
-        [form]="userForm" 
-        [type]="customFormFields[1].properties['type']!" 
-        [placeholder]="customFormFields[1].properties['label']!" 
-        [name]="customFormFields[1].properties['label']!.toLowerCase()" 
-        [label]="customFormFields[1].properties['label']!"></app-form-input>
-      </li>
-      <li>
-        <app-form-input 
-        [enableRadonly]="true"
-        [form]="userForm" 
-        [type]="customFormFields[2].properties['type']!" 
-        [placeholder]="customFormFields[2].properties['label']!" 
-        [name]="customFormFields[2].properties['label']!.toLowerCase()" 
-        [label]="customFormFields[2].properties['label']!"></app-form-input>
-      </li>
+      <ng-container *ngFor="let field of customFormFields | slice:0:-1; trackBy: formFieldTrackBy">
+        <li>
+          <app-form-input
+          (onValueChange)="onValueChange($event)"
+          [editMode]="true"
+          [form]="form" 
+          [placeholder]="field.properties['label']!" 
+          [name]="field.properties['label']!.toLowerCase()" 
+          [label]="field.properties['label']!"></app-form-input>
+        </li>
+      </ng-container>
     </ul>
-
-    <div class='btn-container'>
-      <button
-      type="submit"
-      [disabled]="!userForm.valid"
-      mat-raised-button> update </button>
-    </div>
   </form>
 
   <ng-container *ngIf="isLoading">

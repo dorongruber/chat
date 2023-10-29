@@ -18,7 +18,7 @@ import { userFormStructure } from '../../consts/user-form';
   styleUrls: ['./user-info.component.scss']
 })
 export class UserinfoComponent {
-  userForm: FormGroup;
+  form: FormGroup;
   user: User = new User('','','','','',new File([],'emptyFile'));
   isLoading = false;
   selectedFile: ImageSnippet | undefined;
@@ -33,7 +33,7 @@ export class UserinfoComponent {
   ) { 
 
     this.customFormFields = this.controlService.GetFlattedList(userFormStructure);
-    this.userForm = this.controlService.InstantiateForm(userFormStructure);
+    this.form = this.controlService.InstantiateForm(userFormStructure);
     this.userService.onUserChange
       .pipe(
         takeUntil(this.subscriptionContolService.stop$), tap((user: User) => {
@@ -52,7 +52,7 @@ export class UserinfoComponent {
   }
 
   initForm(){
-    this.userForm.patchValue({
+    this.form.patchValue({
       name: this.user.name,
       email: this.user.email,
       phone: this.user.phone,
@@ -63,17 +63,8 @@ export class UserinfoComponent {
     this.selectedFile = file;
   }
 
-  onSubmit(form: FormGroup) {
-    if (!form.valid && this.selectedFile) return;
-    this.onLoadingChange(this.isLoading);
-    let name = form.value.name;
-    let email = form.value.email;
-    let phone = form.value.phone;
-    let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
-
-    const updatedUser = new User(this.user.id,name,phone,this.user.password,email,img);
-    this.userService.updateUser(updatedUser);
-    this.onLoadingChange(this.isLoading);
+  formFieldTrackBy(index: number,field: CustomBasicControl) {
+    return field.properties["label"];
   }
 
   onLoadingChange(load: boolean) {
@@ -82,5 +73,27 @@ export class UserinfoComponent {
 
   closeWindow() {
     this.controllerService.onStateChange(undefined);
+  }
+
+  onValueChange(fieldName: string) {
+    const control = this.form.get(fieldName);
+    
+    if(control?.invalid) {
+      alert(control?.errors);
+      return;
+    }
+    if(this.form.invalid) {
+      alert(this.form.errors);
+      return;
+    }
+    if(!this.form.dirty || this.form.pristine) {
+      return;
+    }
+    this.onLoadingChange(this.isLoading);
+    let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
+    const updatedUser = new User(this.user.id,this.form.value.name,this.form.value.phone,this.user.password,this.form.value.email,img);
+    this.userService.updateUser(updatedUser);
+    this.onLoadingChange(this.isLoading);
+    
   }
 }
