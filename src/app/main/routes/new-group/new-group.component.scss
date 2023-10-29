@@ -3,6 +3,7 @@
   background-repeat: round;
   background-size: 11% 29%;
   height: calc(100% - var(--header-height));
+  background-color: var(--prime-backgroud-color);
   @media (max-width: 640px) {
     position: relative;
     width: 100%;
