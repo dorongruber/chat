@@ -4,10 +4,9 @@ import { ChatService } from 'src/app/services/chat.service';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 import { Header2Component } from '../../components/headers/header2/header2.component';
 import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ListItem } from '../../models/list-item';
 import { User } from 'src/app/shared/models/user';
-import { ImageSnippet } from '../../models/imagesnippet.model';
 import { CustomBasicControl } from 'src/app/shared/models/form-field';
 import { FormControlService } from 'src/app/services/form-control.service';
 import { chatFormStructure } from '../../consts/group-form';
@@ -25,7 +24,7 @@ export class ChatInfoComponent implements OnInit {
   usersById: {[key: string]: User} = {};
   usersItemFormat: ListItem[] = [];
   listUsers: ListItem[] = [];
-  selectedFile: ImageSnippet | undefined;
+  selectedFile?: File;
   componentRef = new DynamicComponentRef(Header2Component);
 
   customFormFields: CustomBasicControl[];
@@ -79,7 +78,7 @@ export class ChatInfoComponent implements OnInit {
     return this.form.get('users') as FormArray;
   }
 
-  initImg(file: ImageSnippet) {
+  initImg(file: File) {
     this.selectedFile = file;
   }
 
@@ -98,7 +97,7 @@ export class ChatInfoComponent implements OnInit {
       return;
     }
     this.onLoadingChange();
-    let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
+    let img =  this.selectedFile ? this.selectedFile : new File([],'emptyFile');
     // const updatedUser = new User(this.user.id,this.form.value.name,this.form.value.phone,this.user.password,this.form.value.email,img);
     // this.chatService.(updatedUser);
     this.onLoadingChange();

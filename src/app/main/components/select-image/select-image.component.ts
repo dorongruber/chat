@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
-import { ImageSnippet } from '../../models/imagesnippet.model';
 import { takeUntil, tap } from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
-import { DomSanitizer } from '@angular/platform-browser';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 import { FormGroup } from '@angular/forms';
 
@@ -15,22 +13,17 @@ export class SelectImageComponent implements OnChanges{
   @Input() form!: FormGroup;
   @Input() file: File | undefined;
   @Input() type!: string;
-  selectedFile: ImageSnippet | undefined = undefined;
+  selectedFile: File | undefined = undefined;
   imgToShow: any = null;
 
-  @Output() onImageFileChange: EventEmitter<ImageSnippet> = new EventEmitter<ImageSnippet>();
+  @Output() onImageFileChange: EventEmitter<File> = new EventEmitter<File>();
   constructor(
-    private sanitizer: DomSanitizer,
     private subscriptionContolService: SubscriptionContolService,
   ) {}
 
   ngOnChanges(): void {
     if(this.file && Object.keys(this.file).includes('data')) {
       this.imgToShow = (this.file as any).data;
-      this.selectedFile = new ImageSnippet(
-        new File([(this.file as any).data],
-       (this.file as any).filename)
-      );
     }
   }
   ProcessFile(imageInput: any) {
@@ -39,13 +32,7 @@ export class SelectImageComponent implements OnChanges{
       const reader = new FileReader();
       fromEvent(reader, 'load')
       .pipe(takeUntil(this.subscriptionContolService.stop$), tap((event: any) => {
-        if (file) {
-          const newfile = new File([file], file.name);
-          this.selectedFile = new ImageSnippet(newfile);
-        } else {
-          const emptyFile = new File([], 'emptyfile');
-          this.selectedFile = new ImageSnippet(emptyFile);
-        }
+        this.selectedFile = file ? file : new File([], 'emptyfile');
       }))
       .subscribe((event: any) => {
         this.imgToShow = event.target.result;

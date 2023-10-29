@@ -3,7 +3,6 @@ import { FormGroup } from '@angular/forms';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/models/user';
-import { ImageSnippet } from '../../models/imagesnippet.model';
 import { takeUntil, tap } from "rxjs/operators";
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 import { Header2Component } from '../../components/headers/header2/header2.component';
@@ -21,7 +20,7 @@ export class UserinfoComponent {
   form: FormGroup;
   user: User = new User('','','','','',new File([],'emptyFile'));
   isLoading = false;
-  selectedFile: ImageSnippet | undefined;
+  selectedFile?: File;
   imgToShow: any;
   componentRef = new DynamicComponentRef(Header2Component);
   customFormFields: CustomBasicControl[];
@@ -59,7 +58,7 @@ export class UserinfoComponent {
     });
   }
 
-  initImg(file: ImageSnippet) {
+  initImg(file: File) {
     this.selectedFile = file;
   }
 
@@ -90,7 +89,7 @@ export class UserinfoComponent {
       return;
     }
     this.onLoadingChange(this.isLoading);
-    let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
+    let img =  this.selectedFile ? this.selectedFile : new File([],'emptyFile');
     const updatedUser = new User(this.user.id,this.form.value.name,this.form.value.phone,this.user.password,this.form.value.email,img);
     this.userService.updateUser(updatedUser);
     this.onLoadingChange(this.isLoading);

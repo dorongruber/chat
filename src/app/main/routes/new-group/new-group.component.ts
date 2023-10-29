@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { ChatsService } from 'src/app/services/chats.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/shared/models/user';
-import { ImageSnippet } from '../../models/imagesnippet.model';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 import { takeUntil } from "rxjs/operators";
 import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
@@ -22,7 +21,7 @@ import { chatFormStructure } from '../../consts/group-form';
 export class GroupchatComponent implements OnInit {
   isLoading = false;
   error: string | null = null;
-  selectedFile: ImageSnippet | undefined = undefined;
+  selectedFile?: File;
   imgToShow: any = null;
   chatName = '';
   filteredOptions: Observable<User[]>[] = [];
@@ -96,7 +95,7 @@ export class GroupchatComponent implements OnInit {
     return this.chatForm.get('users') as FormArray;
   }
 
-  initImg(file: ImageSnippet) {
+  initImg(file: File) {
     this.selectedFile = file;
   }
 
@@ -113,7 +112,7 @@ export class GroupchatComponent implements OnInit {
     }
     reqUsers.push(this.currentUser)
     let name = form.value.name;
-    let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
+    let img =  this.selectedFile ? this.selectedFile : new File([],'emptyFile');
     this.chatsService.addChat(this.chatId,name,reqUsers,this.currentUser.id,img, "group");
     form.reset();
     this.isLoading = false;
