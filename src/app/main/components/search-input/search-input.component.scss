@@ -2,6 +2,7 @@
     width: 100%;
     height: var(--search-input-container-height);
     padding: 13px 10px;
+    background-color: var(--header-backround-color);
     box-sizing: border-box;
 }
 
@@ -9,7 +10,7 @@
     display: flex;
     align-items: center;
     height: 33px;
-    background-color: hsl(0, 0%, 35%);
+    background-color: var(--prime-backgroud-color);
     border-radius: 10px;
 }
 
