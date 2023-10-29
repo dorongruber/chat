@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderMenuOption } from 'src/app/main/models/header-menu-option';
@@ -13,18 +12,13 @@ export class Header2Component {
   @Input() menuOptions: HeaderMenuOption[] = [];
   @Input() title: string = '';
   @Input() type!: string;
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    public controllerService: ControllerService,
-  ) { }
+  constructor(public controllerService: ControllerService) { }
 
   onOptionSelect(index: number) {
     
     switch(index) {
       case 0:
         this.controllerService.onStateChange(this.menuOptions[index]);
-      //this.onNavigationChange(`/main/newchat/${this.chat.id}`);
         break;
       case 1:
         this.back();

@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { Message } from 'src/app/main/models/message';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
@@ -16,7 +15,6 @@ import { chatMenuOptions } from 'src/app/main/consts/menuoptionslists';
 import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
 import { Header2Component } from '../../components/headers/header2/header2.component';
 
-
 const COMPONENT_BASE_ROUTE = '/main/chat';
 
 @Component({
@@ -30,7 +28,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
   msgContent: string = '';
   messageFormat: Message = {};
   messages: Message[] = [];
-  chatUsers: {userId: string, userName: string, chatId: string}[] ;
   baseRoute = COMPONENT_BASE_ROUTE;
   lastMsgElement: Element | null = null;
   isLoading = false;
@@ -52,7 +49,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
         this.sidenav.toggle();
       }))
       .subscribe();
-    this.chatUsers = [];
     this.userService.onUserChange
       .pipe(takeUntil(this.subscriptionContolService.stop$))
       .subscribe(
@@ -81,14 +77,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
       });
    }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit() {
    
-
-    this.chatService.usersInChat
-   .pipe(takeUntil(this.subscriptionContolService.stop$))
-   .subscribe(resUsers => {
-    this.chatUsers = [...resUsers];
-   })
    this.chatService.messages
    .pipe(takeUntil(this.subscriptionContolService.stop$), tap(resMsg => {
       this.onLoadingChange();
@@ -96,7 +86,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
       setTimeout(() => {
         this.scrollToLastMsg(); 
       });
-    this.onLoadingChange();
   }))
    .subscribe(resMsg => {
     this.onLoadingChange();

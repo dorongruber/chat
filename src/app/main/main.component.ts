@@ -33,9 +33,6 @@ export class MainComponent implements OnInit {
       if(this.deviceTypeService.isMobile) {
         this.router.navigate(["menu"], {relativeTo: this.route.parent});
       } 
-      // else {
-      //   this.router.navigate(["landingpage"], {relativeTo: this.route.parent});
-      // }
    }
 
   async ngOnInit(): Promise<void> {

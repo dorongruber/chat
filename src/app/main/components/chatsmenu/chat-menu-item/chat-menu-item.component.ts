@@ -7,8 +7,7 @@ import { ChatInMenu } from '../../../models/chat';
 import { takeUntil } from "rxjs/operators";
 import { User } from 'src/app/shared/models/user';
 import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
-import { DeviceTypeService } from 'src/app/services/devicetype.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-chatmenuitem',
   templateUrl: './chat-menu-item.component.html',
@@ -16,17 +15,17 @@ import { Router } from '@angular/router';
 })
 export class ChatmenuitemComponent implements OnChanges {
   @Input() chat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
-
   @Input()user!: User;
+  
   asImage!: boolean;
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private controllerService: ControllerService,
     private socketService: SocketService,
     private sanitizer: DomSanitizer,
     private chatService: ChatService,
     private subscriptionContolService: SubscriptionContolService,
-    private deviceTypeService: DeviceTypeService,
   ) { 
     this.controllerService.onChatFocus
     .pipe(takeUntil(this.subscriptionContolService.stop$))
@@ -43,15 +42,8 @@ export class ChatmenuitemComponent implements OnChanges {
     const userName = this.user.name;
     const userId = this.user.id;
     await this.resetMsgAndCount(id);
-    this.socketService.connectToChat(userId, userName, id);
-
-    if(this.deviceTypeService.isMobile) {
-      //this.controllerService.onStateChange('open');
-      
-    }
-    else {
-      this.router.navigate(['./main/chat', this.chat.id]);
-    }
+    this.socketService.connectToChat(userId, userName, id);    
+    this.router.navigate(['chat', this.chat.id,], {relativeTo: this.route.parent});
   }
 
   async resetMsgAndCount(id: string) {
