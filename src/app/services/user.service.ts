@@ -65,7 +65,7 @@ export class UserService {
     formData.append('image', updateduser.img);
 
     const url =`${URI}update/`
-    this.baseService.put<any>(URI,formData)
+    this.baseService.put<User>(URI,formData)
     .then(resUpdatedUser => {
       const updatedUser = new User
       (resUpdatedUser.id,
