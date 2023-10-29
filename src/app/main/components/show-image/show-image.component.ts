@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
@@ -10,13 +10,14 @@ export class ShowImageComponent implements OnChanges {
 
   @Input() imgToShow: string | undefined;
   @Input() type!: string;
+  @Input() size!: string;
   iconName!: string;
 
   constructor(
     private sanitizer: DomSanitizer,
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
       this.iconName = this.type == 'group' ? 'supervised_user_circle' : 'account_circle';
   }
 
