@@ -29,6 +29,7 @@ import { FormInputComponent } from './components/form-input/form-input.component
 import { SelectImageComponent } from './components/select-image/select-image.component';
 import { ToggleReadonlyDirective } from './directives/toggle-readonly.directive';
 import { ChatInfoComponent } from './routes/group-chat-info/group-chat-info.component';
+import { ShowImageComponent } from './components/show-image/show-image.component';
 
 
 @NgModule({
@@ -56,6 +57,7 @@ import { ChatInfoComponent } from './routes/group-chat-info/group-chat-info.comp
     SelectImageComponent,
     ToggleReadonlyDirective,
     ChatInfoComponent,
+    ShowImageComponent,
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,10 @@
+<ng-container *ngIf="imgToShow else ShowIcon">
+    <img
+    [src]="Transform()"
+    alt="Image Preview"
+    class="image-preview"
+    >   
+</ng-container>
+<ng-template #ShowIcon>
+    <mat-icon>{{ iconName }}</mat-icon>
+</ng-template>
