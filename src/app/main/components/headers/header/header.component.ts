@@ -21,7 +21,6 @@ export class HeaderComponent implements OnChanges {
     if(this.componentRef && this.bodyHost) {
       this.bodyHost.viewContainerRef.clear();
       const ref = this.bodyHost.viewContainerRef.createComponent(this.componentRef.bodyComponent);
-      console.log("ref ==> ", ref.instance);
       ref.instance.menuOptions = this.menuOptions;
       ref.instance.title = this.title;
     }
