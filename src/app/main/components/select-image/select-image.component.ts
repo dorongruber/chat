@@ -14,6 +14,7 @@ import { FormGroup } from '@angular/forms';
 export class SelectImageComponent implements OnChanges{
   @Input() form!: FormGroup;
   @Input() file: File | undefined;
+  @Input() type!: string;
   selectedFile: ImageSnippet | undefined = undefined;
   imgToShow: any = null;
 
@@ -45,20 +46,14 @@ export class SelectImageComponent implements OnChanges{
           const emptyFile = new File([], 'emptyfile');
           this.selectedFile = new ImageSnippet(emptyFile);
         }
-        this.onImageFileChange.emit(this.selectedFile);
       }))
       .subscribe((event: any) => {
         this.imgToShow = event.target.result;
+        this.onImageFileChange.emit(this.selectedFile);
       });
       reader.readAsDataURL(file);
     }
   }
 
-  Transform() {
-    if( this.imgToShow) {
-      const imgURL = this.imgToShow.includes('data:image/')? this.imgToShow : 'data:image/*;base64,' + this.imgToShow;
-      return this.sanitizer.bypassSecurityTrustResourceUrl(imgURL);
-    }      
-    return '';
-  }
+
 }

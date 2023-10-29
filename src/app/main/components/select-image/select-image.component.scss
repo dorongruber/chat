@@ -1,8 +1,7 @@
-.cyrcle-img {
-    width: 150px;
-    height: 150px;
+.circle-img {
+    width: var(--image-size);
+    height: var(--image-size);
     margin: auto;
-    border: 2px solid rgb(122, 118, 118);
     border-radius: 50%;
   
     &:hover .drop-container {
@@ -20,18 +19,6 @@
     visibility: hidden;
     display: none;
 }
-
-.image-preview {
-    position: absolute;
-    top: 0;
-    z-index: 1;
-    width: inherit;
-    height: inherit;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 2px solid rgb(122, 118, 118);
-    box-sizing: border-box;
-}
     
 .drop-container {
     position: relative;
@@ -39,8 +26,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 150px;
-    width: 150px;
+    height: var(--image-size);
+    width: var(--image-size);
     border-radius: 50%;
     cursor: pointer;
     transition: background .2s ease-in-out, border .2s ease-in-out;
