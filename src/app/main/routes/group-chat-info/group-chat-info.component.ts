@@ -29,6 +29,7 @@ export class ChatInfoComponent implements OnInit {
   componentRef = new DynamicComponentRef(Header2Component);
 
   customFormFields: CustomBasicControl[];
+  isReadOnly: boolean = true;
   constructor(
     private controlService: FormControlService,
     private fb: FormBuilder,
@@ -44,19 +45,34 @@ export class ChatInfoComponent implements OnInit {
     .pipe(takeUntil(this.subscriptionContolService.stop$), tap(async res => {
       this.onLoadingChange();
       this.chat = res;
-      for (let index = 0; index < this.chat.users.length; index++) {
-        const user = this.chat.users[index];
-        this.usersById[user.id] = user;
-        const formatUser = new ListItem(user.id, user.name,user.phone,{_img: user.img, _icon: 'account_circle'});
-        this.listUsers.push(formatUser);
-        const newControl = this.fb.control<User>(user);
-        this.users.push(newControl);
+      this.isReadOnly = this.chat.type == 'group' ? false : true;
+      this.initForm();
+      if(this.chat.type == 'group') {
+        this.initUsersList();
       }
       
     }))
     .subscribe(() => {
       this.onLoadingChange();
     });
+  }
+
+  initForm() {
+    this.form.patchValue({
+      name: this.chat.name,
+      image: this.chat.image
+    })
+  }
+
+  initUsersList() {
+    for (let index = 0; index < this.chat.users.length; index++) {
+      const user = this.chat.users[index];
+      this.usersById[user.id] = user;
+      const formatUser = new ListItem(user.id, user.name,user.phone,{_img: user.img, _icon: 'account_circle'});
+      this.listUsers.push(formatUser);
+      const newControl = this.fb.control<User>(user);
+      this.users.push(newControl);
+    }
   }
 
   get users() {
@@ -67,26 +83,26 @@ export class ChatInfoComponent implements OnInit {
     this.selectedFile = file;
   }
 
-  onSubmit(form: FormGroup) {
-
-    if (!form.valid) {
-      console.log('invalide form -> ', form);
+  onValueChange(fieldName: string) {
+    const control = this.form.get(fieldName);
+    
+    if(control?.invalid) {
+      alert(control?.errors);
       return;
     }
-    this.isLoading = true;
-    console.log("update submited group chat ==> ", form);
+    if(this.form.invalid) {
+      alert(this.form.errors);
+      return;
+    }
+    if(!this.form.dirty || this.form.pristine) {
+      return;
+    }
+    this.onLoadingChange();
+    let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
+    // const updatedUser = new User(this.user.id,this.form.value.name,this.form.value.phone,this.user.password,this.form.value.email,img);
+    // this.chatService.(updatedUser);
+    this.onLoadingChange();
     
-    // let reqUsers: any[] = [];
-    // for(const control of this.users.value) {
-    //   reqUsers.push(control.value);
-    // }
-    // reqUsers.push(this.currentUser)
-    // let name = form.value.name;
-    // let img =  this.selectedFile?.file ? this.selectedFile.file : new File([],'emptyFile');
-    // this.chatsService.addChat(this.chatId,name,reqUsers,this.currentUser.id,img);
-    form.reset();
-    // this.InitForm();
-    this.isLoading = false;
   }
 
   onSelectedUser(selected: ListItem) {
