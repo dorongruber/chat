@@ -35,6 +35,7 @@ class FormatService {
       name: chat.name,
       users: chat.users,
       messages: chat.messages,
+      type: chat.chatType,
       img: {
         contentType: chat?.img && chat?.img.contentType ? chat.img.contentType : null,
         data: chat?.img && chat?.img.data ? chat.img.data.toString('base64') : null,

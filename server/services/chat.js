@@ -15,7 +15,6 @@ class ChatService {
     .populate('users', 'id name phone email socketId img')
     .populate('messages');
     if (!chat) return new Error('404');
-    //console.log('get chat by id chat -> ', chat.name);
     return formatService.singleChatResponseFormat(chat);
   }
 

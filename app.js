@@ -8,6 +8,7 @@ const userRouter = require('./server/api/users');
 const chatRouter = require('./server/api/chats');
 const app = express();
 
+app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'dist','chat')));

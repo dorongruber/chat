@@ -3,6 +3,7 @@ const { userService } = require('../services/user');
 const { AuthenticationToken } = require('../middleware/jwt');
 const { upload } = require('../middleware/processimg');
 const { loginUserValidator } = require('../middleware/login-validator');
+const { updatedUserValidator } = require('../middleware/registraion-validator');
 const { userValidator } = require('../middleware/registraion-validator');
 const router = express.Router();
 
@@ -10,7 +11,7 @@ router.post('/login',loginUserValidator, Login);
 
 router.post('/register', userValidator, saveUser);
 
-router.put('/',userValidator, upload.single('image') ,updateUserInfo)
+router.put('/',AuthenticationToken, updatedUserValidator, upload.single('image') ,updateUserInfo)
 
 //router.post('/update', updateUserInfo);
 

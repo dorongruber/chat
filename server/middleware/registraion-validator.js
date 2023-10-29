@@ -20,7 +20,7 @@ function phoneValidator(phone) {
     return cleanedPhoneNumber.length == 10;
 }
 
-module.exports.userValidator = function userValidator(req,res,next) {
+function userValidator(req,res,next) {
     const { user } = req.body;
     if(!nameValidator(user._firstName))
         return res.setStatus(401);
@@ -31,4 +31,22 @@ module.exports.userValidator = function userValidator(req,res,next) {
     if(!validatePassword(user._password))
         return res.setStatus(401);
     next();
+}
+
+function updatedUserValidator(req, res, next) {
+    console.log("req ===> ", req);
+    const { user } = req.data;
+    console.log("user ==> ", user);
+    if(!nameValidator(user.name))
+        return res.setStatus(401);
+    if(!phoneValidator(user.phone))
+        return res.setStatus(401);
+    if(!validateEmail(user.email))
+        return res.setStatus(401);
+    next();
+}
+
+module.exports = {
+    userValidator,
+    updatedUserValidator,
 }

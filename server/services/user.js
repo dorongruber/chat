@@ -53,7 +53,6 @@ class UserService {
       user.name =  newUserInfo.name;
       user.phone =  newUserInfo.phone;
       user.email =  newUserInfo.email;
-      user.password = newUserInfo.password? newUserInfo.password: user.password,
       user.chats = newUserInfo.chats? [...newUserInfo.chats]: [...user.chats];
       user.socketId = newUserInfo.socketId? newUserInfo.socketId : user.socketId;
       if (newUserInfo.img && Object.keys(newUserInfo.img).includes('filename') && newUserInfo.img.filename) {
