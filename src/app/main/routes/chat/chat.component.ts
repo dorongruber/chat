@@ -14,8 +14,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { chatMenuOptions } from 'src/app/main/consts/menuoptionslists';
 import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
 import { Header1Component } from '../../components/headers/header1/header1.component';
-
-const COMPONENT_BASE_ROUTE = '/main/chat';
+import { HeaderMenuOption } from '../../models/header-menu-option';
 
 @Component({
   selector: 'app-chat',
@@ -26,15 +25,13 @@ const COMPONENT_BASE_ROUTE = '/main/chat';
 export class ChatComponent implements OnInit, AfterViewInit {
   @ViewChild("chatSideNav") sidenav!: MatSidenav;
   msgContent: string = '';
-  messageFormat: Message = {};
   messages: Message[] = [];
-  baseRoute = COMPONENT_BASE_ROUTE;
   lastMsgElement: Element | null = null;
   isLoading = false;
   selectedChat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
   user!: User;
-  menuOPtions = chatMenuOptions;
-  componentRef = new DynamicComponentRef(Header1Component);
+  menuOptions: HeaderMenuOption[] ;
+  componentRef: DynamicComponentRef;
   sidenavComponentRef?: DynamicComponentRef;
   constructor(
     private chatService: ChatService,
@@ -43,6 +40,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
     private controllerService: ControllerService,
     private subscriptionContolService: SubscriptionContolService,
     ) {
+      this.componentRef = new DynamicComponentRef(Header1Component);
+      this.menuOptions = chatMenuOptions;
       this.controllerService.onMenuStateChange
       .pipe(takeUntil(this.subscriptionContolService.stop$), tap((res) => {
         this.sidenavComponentRef = res?.componentRef;
@@ -136,9 +135,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
   onMessageSubmit(form: NgForm) {
     if (form.invalid) return;
-    this.messageFormat = this.createMessage(form.value.message);
-    this.socketService.sendMessage(this.messageFormat);
-    this.messages = [this.messageFormat, ...this.messages];
+    const messageFormat = this.createMessage(form.value.message);
+    this.socketService.sendMessage(messageFormat);
+    this.messages = [messageFormat, ...this.messages];
     this.msgContent = '';
     setTimeout(() => {
       this.scrollToLastMsg();

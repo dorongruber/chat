@@ -5,8 +5,6 @@ import { ControllerService } from 'src/app/services/base/controller.service';
 import { UserService } from 'src/app/services/user.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HeaderMenuOption } from 'src/app/main/models/header-menu-option';
-import { UserIcon, newChatIcon } from 'src/app/main/consts/menuoptionslists';
-
 
 @Component({
   selector: 'app-header1',
@@ -15,12 +13,11 @@ import { UserIcon, newChatIcon } from 'src/app/main/consts/menuoptionslists';
 })
 export class Header1Component {
   @Input() menuOptions: HeaderMenuOption[] = [];
+  @Input() extraOptions: HeaderMenuOption[] = [];
   @Input() title: string = '';
   @Input() type!: string;
   user!: User;
   asImage!: boolean;
-  userIcon: HeaderMenuOption  = UserIcon;
-  newChatIcon: HeaderMenuOption = newChatIcon;
   constructor(
     private router: Router,
     private userService: UserService,

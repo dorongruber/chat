@@ -11,10 +11,12 @@ export const chatMenuOptions = [
   new HeaderMenuOption('exit chat', 'chevron_right'),
 ];
 export const mainMenuOptions = [
+  new HeaderMenuOption('user info', 'info', new DynamicComponentRef(UserinfoComponent)),
   new HeaderMenuOption('new group', 'add_circle_outline',  new DynamicComponentRef(GroupchatComponent)),
   new HeaderMenuOption('remove chat', 'remove_circle_outline', new DynamicComponentRef(DeletechatComponent)),
   new HeaderMenuOption('exit app', 'exit_to_app'),
 ];
 
-export const UserIcon = new HeaderMenuOption('user info', 'info', new DynamicComponentRef(UserinfoComponent));
-export const newChatIcon = new HeaderMenuOption('new chat', 'add_circle_outline',  new DynamicComponentRef(NewchatComponent));
+export const menuExtraOptions = [
+  new HeaderMenuOption('new chat', 'add_comment',  new DynamicComponentRef(NewchatComponent)),
+];

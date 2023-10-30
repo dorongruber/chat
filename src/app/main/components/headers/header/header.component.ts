@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { ComponentDirective } from '../../../directives/component.directive';
 import { DynamicComponentRef } from '../../../directives/dynamic-component.ref.directive';
+import { HeaderMenuOption } from 'src/app/main/models/header-menu-option';
 
 @Component({
   selector: 'app-header',
@@ -9,9 +10,9 @@ import { DynamicComponentRef } from '../../../directives/dynamic-component.ref.d
 })
 export class HeaderComponent implements OnChanges {
   isChatOpen = false;
-  @Input() menuOptions: any[] = [];
+  @Input() menuOptions: HeaderMenuOption[] = [];
+  @Input() extraOptions: HeaderMenuOption[] = [];
   @Input() title: string = '';
-  
   @Input() componentRef?: DynamicComponentRef | undefined;
   @ViewChild(ComponentDirective, { static: true}) bodyHost?: ComponentDirective;
 
@@ -23,6 +24,7 @@ export class HeaderComponent implements OnChanges {
       const ref = this.bodyHost.viewContainerRef.createComponent(this.componentRef.bodyComponent);
       ref.instance.menuOptions = this.menuOptions;
       ref.instance.title = this.title;
+      ref.instance.extraOptions = this.extraOptions;
     }
   }
   

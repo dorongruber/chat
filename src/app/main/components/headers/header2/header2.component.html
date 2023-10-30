@@ -1,18 +1,6 @@
 <header>
-    <div class="menu-options">
-    <ng-container *ngIf="menuOptions.length > 0 else empty">
-        <mat-icon [matMenuTriggerFor]="chatMenu">more_vert</mat-icon>
-    <mat-menu #chatMenu="matMenu" xPosition="before">
-        <ng-container *ngFor="let option of menuOptions; let i=index">
-        <button (click)="onOptionSelect(i)" mat-menu-item >
-            <span>{{option.title}}</span>
-        </button>
-        </ng-container>
-    </mat-menu>
-    </ng-container>
-    <ng-template #empty>
+    <div class="menu-options">    
         <mat-icon (click)="back()">arrow_back</mat-icon>
-    </ng-template>
     </div>
     <h4>{{ title }}</h4>
 </header>

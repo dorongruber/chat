@@ -9,25 +9,9 @@ import { ControllerService } from 'src/app/services/base/controller.service';
   styleUrls: ['./header2.component.scss']
 })
 export class Header2Component {
-  @Input() menuOptions: HeaderMenuOption[] = [];
   @Input() title: string = '';
   @Input() type!: string;
   constructor(public controllerService: ControllerService) { }
-
-  onOptionSelect(index: number) {
-    
-    switch(index) {
-      case 0:
-        this.controllerService.onStateChange(this.menuOptions[index]);
-        break;
-      case 1:
-        this.back();
-        break;
-      default:
-        this.controllerService.onStateChange(undefined);
-        break;
-    }
-  }
 
   back() {
     this.controllerService.onStateChange(undefined);
