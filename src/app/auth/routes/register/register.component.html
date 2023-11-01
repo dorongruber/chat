@@ -1,5 +1,5 @@
 <!-- <app-alert *ngIf="error"></app-alert> -->
-<form class="form-container" [formGroup]="authForm" (ngSubmit)="onSubmit(authForm)" *ngIf="!isLoading">
+<form class="form-container" [formGroup]="authForm" (ngSubmit)="onSubmit(authForm)">
 
   <ng-container *ngFor="let formField of registrationFormFieldsStracture">
     <app-dynamic-authform-input [form]="authForm" [formField]="formField" ></app-dynamic-authform-input>

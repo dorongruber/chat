@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
 import { takeUntil } from "rxjs/operators";
 import { AuthService } from 'src/app/services/auth.service';
-import { AuthResponseData } from '../../models/auth-response';
 import { BaseUser } from '../../models/newuser';
 import { CustomBasicControl } from '../../../shared/models/form-field';
 import { loginFormStructure } from '../../consts/auth-forms-controls';
@@ -18,7 +16,6 @@ import { SubscriptionContolService } from 'src/app/services/subscription-control
 })
 export class LoginComponent {
 
-  isLoading = false;
   authForm: FormGroup;
   loginFormFields: CustomBasicControl[];
   error: string | null;
@@ -39,26 +36,23 @@ export class LoginComponent {
     if(form.invalid) {
       return;
     }
-    // submit form
-    this.isLoading = true;
-    let authObs: Observable<AuthResponseData>;
+    this.authService.loadingObs.next(true);
     const isUser = new BaseUser(form.value.email, form.value.password)
 
-    authObs = this.authService.onLogin(isUser).pipe(takeUntil(this.subscriptionContolService.stop$));
-
-    authObs.subscribe((resData) => {
-      console.log(`auth obs next ==> ${resData}`);
-      
+    this.authService.onLogin(isUser)
+    .pipe(takeUntil(this.subscriptionContolService.stop$))
+    .subscribe((resData) => {      
       this.error = null;
     }, (errMsg) => {
       this.authService.loadingObs.next(false);
-      this.isLoading = false;
       this.error = errMsg;
+      form.reset();
     }, () =>{
-      this.authService.loadingObs.next(this.isLoading);
+      form.reset();
+      this.authService.loadingObs.next(false);
       this.router.navigate(['../../main'], { relativeTo: this.route});
     });
-    form.reset();
+    
   }
 
 }

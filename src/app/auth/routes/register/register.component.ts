@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { RegisterUser } from '../../models/newuser';
 import { CustomBasicControl } from '../../../shared/models/form-field';
@@ -16,7 +15,6 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
-  isLoading = false;
   authForm: FormGroup;
   error: string | null = null;
   registrationFormFieldsStracture: CustomBasicControl[];
@@ -37,28 +35,22 @@ export class RegisterComponent {
     if (!form.valid) {
       return;
     }
-    this.isLoading = true;
+    this.authService.loadingObs.next(true);
     let name = form.value.name;
     let email = form.value.email;
     let phone = form.value.phone;
     let password = form.value.passform.password;
 
-    let authObs: Observable<{message: boolean}>;
     const newuser = new RegisterUser(email,password,name,name,phone);
-    authObs = this.authService.onRegister(newuser).pipe(takeUntil(this.subscriptionContolService.stop$));
-    // add new user to db
-
-    authObs.subscribe(resData => {
+    this.authService.onRegister(newuser)
+    .pipe(takeUntil(this.subscriptionContolService.stop$))
+    .subscribe(resData => {
+      this.authService.loadingObs.next(false);
       if (resData) {
-        this.isLoading = false;
-        this.authService.loadingObs.next(this.isLoading);
+        form.reset();
         this.router.navigate(['../login'], {relativeTo: this.route});
-      } else {
-        this.isLoading = false;
-        this.authService.loadingObs.next(this.isLoading);
-      }
+      } 
     });
-    form.reset();
   }
 }
 

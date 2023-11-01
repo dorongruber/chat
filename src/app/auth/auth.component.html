@@ -8,7 +8,7 @@
   </ng-container>
   <ng-template #Auth>
     <div class="auth-component-container" >
-      <div class="header-container" *ngIf="!isLoading">
+      <div class="header-container">
         <div class="icon-container">
           <mat-icon class="icon">person_outline</mat-icon>
         </div>
@@ -18,7 +18,7 @@
       <div class="router-container">
         <router-outlet></router-outlet>
       </div>
-      <div class="btn-container" *ngIf="!isLoading">
+      <div class="btn-container">
         <button
         class="btn main-btn"
         type="button"
