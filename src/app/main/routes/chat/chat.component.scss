@@ -71,8 +71,10 @@
 
 .messages-container {
   height: calc(100% - (var(--header-height) + var(--send-message-footer-height)));
+  padding: 1em;
   overflow-y: auto;
-  transform: rotateZ(180deg);
+  // transform: rotateZ(180deg);
+  box-sizing: border-box;
 }
 
 .single-msg {

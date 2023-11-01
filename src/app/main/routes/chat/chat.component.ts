@@ -64,8 +64,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
         this.onLoadingChange();
         this.selectedChat = res;       
         
-        const formDb = await this.chatService.getChatMessages(this.selectedChat.id);
-        this.messages = formDb.reverse();
+        this.messages = await this.chatService.getChatMessages(this.selectedChat.id);
         setTimeout(() => {
           this.scrollToLastMsg();
           this.scrollObservable();
@@ -78,15 +77,12 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
    
-   this.chatService.messages
-   .pipe(takeUntil(this.subscriptionContolService.stop$), tap(resMsg => {
+   this.chatService.newMsg
+   .pipe(takeUntil(this.subscriptionContolService.stop$), tap(res => {
       this.onLoadingChange();
-      this.messages = [resMsg, ...this.messages];
-      setTimeout(() => {
-        this.scrollToLastMsg(); 
-      });
+      this.messages.push(res);
   }))
-   .subscribe(resMsg => {
+   .subscribe(res => {
     this.onLoadingChange();
    });
   }
@@ -102,46 +98,46 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
 
   scrollObservable() {
-    const lmEl = document.querySelector('#chat-top-indicator');
+    const indicator = document.getElementById('chat-top-indicator');
+    const msgsContainer = document.getElementById('msgs-container');
     let options = {
-      root: document.querySelector('#msgs-container'),
-      threshold: [1],
+      root: msgsContainer,
+      threshold: [.75],
     }
-    if(lmEl) {
+    if(indicator) {
       let observer = new IntersectionObserver(this.checkScroll.bind(this), options);
-
-      if(!this.lastMsgElement)
-        this.lastMsgElement = lmEl;
-      else {
-        observer.unobserve(this.lastMsgElement)
-        this.lastMsgElement = lmEl;
-      }
-      observer.observe(this.lastMsgElement);
+      observer.observe(indicator);
     }
 
   }
 
   async checkScroll(entires: any) {
-    let prevDayMsgs;
-    if(entires[0].intersectionRatio === 1) {
-      const currentDate = this.messages[0]?.date? this.messages[0]?.date: null;
-      if(currentDate)
-        prevDayMsgs = await this.chatService.getPrevDayMsgs(this.selectedChat.id,currentDate);
-        if (prevDayMsgs && prevDayMsgs.length) {
-          this.messages = [...this.messages,...prevDayMsgs];
-        } 
+    const currentDate = this.messages[0]?.date? this.messages[0]?.date: null;
+    if(entires[0].intersectionRatio === 1 && currentDate) {
+      
+      const msgsContainer = document.getElementById('msgs-container');
+      const prevH = msgsContainer!.scrollHeight;
+      
+      let prevDayMsgs = await this.chatService.getPrevDayMsgs(this.selectedChat.id,currentDate);
+      if (prevDayMsgs && prevDayMsgs.length) {
+        this.messages.unshift(...prevDayMsgs);
+        setTimeout(() => {
+          const curH = msgsContainer!.scrollHeight;
+          msgsContainer!.scrollTop = curH - prevH;
+         })
+      } 
     }
   }
 
   onMessageSubmit(form: NgForm) {
     if (form.invalid) return;
     const messageFormat = this.createMessage(form.value.message);
+    this.messages.push(messageFormat);
     this.socketService.sendMessage(messageFormat);
-    this.messages = [messageFormat, ...this.messages];
-    this.msgContent = '';
+    form.reset();
     setTimeout(() => {
       this.scrollToLastMsg();
-    });
+    })
   }
 
   createMessage(msg: string): Message {
@@ -162,9 +158,12 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
 
   scrollToLastMsg() {
-    const chatMsgsElement = document.querySelector('#msgs-container') as HTMLElement;
-    if(chatMsgsElement)
-      chatMsgsElement.scrollTop = 0;
+    const chatMsgsElement = document.getElementById('msgs-container') as HTMLElement;    
+    chatMsgsElement.scrollTop = chatMsgsElement.scrollHeight;
+  }
+
+  trackMessages(index: number, msg: Message) {    
+    return msg.date!.getTime();
   }
 
 }
