@@ -2,7 +2,9 @@
     <ng-container *ngIf="!isReadOnly else ReadOnly">
         <ng-container *ngIf="!editMode">
             <div class="form__group">
-                <mat-icon (click)="onChange()" class="icon-check">check</mat-icon>
+                <ng-container *ngIf="asIcon">
+                    <mat-icon (click)="onChange()" class="icon-check">check</mat-icon>
+                </ng-container>
                 <input 
                 [id]="name"
                 [type]="type" class="form__field"
@@ -16,7 +18,7 @@
         </ng-container>
         
         <ng-container *ngIf="editMode">
-            <span>{{value}}</span>
+            <span>{{this.form.get(this.name)?.value}}</span>
     
             <button type="button"  (click)="toggleEditMode()">
                 <mat-icon>edit</mat-icon>
@@ -25,7 +27,7 @@
     </ng-container>
 
     <ng-template #ReadOnly>
-        <span>{{value}}</span>
+        <span>{{this.form.get(this.name)?.value}}</span>
     </ng-template>
     
 </div>

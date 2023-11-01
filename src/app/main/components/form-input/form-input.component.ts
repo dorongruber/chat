@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 @Component({
@@ -6,7 +6,7 @@ import { FormGroup } from '@angular/forms';
   templateUrl: './form-input.component.html',
   styleUrls: ['./form-input.component.scss']
 })
-export class FormInputComponent implements OnChanges {
+export class FormInputComponent {
   @Input() form!: FormGroup;
   @Input() type: string = "text";
   @Input() placeholder!: string;
@@ -15,13 +15,9 @@ export class FormInputComponent implements OnChanges {
   @Input() label!: string;
   @Input() editMode: boolean = true;
   @Input() isReadOnly: boolean = false;
-  value: string | undefined;
-
+  @Input() asIcon: boolean = true;
   @Output() onValueChange: EventEmitter<string> = new EventEmitter<string>();
 
-  ngOnChanges(changes: SimpleChanges): void {
-      this.value = this.form.get(this.name)?.value;
-  }
 
   toggleEditMode() {
     this.editMode = !this.editMode;
