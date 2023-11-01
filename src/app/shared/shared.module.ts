@@ -12,14 +12,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule} from '@angular/material/button';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FocusDirective } from './directives/focuslastelement.directive';
 import { Page404Component } from './components/page404/page404.component';
 
 @NgModule({
   declarations: [
     AlertComponent,
     LoadingSpinnerComponent,
-    FocusDirective,
     Page404Component,
   ],
   imports: [
@@ -41,7 +39,6 @@ import { Page404Component } from './components/page404/page404.component';
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
-    FocusDirective,
     MatMenuModule,
     MatAutocompleteModule,
     MatButtonModule,
