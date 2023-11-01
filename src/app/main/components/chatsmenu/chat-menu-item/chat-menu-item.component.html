@@ -10,21 +10,21 @@
 
   <div class="groups-content">
     <div class="group1">
-      <h2 class="chat-name item1">
-        {{chat.name}}
-        <ng-container *ngIf="(chat.onCounterChange | async)">
-          <ng-container *ngIf="chat.newmsgscounter > 0">
-            <div class="new-masgs-counter-badge">
-              <div class="count">
-                {{chat.newmsgscounter}}
-              </div>
-            </div>
+      <div class="item1">
+        <span class="chat-name">
+          {{chat.name}}
+          <ng-container *ngIf="chat.newmsgscounter">
+              <span class="new-masgs-counter-badge">
+                <span class="count">
+                  {{chat.newmsgscounter}}
+                </span>
+              </span>
           </ng-container>
-        </ng-container>
-      </h2>
-      <p class="msg item2" [ngClass]="{'last-msg-color':  chat.newmsgscounter === 0}"> 
-        <ng-container *ngIf="(chat.onMsgChange | async) || chat.lastMsg ">
-          
+        </span>
+      </div>
+      
+      <span class="msg item2" [ngClass]="{'last-msg-color':  chat.newmsgscounter === 0}"> 
+        <ng-container *ngIf="chat.lastMsg ">
             <span >
               {{ chat.lastMsg.userName }}
           </span>: 
@@ -33,13 +33,13 @@
           </span>
         
         </ng-container>
-    </p>
+    </span>
     </div>
   
     <div class="group2">
       <h4 class="time item1 last-msg-color">
   
-      <ng-container *ngIf="(chat.onMsgChange | async) || chat.lastMsg ">
+      <ng-container *ngIf="chat.lastMsg ">
           {{ chat.lastMsg.date | date: 'shortDate'}}
         
       </ng-container>
