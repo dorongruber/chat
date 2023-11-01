@@ -48,10 +48,9 @@ export class ChatsmenuComponent implements OnInit {
 
     this.chatsService.onNewChat
     .pipe(takeUntil(this.subscriptionContolService.stop$))
-    .subscribe(res => {
+    .subscribe(res => {      
       const newChat = new ChatInMenu(res.id,res.name, res.img);
       this.chats.push(newChat);
-      this.fliteredChats.push(newChat);
     });
     
     this.chatService.newMenuMsg
@@ -62,8 +61,6 @@ export class ChatsmenuComponent implements OnInit {
           if (c.id === resMsg.chatId && resMsg.message) {
             c.lastMsg = resMsg;
             c.newmsgscounter = c.newmsgscounter + 1;
-            c.onMsgChange.next(resMsg);
-            c.onCounterChange.next(c.newmsgscounter);
           }
         });
       }
