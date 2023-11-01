@@ -4,7 +4,7 @@ import { map } from "rxjs/operators";
 import { Chat, ChatInMenu } from "../main/models/chat";
 import { Message } from "../main/models/message";
 import { takeUntil } from "rxjs/operators";
-import { User as FullUser, User } from "../shared/models/user";;
+import { User } from "../shared/models/user";;
 import { BaseService } from "./base/base.service";
 import { SocketService } from "./socket.service";
 import { UserService } from "./user.service";
@@ -17,8 +17,7 @@ const URI = window.location.hostname === 'localhost'? DEV_URI: PROD_URI;
   providedIn: 'root'
 })
 export class ChatService {
-  usersInChat = new Subject<[{userId: string, userName: string, chatId: string}]>();
-  messages = new Subject<Message>();
+  newMsg = new Subject<Message>();
   newMenuMsg = new Subject<Message>();
   private onChatChange = new BehaviorSubject<any | null>(null);
   chat: any;
@@ -42,14 +41,8 @@ export class ChatService {
           },
         );
 
-       this.usersInChat = socketService.getUsersinChat()
+       this.newMsg = socketService.getNewMessage()
        .pipe(map(response => {
-         return response
-       })) as Subject<[{userId: string, userName: string, chatId: string}]>
-
-       this.messages = socketService.getNewMessage()
-       .pipe(map(response => {
-         console.log('new msgs -> ', response);
          return response;
        })) as Subject<Message>
 
@@ -59,9 +52,8 @@ export class ChatService {
        })) as Subject<Message>;
      }
 
-     async newChat(id: string,name: string, users: FullUser[], userId: string, img: File, type: string) {
+    newChat(id: string,name: string, users: User[], userId: string, img: File, type: string) {
       const formData = new FormData();
-      const url = `${URI}newchat`;
       formData.append('id', id);
       formData.append('name', name);
       formData.append('users',  JSON.stringify(users.map(u => u.id)));
@@ -69,8 +61,7 @@ export class ChatService {
       formData.append('image', img);
       formData.append('type', type);
       try {
-         const res = await this.baseService.post(url, formData);
-         return res;
+         return this.baseService.post<Chat>(URI, formData);
        } catch (err: any) {
          if (err)
            return new Error(err);
@@ -102,7 +93,7 @@ export class ChatService {
             userId: msg.userId,
             chatId: msg.chatId,
             userName: msg.userName,
-            date: msg.date,
+            date: new Date(msg.date),
             fromCurrentUser: this.userId === msg.userId? true: false,
           });
         })
@@ -129,7 +120,7 @@ export class ChatService {
                 userId: msg.userId,
                 chatId: msg.chatId,
                 userName: msg.userName,
-                date: msg.date,
+                date: new Date(msg.date),
                 fromCurrentUser: this.userId === msg.userId? true: false,
               });
             })

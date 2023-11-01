@@ -55,17 +55,16 @@ export class UserService {
   }
 
   updateUser(updateduser: User) {
-    const formData = new FormData();
 
-    formData.append('id', updateduser.id);
-    formData.append('name', updateduser.name);
-    formData.append('phone',  updateduser.phone);
-    formData.append('password', updateduser.password);
-    formData.append('email', updateduser.email);
-    formData.append('image', updateduser.img);
-
-    const url =`${URI}update/`
-    this.baseService.put<User>(URI,formData)
+    const body = {
+      id: updateduser.id,
+      name: updateduser.name,
+      phone: updateduser.phone,
+      password: updateduser.password,
+      email: updateduser.email,
+      image: updateduser.img,
+    }
+    this.baseService.put<User>(URI,body)
     .then(resUpdatedUser => {
       const updatedUser = new User
       (resUpdatedUser.id,

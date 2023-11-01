@@ -1,11 +1,12 @@
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
-import { map } from "rxjs/operators";
+import { map, takeUntil, tap } from "rxjs/operators";
 import { Chat, ChatInMenu } from "../main/models/chat";
 import { User } from "../shared/models/user";
 import { BaseService } from "./base/base.service";
 import { ChatService } from './chat.service';
 import { SocketService } from "./socket.service";
+import { SubscriptionContolService } from "./subscription-control.service";
 
 //const USER_URI = 'http://localhost:3000/api/chat/';
 const DEV_URI = 'http://localhost:3000/api/user/';
@@ -22,14 +23,15 @@ export class ChatsService {
     private baseService: BaseService,
     private chatService: ChatService,
     private socketService: SocketService,
+    private subscriptionContolService: SubscriptionContolService,
     )
   {
-    this.onNewChat = this.socketService.joinNewChat()
-    .pipe(map((newChat: any) => {
+    this.socketService.joinNewChat()
+    .pipe(takeUntil(this.subscriptionContolService.stop$), tap((newChat: any) => {      
       const chatToSend = new Chat(newChat.chatId, newChat.chatName, newChat.img);
       this.chats.push(chatToSend);
-      return chatToSend;
-    })) as Subject<Chat>
+      this.onNewChat.next(chatToSend)
+    })).subscribe();
   }
 
   getChats(userId: string) {
@@ -60,8 +62,9 @@ export class ChatsService {
   async addChat(chatId: string, name: string, users: User[], userId: string, img: File, type: string) {
     const id = chatId.length === 0? this.GenerateId(): chatId;
     const savedChat = await this.chatService.newChat(id,name,users,userId,img, type);
-    if(!(savedChat instanceof Error) && !savedChat) {
-      this.socketService.createChat(id,name,users, userId);
+    if(!(savedChat instanceof Error) && savedChat) {
+      this.chats.push(savedChat);
+      this.onNewChat.next(savedChat);
       return true;
     }
     return false;
