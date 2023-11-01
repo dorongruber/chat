@@ -27,7 +27,6 @@ import { SearchInputComponent } from './components/search-input/search-input.com
 import { DebounceKeyupDirective } from './directives/debounce-keyup.directive';
 import { FormInputComponent } from './components/form-input/form-input.component';
 import { SelectImageComponent } from './components/select-image/select-image.component';
-import { ToggleReadonlyDirective } from './directives/toggle-readonly.directive';
 import { ChatInfoComponent } from './routes/group-chat-info/group-chat-info.component';
 import { ShowImageComponent } from './components/show-image/show-image.component';
 
@@ -55,7 +54,6 @@ import { ShowImageComponent } from './components/show-image/show-image.component
     DebounceKeyupDirective,
     FormInputComponent,
     SelectImageComponent,
-    ToggleReadonlyDirective,
     ChatInfoComponent,
     ShowImageComponent,
   ],
