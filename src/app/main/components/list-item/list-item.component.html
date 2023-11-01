@@ -1,4 +1,4 @@
-<li class="chat-contaienr"  (click)="onItemSelect(listItem)">
+<li class="chat-contaienr" [ngClass]="{'active': isSelected}" (click)="onItemSelect(listItem)">
     <div class="chat-img-container">
       <ng-container *ngIf="asImage else NotFound">
         <img [src]="Transform(listItem.img)" alt="">

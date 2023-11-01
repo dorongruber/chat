@@ -11,6 +11,7 @@ export class ListItemComponent implements OnChanges {
   @Input() listItem: ListItem = new ListItem('','','',{});
   @Output() onSelectedItem: EventEmitter<ListItem> = new EventEmitter<ListItem>();
   asImage!: boolean;
+  isSelected:boolean = false;
   constructor(
     private sanitizer: DomSanitizer,
   ) { 
@@ -22,6 +23,7 @@ export class ListItemComponent implements OnChanges {
   }
 
   onItemSelect(listItem: ListItem) {
+    this.isSelected = !this.isSelected;
     this.onSelectedItem.emit(listItem);
   }
 
