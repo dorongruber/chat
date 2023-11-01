@@ -24,8 +24,6 @@ class ChatService {
 
   createChat = async function(newChatInfo) {
    try{
-    console.log('create chat chat service newChatInfo ==> ', newChatInfo.id, newChatInfo.name, JSON.parse(newChatInfo.users));
-
     const chat = await Chats.findOne({id: newChatInfo.id});
     let image = null;
     if (chat) return this.updateChat(newChatInfo)

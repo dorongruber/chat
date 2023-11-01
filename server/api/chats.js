@@ -9,7 +9,7 @@ router.get('/messages/:id', AuthenticationToken, getMessagesByChatId);
 
 router.get('/prevDateMsgs/:id/:date', AuthenticationToken, getPrevDayMsgs)
 
-router.post('/newchat', AuthenticationToken, upload.single('image') , addChat)
+router.post('/', AuthenticationToken, upload.single('image') , addChat)
 
 router.get('/:id', AuthenticationToken, getChatById);
 

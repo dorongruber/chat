@@ -31,7 +31,6 @@ module.exports.updateUser = function updateUser(userId,userName,chatId,socketId)
 
 module.exports.getUser = function getUser(id) {
   try {
-    console.log('utills users => ', users);
     const index = users.findIndex(u => u.userId === id);
     if (index === -1){
       return null;
@@ -64,7 +63,6 @@ module.exports.removeUser = function removeUser(id) {
 }
 
 module.exports.getChatUsers = function getChatUsers(chatId) {
-  //console.log('getChatUsers(chatId) -> ', users.filter(u => u.chatId == chatId), users, chatId);
   return users.filter(u => u.chatId == chatId);
 }
 

@@ -30,11 +30,10 @@ class SocketServerService {
 
   CreateChat(chatId, chatName, chatUsers,userId,socket) {
 
-    chatUsers.forEach(async (u) => {
-      const connectedUser = await userService.getByCustomId(u._id);
-      if(connectedUser) {
-        io.to(connectedUser.socketId).emit('JoinChat',({chatName,chatId}));
-      }
+    chatUsers.forEach((u) => {
+      userService.getByCustomId(u._id).then(user => {
+        io.to(user.socketId).emit('JoinChat',({chatName,chatId}));
+      })
     });
   }
   //todo check if nedd to change function
@@ -46,8 +45,6 @@ class SocketServerService {
         const savedUser = chatService.addUserToChat(user);
       }
       socket.join(chatId);
-      const chatUsers = await chatService.getSingalePopulatedField(chatId, this.feildToPopulate);
-      io.in(chatId).emit('inChat', (chatUsers));
     }catch(err) {
       throw err;
     }
@@ -57,7 +54,7 @@ class SocketServerService {
     try {
       const msgId = `${userId}${chatId}${date}`;
       const msgState = await msgService.save(message,msgId,userId,chatId,chatId,date,userName);
-      const chatState = await chatService.addMessageToChat(msgState)
+      chatService.addMessageToChat(msgState)
       const newMesg = formatService.messageFormat(msgState);
 
       this.sendMessageToUsersNotConnectedToSocket(chatId,newMesg);

@@ -13,8 +13,6 @@ router.post('/register', userValidator, saveUser);
 
 router.put('/',AuthenticationToken, updatedUserValidator, upload.single('image') ,updateUserInfo)
 
-//router.post('/update', updateUserInfo);
-
 router.get('/allUsers', getAllUsers);
 
 router.get('/chats/:id', AuthenticationToken, getChatByuserId);
