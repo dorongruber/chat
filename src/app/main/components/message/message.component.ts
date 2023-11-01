@@ -28,10 +28,9 @@ export class MessageComponent implements AfterViewInit {
   }
 
   showDate() {
-    const date = new Date(this.msgFromat.date as Date);
-    const day = date.getDate();
-    const month = date.getMonth();
-    const year = date.getFullYear();
+    const day = this.msgFromat.date!.getDate();
+    const month = this.msgFromat.date!.getMonth();
+    const year = this.msgFromat.date!.getFullYear();
     return `${day}/${month}/${year}`;
   }
 

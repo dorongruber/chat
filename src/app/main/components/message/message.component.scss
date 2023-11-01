@@ -1,9 +1,9 @@
 .message-style-container {
   position: relative;
-  margin-top: 15px;
+  margin: 15px;
   min-height: 35px;
   // max-width: 50%;
-  transform: rotateZ(180deg);
+  // transform: rotateZ(180deg);
   @media (max-width: 640px) {
     margin-top: 10px;
     min-height: 45px;
@@ -13,9 +13,9 @@
 
 .triangle {
   position: absolute;
-  left: 0px;
+  // left: 0px;
   top: 1px;
-  width: 0;
+  width: min-content;
   height: 0;
   border-top: 0px solid transparent;
   border-bottom: 23px solid transparent;
@@ -24,8 +24,8 @@
 }
 
 .currentUser-triangle {
-  left: unset;
-  right: 0px;
+  // left: unset;
+  // right: 0px;
   border-top: 23px solid hsl(198, 57%, 58%);
   border-bottom: 0 solid transparent;
   border-right: 30px solid transparent;
@@ -33,23 +33,25 @@
 }
 
 .message-container {
-  position: absolute;
-  left: 12px;
+  position: relative;
+  left: 5px;
   top: 1px;
-  display: flex;
-  flex-direction: column;
+  // display: flex;
+  // flex-direction: column;
   background-color: hsl(42, 57%, 58%);
   border-radius: 5px;
   box-sizing: border-box;
   min-width: 20%;
+  width: fit-content;
+  max-width: 45%;
   @media (max-width: 640px) {
     min-width: 45%;
   }
 }
 
 .currentUser {
-  left: unset;
-  right: 12px;
+  // left: unset;
+  // right: 12px;
   background-color: hsl(198, 57%, 58%);
 }
 
