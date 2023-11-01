@@ -12,6 +12,7 @@ import { ListItem } from '../../models/list-item';
 import { CustomBasicControl } from 'src/app/shared/models/form-field';
 import { FormControlService } from 'src/app/services/form-control.service';
 import { chatFormStructure } from '../../consts/group-form';
+import { ControllerService } from 'src/app/services/base/controller.service';
 
 @Component({
   selector: 'app-new-group',
@@ -44,6 +45,7 @@ export class GroupchatComponent implements OnInit {
     private controlService: FormControlService,
     private userService: UserService,
     private chatsService: ChatsService,
+    private controllerService: ControllerService,
     private fb: FormBuilder,
     private subscriptionContolService: SubscriptionContolService,
   ) {
@@ -108,14 +110,16 @@ export class GroupchatComponent implements OnInit {
     this.isLoading = true;
     let reqUsers: any[] = [];
     for(const control of this.users.value) {
-      reqUsers.push(control.value);
+      reqUsers.push(control);
     }
-    reqUsers.push(this.currentUser)
+    reqUsers.push(this.currentUser);
+    
     let name = form.value.name;
     let img =  this.selectedFile ? this.selectedFile : new File([],'emptyFile');
     this.chatsService.addChat(this.chatId,name,reqUsers,this.currentUser.id,img, "group");
     form.reset();
     this.isLoading = false;
+    this.controllerService.onStateChange(undefined);
   }
 
 }

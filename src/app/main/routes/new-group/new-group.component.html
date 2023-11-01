@@ -13,6 +13,8 @@
 
       <app-form-input 
       [form]="chatForm" 
+      [editMode]="false"
+      [asIcon]="false"
       [placeholder]="customFormFields[0].properties['label']!" 
       [name]="customFormFields[0].properties['label']!.toLowerCase()" 
       [label]="customFormFields[0].properties['label']!"></app-form-input>
@@ -20,7 +22,7 @@
 
       <ul>
         <ng-container *ngFor="let user of listUsers; let i = index;">
-          <app-list-item [listItem]="user" (onSelectedItem)="onSelectedUser($event)"></app-list-item>
+          <app-list-item [listItem]="user" (onSelectedItem)="onSelectedUser($event);"></app-list-item>
         </ng-container>
       </ul>
       <br>

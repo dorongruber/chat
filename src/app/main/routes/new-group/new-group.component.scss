@@ -49,10 +49,8 @@ ul {
   box-sizing: border-box;
 }
 
-
-
-
-
-
+:host ::ng-deep app-list-item  li.active {
+  background-color: var(--secondary-background-color);
+}
 
 
