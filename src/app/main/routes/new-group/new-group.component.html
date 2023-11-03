@@ -8,7 +8,7 @@
     *ngIf="!isLoading">
 
       <header class="img-container">
-          <app-select-image [form]="chatForm" (onImageFileChange)="initImg($event)"></app-select-image>
+          <app-select-image [form]="chatForm" [type]="'group'" (onImageFileChange)="initImg($event)"></app-select-image>
       </header>
 
       <app-form-input 
@@ -31,7 +31,10 @@
         class="create-btn"
         type="submit"
         [disabled]="!chatForm.valid"
-        mat-raised-button> Create Chat </button>
+        mat-fab
+        > 
+          <mat-icon>done</mat-icon>
+        </button>
       </div>
     </form>
   </body>
