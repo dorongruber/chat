@@ -18,11 +18,10 @@
         </ng-container>
         
         <ng-container *ngIf="editMode">
-            <span>{{this.form.get(this.name)?.value}}</span>
-    
             <button type="button"  (click)="toggleEditMode()">
                 <mat-icon>edit</mat-icon>
             </button>
+            <span>{{this.form.get(this.name)?.value}}</span>
         </ng-container>
     </ng-container>
 
