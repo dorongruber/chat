@@ -7,14 +7,21 @@
   --main-input-field-height: 60px;
   --image-size: 150px;
 
+  --large-font-size: 18px;
+  --medium-font-size: 16px;
+  --small-font-size: 14px;
+
   --header-backround-color: hsl(0, 0%, 38%);
-
-
+  
   --prime-backgroud-color: hsl(0, 0%, 15%);
   --secondary-background-color: hsl(0, 0%, 24%);
 
+  --marker-color: aqua;
+  --white: #fff;
+  --gray: #9b9b9b;
 
-  --landing-page-image: url('app/main/assets/images/front.png')
+  --landing-page-image: url('app/main/assets/images/front.png');
+  
 }
 
 /* You can add global styles to this file, and also import other style files */
@@ -25,3 +32,27 @@ body {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html * {
+  font-size: var(--medium-font-size);
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

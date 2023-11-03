@@ -2,8 +2,6 @@
     position: absolute;
     top: 0;
     z-index: 1;
-    // width: var(--image-size);
-    // height: var(--image-size);
     object-fit: cover;
     border-radius: 50%;
     box-sizing: border-box;
@@ -13,8 +11,5 @@ mat-icon {
     position: absolute;
     top: 0;
     z-index: 1;
-    // width: var(--image-size);
-    // height: var(--image-size);
-    // font-size: var(--image-size);
     color: var(--header-backround-color);
 }

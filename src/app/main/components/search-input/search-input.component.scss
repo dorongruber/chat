@@ -37,7 +37,7 @@ label {
     width: 100%;
     background-color: inherit;
     padding-inline-end: 20px;
-    font-size: 1.1rem;
+    font-size: var(--large-font-size);
     color: hsl(0, 0%, 86%);
     border: transparent;
     outline: transparent;
@@ -45,7 +45,7 @@ label {
     border-radius: 10px;
     &::placeholder {
         color: hsl(0, 0%, 86%);
-        font-size: 1.1rem;
+        font-size: var(--large-font-size);
         transition: color .5s ease-in-out;
     }
 

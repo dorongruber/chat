@@ -9,21 +9,23 @@
 }
 
 .groups-content {
-  border-bottom: 1px solid hsl(0, 0%, 21%);
+  border-bottom: 1px solid var(--secondary-background-color);
   box-sizing: border-box;
   display: grid;
   grid-area: 1/3;
   grid-column: 2/13;
+  margin-inline-end: 15px;
 }
 
 @media screen and (min-width: 640px) {
   .chat-contaienr:hover {
-    background-color: hsl(0, 0%, 26%);
+    background-color: var(--secondary-background-color);
   }
 }
 
-.chat-name {
+.title {
   position: relative;
+  font-size: var(--large-font-size);
   grid-row: 1;
   color: hsl(0, 0%, 86%);
   margin: 0;
@@ -31,27 +33,19 @@
 }
 
 .new-masgs-counter-badge {
-  position: absolute;
-  top: -6px;
-  right: 23px;
-  width: 18px;
-  height: 18px;
-  background: hsl(0, 0%, 36%);
+  background: var(--marker-color);
   border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
 .count {
-  color: hsl(0, 0%, 72%);
-  font-size: 14px;
+  color: hsl(0, 0%, 0%);
+  padding: 5px;
+  box-sizing: border-box;
 }
 
-.msg {
+.msg-container {
   grid-row: 2;
-  font-size: 14px;
+  font-size: var(--small-font-size);
   margin: 0;
   color: #f1f1f1;
   font-weight: bolder;
@@ -64,7 +58,7 @@
 
 .time {
   grid-row: 1;
-  font-size: 13px;
+  font-size: var(--small-font-size);
   color: #f1f1f1;
   margin: 0;
 }
@@ -113,7 +107,7 @@
   line-height: 23px;
 }
 
-.chat-name, .item2 {
+.title, .item2 {
   white-space: nowrap;
   overflow-x: clip;
   container-type: inline-size;
@@ -125,7 +119,6 @@
 }
 
 .chatItemMenu {
-  display: none;
   grid-row: 2;
 }
 

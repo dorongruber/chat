@@ -22,17 +22,6 @@ li {
   list-style: none;
 }
 
-.close-btn {
-  cursor: pointer;
-  margin-right: auto;
-}
-
-.btn-container {
-  text-align: center;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
 .spinner {
     display: flex;
     flex-direction: column;
@@ -43,5 +32,6 @@ li {
 }
 
 :host ::ng-deep app-form-input > div.input-container {
-  justify-content: center !important;
+  padding-inline: 1.5rem;
+  box-sizing: border-box;
 }

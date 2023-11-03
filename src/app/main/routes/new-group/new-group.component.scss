@@ -1,11 +1,11 @@
 .new-chat {
+  position: relative;
   background-position: center;
   background-repeat: round;
   background-size: 11% 29%;
   height: calc(100% - var(--header-height));
   background-color: var(--prime-backgroud-color);
   @media (max-width: 640px) {
-    position: relative;
     width: 100%;
     background-size: 70%;
     background-position: unset;
@@ -24,22 +24,27 @@
 }
 
 .btn-container {
-  display: flex;
-  justify-content: center;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
 }
-
-.create-btn {
-  cursor: pointer;
-  font-size: 12px;
-  padding: 0 10px;
-  line-height: 24px;
-}
-
-:host ::ng-deep mat-icon {
-  .mat-icon {
-    color: #fff;
+button {
+  &.mdc-fab {
+    width: 45px !important;
+    height: 45px !important;
   }
-}
+  mat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 36px;
+  }
+  &:valid {
+    background-color: var(--marker-color);
+    mat-icon {
+      color: var(--secondary-background-color);
+    }
+  }
+}    
 
 ul {
   background-color: var(--prime-backgroud-color);
