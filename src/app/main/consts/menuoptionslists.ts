@@ -8,7 +8,6 @@ import { ChatInfoComponent } from "../routes/group-chat-info/group-chat-info.com
 
 export const chatMenuOptions = [
   new HeaderMenuOption('chat info', 'info', new DynamicComponentRef(ChatInfoComponent)),
-  new HeaderMenuOption('exit chat', 'chevron_right'),
 ];
 export const mainMenuOptions = [
   new HeaderMenuOption('user info', 'info', new DynamicComponentRef(UserinfoComponent)),
