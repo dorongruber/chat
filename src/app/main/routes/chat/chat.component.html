@@ -25,7 +25,7 @@
         <form #messageForm="ngForm" (ngSubmit)="onMessageSubmit(messageForm)">
           <div class="input-container">
             <input [(ngModel)]="msgContent" required name="message" id="message" autocomplete="off"  placeholder="send message" class="message-input">
-            <button class="send-message-btn btn-flex" type="submit">
+            <button mat-icon-button type="submit">
               <mat-icon class="send-icon">send</mat-icon>
             </button>
           </div>
