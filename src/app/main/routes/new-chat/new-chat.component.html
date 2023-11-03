@@ -1,0 +1,19 @@
+<app-header [title]="'new chat'" [componentRef]="componentRef"></app-header>
+<main class="new-chat" style="background-color: hsl(0, 0%, 15%);">
+ <section class="search-input-container">
+  <div class="search-input">
+    <app-search-input (onInputValueChane)="FilterUsers($event)"></app-search-input>
+  </div>
+ </section>
+ <br>
+ <section>
+  <ul>
+    <ng-container *ngFor="let user of listUsers; let i = index;">
+      <app-list-item [listItem]="user" (onSelectedItem)="onSelectedUser($event)"></app-list-item>
+    </ng-container>
+    <ng-container *ngIf="listUsers.length == 0">
+      <p>no users found!</p>
+    </ng-container>
+  </ul>
+ </section>
+</main>

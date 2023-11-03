@@ -4,9 +4,7 @@ export class Dictionary<T> implements IKeyCollection<T> {
   protected items: {[index: string]: T} = {};
   private count = 0;
   add(key: string, value: T): T {
-    console.log('!this.items.hasOwnProperty(key) -> ', !this.items.hasOwnProperty(key));
     if (!this.items.hasOwnProperty(key)) {
-      console.log('count');
       this.count++;
     }
 
@@ -37,7 +35,6 @@ export class Dictionary<T> implements IKeyCollection<T> {
 
   getKeys(): string[] {
     const keySet: string[] = [];
-    console.log('getkeys -> ', this.items, this.count);
     for (const property in this.items) {
       if (this.items.hasOwnProperty(property)) {
         keySet.push(property);

@@ -4,9 +4,3 @@
   height: 100vh;
   overflow-y: auto;
 }
-
-.change-overflow {
-  @media (max-width: 640px) {
-    overflow-y: clip;
-  }
-}

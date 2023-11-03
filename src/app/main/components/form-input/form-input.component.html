@@ -1,0 +1,32 @@
+<div [formGroup]="form" class="input-container">
+    <ng-container *ngIf="!isReadOnly else ReadOnly">
+        <ng-container *ngIf="!editMode">
+            <div class="form__group">
+                <ng-container *ngIf="asIcon">
+                    <mat-icon (click)="onChange()" class="icon-check">check</mat-icon>
+                </ng-container>
+                <input 
+                [id]="name"
+                [type]="type" class="form__field"
+                [placeholder]="placeholder" 
+                [name]="name"
+                [formControlName]="name"
+                [autocomplete]="autocomplete"/>
+                <label [for]="name" class="form__label">{{ label }}</label>
+                
+            </div>
+        </ng-container>
+        
+        <ng-container *ngIf="editMode">
+            <button type="button"  (click)="toggleEditMode()">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <span>{{this.form.get(this.name)?.value}}</span>
+        </ng-container>
+    </ng-container>
+
+    <ng-template #ReadOnly>
+        <span>{{this.form.get(this.name)?.value}}</span>
+    </ng-template>
+    
+</div>

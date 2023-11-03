@@ -1,0 +1,27 @@
+<app-header [title]="'user Info'" [componentRef]="componentRef"></app-header>
+<main class="userInfo-container">
+  <form [formGroup]="form" *ngIf="!isLoading">
+    <header>
+      <app-select-image [form]="form" [type]="'group'" (onImageFileChange)="initImg($event)"></app-select-image>
+  </header>
+
+    <ul>
+      <ng-container *ngFor="let field of customFormFields | slice:0:-1; trackBy: formFieldTrackBy">
+        <li>
+          <app-form-input
+          (onValueChange)="onValueChange($event)"
+          [editMode]="true"
+          [form]="form" 
+          [placeholder]="field.properties['label']!" 
+          [name]="field.properties['label']!.toLowerCase()" 
+          [label]="field.properties['label']!"></app-form-input>
+        </li>
+      </ng-container>
+    </ul>
+  </form>
+
+  <ng-container *ngIf="isLoading">
+    <app-loading-spinner></app-loading-spinner>
+  </ng-container>
+
+</main>

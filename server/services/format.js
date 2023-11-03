@@ -14,6 +14,7 @@ class FormatService {
       formatedChats.push({
         id: chat.id,
         name: chat.name,
+        type: chat.chatType,
         lastMsg:  lastMsg ? this.requestMsgFormat(lastMsg)[0] : lastMsg,
         img: {
           contentType: chat?.img && chat?.img.contentType ? chat.img.contentType : null,
@@ -33,6 +34,8 @@ class FormatService {
       id: chat.id,
       name: chat.name,
       users: chat.users,
+      messages: chat.messages,
+      type: chat.chatType,
       img: {
         contentType: chat?.img && chat?.img.contentType ? chat.img.contentType : null,
         data: chat?.img && chat?.img.data ? chat.img.data.toString('base64') : null,
@@ -56,7 +59,6 @@ class FormatService {
       id: user.id,
       name: user.name,
       phone: user.phone,
-      password: user.password,
       email: user.email,
       chats: user.chats,
       socketId: user.socketId,
@@ -90,7 +92,7 @@ class FormatService {
      message: msgState.message,
      userId: msgState.Fid,
      chatId: msgState.Cid,
-     userName: userName,
+     userName: msgState.Fname,
      date: msgState.date
    };
    return msg;

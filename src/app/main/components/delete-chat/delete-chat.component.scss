@@ -1,0 +1,76 @@
+main {
+  height: calc(100% - var(--header-height));
+}
+.delete-chat-container {
+  background-color: var(--prime-backgroud-color);
+}
+
+.delete-chat-container, .btn-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.main-header {
+  margin-top: 40px;
+}
+
+h3 {
+  color: #000000;
+  font-weight: 500;
+  font-size: xx-large;
+  border-bottom: 3px solid black;
+  font-family: fantasy;
+}
+
+.form-container {
+  cursor: pointer;
+  margin: 25vh auto auto auto;
+  color: #000000;
+}
+
+.delete-btn {
+  background-color: rgb(156, 154, 154);
+  color: #000000;
+  border-radius: 5px;
+}
+
+.enable-btn {
+  background-color: rgb(160, 32, 32);
+  color: #fff;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.close-btn {
+  display: flex;
+  margin-right: auto;
+  cursor: pointer;
+}
+
+:host ::ng-deep ::-webkit-scrollbar {
+  display: none;
+}
+
+:host ::ng-deep mat-form-field {
+
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: #193C50 !important;
+  }
+
+  .mat-form-field-outline {
+    color: #193C50 !important;
+  }
+
+  .mat-form-field-outline-thick {
+    color: cadetblue !important;
+  }
+
+  .mat-form-field-label {
+    color: #000 !important;
+    font-weight: 600;
+  }
+
+}

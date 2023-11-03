@@ -1,0 +1,27 @@
+<li class="chat-contaienr" [ngClass]="{'active': isSelected}" (click)="onItemSelect(listItem)">
+    <div class="chat-img-container">
+      <ng-container *ngIf="asImage else NotFound">
+        <img [src]="Transform(listItem.img)" alt="">
+      </ng-container>
+      <ng-template #NotFound>
+        <mat-icon >{{listItem.icon}}</mat-icon>
+      </ng-template>
+    </div>
+  
+    <div class="groups-content">
+      <div class="group1">
+        <span class="chat-name item1">
+          {{listItem.name}}
+        </span>
+        <p class="msg item2 last-msg-color"> 
+          <ng-container *ngIf="listItem.description">
+              <span > {{ listItem.description }} </span>
+          </ng-container>
+        </p>
+      </div>
+    
+      <div class="group2"></div>
+      
+    </div>
+    <span style="grid-row: 1/3; width: 15px;"></span>
+</li>

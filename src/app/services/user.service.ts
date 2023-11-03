@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { User } from "../shared/models/user";
 import { BaseService } from "./base/base.service";
 
@@ -11,13 +11,11 @@ const EmptyFile = new File([],'emptyFile');
   providedIn: 'root'
 })
 export class UserService {
-  private user: User;
-  onUserChange = new Subject<User>();
+  private defaultUser = new User('','','','','', EmptyFile);
+  onUserChange = new BehaviorSubject<User>(this.defaultUser);
   constructor(
     private baseService: BaseService
-    ) {
-    this.user = new User('','','','','', EmptyFile);
-  }
+    ) {}
 
   getUserById(id: string) {
 
@@ -34,8 +32,8 @@ export class UserService {
         user.password,
         user.email,
         img,
-      )
-      this.set(currentUser);
+      );
+      this.onUserChange.next(currentUser);
       return currentUser;
     })
     .catch(err => err);
@@ -57,17 +55,16 @@ export class UserService {
   }
 
   updateUser(updateduser: User) {
-    const formData = new FormData();
 
-    formData.append('id', updateduser.id);
-    formData.append('name', updateduser.name);
-    formData.append('phone',  updateduser.phone);
-    formData.append('password', updateduser.password);
-    formData.append('email', updateduser.email);
-    formData.append('image', updateduser.img);
-
-    const url =`${URI}update/`
-    this.baseService.put<any>(URI,formData)
+    const body = {
+      id: updateduser.id,
+      name: updateduser.name,
+      phone: updateduser.phone,
+      password: updateduser.password,
+      email: updateduser.email,
+      image: updateduser.img,
+    }
+    this.baseService.put<User>(URI,body)
     .then(resUpdatedUser => {
       const updatedUser = new User
       (resUpdatedUser.id,
@@ -76,19 +73,10 @@ export class UserService {
         resUpdatedUser.password,
         resUpdatedUser.email,
         resUpdatedUser.img)
-      this.set(updatedUser);
       this.onUserChange.next(updatedUser);
     })
     .catch(err => {
       throw new Error(err)
     })
-  }
-
-  set(selectedUser: User) {
-    this.user = selectedUser;
-  }
-
-  get() {
-    return this.user;
   }
 }

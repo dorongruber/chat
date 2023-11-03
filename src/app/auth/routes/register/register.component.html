@@ -1,83 +1,15 @@
 <!-- <app-alert *ngIf="error"></app-alert> -->
-<form class="form-container" [formGroup]="authForm" (ngSubmit)="onSubmit(authForm)" *ngIf="!isLoading">
+<form class="form-container" [formGroup]="authForm" (ngSubmit)="onSubmit(authForm)">
 
-  <mat-form-field
-  class="form-content"
-  appearance="outline">
-    <mat-label>Name </mat-label>
-    <input
-    matInput
-    type="text"
-    formControlName="name"
-    placeholder="Name"
-    name="name">
-  </mat-form-field>
-  <br>
-
-  <mat-form-field
-  class="form-content"
-  appearance="outline">
-    <mat-label>Email </mat-label>
-    <input
-    matInput
-    type="email"
-    formControlName="email"
-    placeholder="Email"
-    name="email">
-  </mat-form-field>
-  <br>
-
-  <mat-form-field
-  class="form-content"
-  appearance="outline">
-    <mat-label>Phone </mat-label>
-    <input
-    matInput
-    type="text"
-    formControlName="phone"
-    placeholder="Phone"
-    name="phone">
-  </mat-form-field>
-  <br>
-
-  <div formGroupName="passform">
-    <mat-form-field
-    class="form-content"
-    appearance="outline">
-      <mat-label>Password </mat-label>
-      <input
-      matInput
-      type="password"
-      formControlName="password"
-      placeholder="Password"
-      name="password"
-      matTooltip="password needs to have at lest one Uppercase, Lowercase, number"
-      >
-    </mat-form-field>
-    <br>
-
-    <mat-form-field
-    class="form-content"
-    appearance="outline">
-      <mat-label>Password Confireming </mat-label>
-      <input
-      matInput
-      type="password"
-      formControlName="confirmpassword"
-      placeholder="confirmation password"
-      name="confirmpassword"
-      matTooltip="passwoed needs to have at lest one Uppercase, Lowercase, number"
-      >
-    </mat-form-field>
-
-
-  </div>
+  <ng-container *ngFor="let formField of registrationFormFieldsStracture">
+    <app-dynamic-authform-input [form]="authForm" [formField]="formField" ></app-dynamic-authform-input>
+  </ng-container>
 
   <div class='btn-container'>
     <button
     class="register-btn"
     type="submit"
-    [disabled]="authForm.invalid && authForm.get('passform')?.invalid"
+    [disabled]="authForm.invalid"
     mat-raised-button> Register </button>
   </div>
 </form>

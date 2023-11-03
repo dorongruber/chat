@@ -1,25 +1,36 @@
-<body id="chat" class="chat-container main-background-img" (click)="FocusOnChat()">
-  <app-header [relatedToRoute]="baseRoute" [title]="chatId" [chat]="selectedChat"></app-header>
-  <section id="msgs-container" class="messages-container msgs" *ngIf="!isLoading else ShowSpinner">
-    <ng-container *ngFor="let message of messages; let i=index;">
-      <app-message class="single-msg" [msgFromat]="message"></app-message>
-    </ng-container>
-    <div id="chat-top-indicator"></div>
-  </section>
-  <ng-template #ShowSpinner>
-    <div class="messages-container spinner">
-      <app-loading-spinner></app-loading-spinner>
-    </div>
-  </ng-template>
-  <footer class="form-footer">
-    <form #messageForm="ngForm" (ngSubmit)="onMessageSubmit(messageForm)">
-      <div class="input-container">
-        <!-- <input [(ngModel)]="message" required name="message" class="message-input" type="text" placeholder="send message"> -->
-        <textarea [(ngModel)]="msgContent" required name="message" id="message" cols="5" rows="10" placeholder="send message" class="message-input"></textarea>
-        <button class="send-message-btn btn-flex" type="submit">
-          <mat-icon class="send-icon">send</mat-icon>
-        </button>
-      </div>
-    </form>
-  </footer>
-</body>
+<mat-sidenav-container style="height: 100%;" (click)="FocusOnChat()">
+  <mat-sidenav class="sidenav" position="end" #chatSideNav mode="side">
+    
+      <section style="height: 100%;">
+        <app-dynamic-component [componentRef]="sidenavComponentRef"></app-dynamic-component>
+      </section>
+    
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <main id="chat" class="chat-container main-background-img" >
+      <app-header [menuOptions]="menuOptions" [title]="selectedChat.name" [componentRef]="componentRef"></app-header>
+      <section id="msgs-container" class="messages-container msgs" *ngIf="!isLoading else ShowSpinner">
+        <div id="chat-top-indicator"></div>
+        <ng-container *ngFor="let message of messages; let i=index; trackBy: trackMessages">
+          <app-message class="single-msg" [msgFromat]="message"></app-message>
+        </ng-container>
+      </section>
+      <ng-template #ShowSpinner>
+        <div class="messages-container spinner">
+          <app-loading-spinner></app-loading-spinner>
+        </div>
+      </ng-template>
+      <footer class="form-footer">
+        <form #messageForm="ngForm" (ngSubmit)="onMessageSubmit(messageForm)">
+          <div class="input-container">
+            <input [(ngModel)]="msgContent" required name="message" id="message" autocomplete="off"  placeholder="send message" class="message-input">
+            <button mat-icon-button type="submit">
+              <mat-icon class="send-icon">send</mat-icon>
+            </button>
+          </div>
+        </form>
+      </footer>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

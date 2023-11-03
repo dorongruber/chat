@@ -11,9 +11,10 @@ class ChatService {
   constructor() {}
 
   getById = async function(id) {
-    const chat = await Chats.findOne({id}).populate('users');
+    const chat = await Chats.findOne({id: id})
+    .populate('users', 'id name phone email socketId img')
+    .populate('messages');
     if (!chat) return new Error('404');
-    //console.log('get chat by id chat -> ', chat.name);
     return formatService.singleChatResponseFormat(chat);
   }
 
@@ -23,8 +24,6 @@ class ChatService {
 
   createChat = async function(newChatInfo) {
    try{
-    console.log('create chat chat service newChatInfo ==> ', newChatInfo.id, newChatInfo.name, JSON.parse(newChatInfo.users));
-
     const chat = await Chats.findOne({id: newChatInfo.id});
     let image = null;
     if (chat) return this.updateChat(newChatInfo)
@@ -35,6 +34,7 @@ class ChatService {
     const newChat = new Chats({
       id: newChatInfo.id,
       name: newChatInfo.name,
+      chatType: newChatInfo.type,
       users: [...users.map(u => u._id)],
       img: image,
     });
@@ -43,9 +43,7 @@ class ChatService {
         user.chats.push(newChat._id);
         await userService.update(user);
     }
-    await newChat.save(function(err,chat) {
-      if(err) throw err;
-    });
+    await newChat.save();
     return newChat;
    } catch(err) {
      throw err;
@@ -70,12 +68,7 @@ class ChatService {
             await userService.update(user);
           }
       }
-      const saved = await chat.save(function(err,chat) {
-        if(err) {
-          throw err
-        };
-        return chat;
-      });
+      const saved = await chat.save();
       return saved;
     }catch(err) {
       throw new Error(err)
@@ -84,7 +77,7 @@ class ChatService {
 
   getSingalePopulatedField = async function(id, fieldToPopulate) {
     try {
-      const chat = await Chats.findOne({id})
+      const chat = await Chats.findOne({id: id})
       .populate({
         path: fieldToPopulate
       })
@@ -183,9 +176,8 @@ class ChatService {
       year: refDate.getUTCFullYear()
     }
     const index = chatMsgs.findIndex(m => this.checkDate(lastMsgDate,m.date));
-    console.log('index -> ', index);
     if (index !== -1 && index !== 0) {
-      chatMsgs = chatMsgs.slice(0, index -1);
+      chatMsgs = chatMsgs.slice(0, index);
       chatMsgs = this.getMessagesFromLastDate(chatMsgs);
       const formatedMessages = formatService.requestMsgFormat(chatMsgs);
       return formatedMessages;

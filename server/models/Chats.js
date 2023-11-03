@@ -8,6 +8,10 @@ const ChatSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  chatType: {
+    type: String,
+    required: true,
+  },
   messages: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Messages',

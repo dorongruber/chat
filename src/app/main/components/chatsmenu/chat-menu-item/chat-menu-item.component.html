@@ -1,0 +1,47 @@
+<li class="chat-contaienr"  (click)="OnChatSelect(chat.id)">
+  <div class="chat-img-container">
+    <ng-container *ngIf="asImage else NotFound">
+      <img [src]="Transform(chat.img)" alt="">
+    </ng-container>
+    <ng-template #NotFound>
+      <mat-icon >supervised_user_circle</mat-icon>
+    </ng-template>
+  </div>
+
+  <div class="groups-content">
+    <div class="group1">
+      <div class="item1">
+        <span class="title">
+          {{chat.name}}
+          
+        </span>
+      </div>
+      
+      <span class="msg-container item2" [ngClass]="{'last-msg-color':  chat.newmsgscounter === 0}"> 
+        <ng-container *ngIf="chat.lastMsg && chat.lastMsg.userName?.length">
+          {{ chat.lastMsg.userName }} : {{ chat.lastMsg.message }}
+        </ng-container>
+    </span>
+    </div>
+  
+    <div class="group2">
+      <div class="time item1 last-msg-color">
+  
+      <ng-container *ngIf="chat.lastMsg ">
+          {{ chat.lastMsg.date | date: 'shortDate'}}
+        
+      </ng-container>
+    </div>
+        <div class="chatItemMenu item2" >
+          <ng-container *ngIf="chat.newmsgscounter">
+            <span class="new-masgs-counter-badge">
+              <span class="count">
+                {{chat.newmsgscounter}}
+              </span>
+            </span>
+        </ng-container>
+        </div>
+    </div>
+    
+  </div>
+</li>

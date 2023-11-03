@@ -13,15 +13,17 @@
     "downlevelIteration": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es6",
+    "target": "ES2022",
     "module": "es2020",
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "lib": [
+      "es2019",
       "es2018",
       "dom"
-    ]
+    ],
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

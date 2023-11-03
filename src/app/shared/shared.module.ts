@@ -2,25 +2,22 @@ import { NgModule } from '@angular/core';
 
 import { AlertComponent } from './components/alert/alert.component';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
-import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
+
 
 import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule} from '@angular/material/button';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FocusDirective } from './directives/focuslastelement.directive';
 import { Page404Component } from './components/page404/page404.component';
 
 @NgModule({
   declarations: [
     AlertComponent,
     LoadingSpinnerComponent,
-    DynamicFormComponent,
-    FocusDirective,
     Page404Component,
   ],
   imports: [
@@ -37,13 +34,11 @@ import { Page404Component } from './components/page404/page404.component';
   exports: [
     AlertComponent,
     LoadingSpinnerComponent,
-    DynamicFormComponent,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
-    FocusDirective,
     MatMenuModule,
     MatAutocompleteModule,
     MatButtonModule,

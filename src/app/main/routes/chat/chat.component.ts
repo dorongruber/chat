@@ -1,175 +1,169 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { Message } from 'src/app/main/models/message';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 import { ChatInMenu } from '../../models/chat';
-
-const COMPONENT_BASE_ROUTE = '/main/chat';
+import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
+import { takeUntil } from "rxjs/operators";
+import { User } from 'src/app/shared/models/user';
+import { MatSidenav } from '@angular/material/sidenav';
+import { chatMenuOptions } from 'src/app/main/consts/menuoptionslists';
+import { DynamicComponentRef } from '../../directives/dynamic-component.ref.directive';
+import { Header1Component } from '../../components/headers/header1/header1.component';
+import { HeaderMenuOption } from '../../models/header-menu-option';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.scss']
+  styleUrls: ['./chat.component.scss'],
+  providers: [ControllerService],
 })
-export class ChatComponent implements OnInit, AfterViewInit ,OnDestroy {
-  private subscription = new Subscription();
-  private subscriptions = new Subscription();
+export class ChatComponent implements OnInit, AfterViewInit {
+  @ViewChild("chatSideNav") sidenav!: MatSidenav;
   msgContent: string = '';
-  messageFormat: Message = {};
   messages: Message[] = [];
-  chatId$: Observable<string>;
-  chatId: string = '';
-  chatUsers: {userId: string, userName: string, chatId: string}[] ;
-  baseRoute = COMPONENT_BASE_ROUTE;
   lastMsgElement: Element | null = null;
   isLoading = false;
   selectedChat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
+  user!: User;
+  menuOptions: HeaderMenuOption[] ;
+  componentRef: DynamicComponentRef;
+  sidenavComponentRef?: DynamicComponentRef;
   constructor(
-    private route: ActivatedRoute,
     private chatService: ChatService,
     private socketService: SocketService,
     private userService: UserService,
     private controllerService: ControllerService,
+    private subscriptionContolService: SubscriptionContolService,
     ) {
-    this.chatId$ = new Observable<string>();
-    this.chatUsers = []
+      this.componentRef = new DynamicComponentRef(Header1Component);
+      this.menuOptions = chatMenuOptions;
+      this.controllerService.onMenuStateChange
+      .pipe(takeUntil(this.subscriptionContolService.stop$), tap((res) => {
+        this.sidenavComponentRef = res?.componentRef;
+        this.sidenav.toggle();
+      }))
+      .subscribe();
+    this.userService.onUserChange
+      .pipe(takeUntil(this.subscriptionContolService.stop$))
+      .subscribe(
+        (user: User) => {
+          this.user = user;
+        },
+        (err) => {
+          console.log("errer ChatComponent ==> ", err); 
+        },
+      );
+
+    this.chatService.getCurrentChat()
+      .pipe(takeUntil(this.subscriptionContolService.stop$), tap(async res => {
+        this.onLoadingChange();
+        this.selectedChat = res;       
+        
+        this.messages = await this.chatService.getChatMessages(this.selectedChat.id);
+        setTimeout(() => {
+          this.scrollToLastMsg();
+          this.scrollObservable();
+        });
+     }))
+      .subscribe(() => {
+        this.onLoadingChange();
+      });
    }
 
-  async ngOnInit(): Promise<void> {
-   this.chatId$ = this.route.paramMap.pipe(switchMap(params => {
-     return params.getAll('id');
-   }))
-
-   this.subscription = this.chatId$.subscribe(async res => {
-     this.onLoadingChange();
-     this.chatId = res;
-     const formDb = await this.chatService.getChatMessages(this.chatId);
-     this.messages = formDb.reverse();
-     setTimeout(() => {
-      this.scrollToLastMsg();
-      this.scrollObservable();
-    });
-    this.onLoadingChange();
-   });
-   this.subscriptions.add(this.subscription);
-
-   const user = this.userService.get();
-   this.socketService.connectToChat(user.id, user.name, this.chatId);
-
-   this.subscription = this.chatService.usersInChat.subscribe(resUsers => {
-    this.chatUsers = [...resUsers];
-   })
-   this.subscriptions.add(this.subscription);
-   this.subscriptions = this.chatService.messages.subscribe(resMsg => {
-     this.onLoadingChange();
-     //this.messages.push(resMsg);
-     this.messages = [resMsg, ...this.messages];
-     setTimeout(() => {
-      this.scrollToLastMsg();
-    });
+  ngOnInit() {
+   
+   this.chatService.newMsg
+   .pipe(takeUntil(this.subscriptionContolService.stop$), tap(res => {
+      this.onLoadingChange();
+      this.messages.push(res);
+  }))
+   .subscribe(res => {
     this.onLoadingChange();
    });
   }
 
   ngAfterViewInit(): void {
-    this.selectedChat = this.chatService.selectedChat;
-    this.chatService.onChatChange.subscribe(chatData => {
-      this.selectedChat = this.chatService.selectedChat;
-    });
     if ('scrollRestoration' in history) {
       window.history.scrollRestoration = 'manual';
     }
   }
 
   onLoadingChange() {
-    this.isLoading =!this.isLoading;
+    this.isLoading = !this.isLoading;
   }
 
   scrollObservable() {
-    const lmEl = document.querySelector('#chat-top-indicator');
+    const indicator = document.getElementById('chat-top-indicator');
+    const msgsContainer = document.getElementById('msgs-container');
     let options = {
-      root: document.querySelector('#msgs-container'),
-      threshold: [1],
+      root: msgsContainer,
+      threshold: [.75],
     }
-    if(lmEl) {
+    if(indicator) {
       let observer = new IntersectionObserver(this.checkScroll.bind(this), options);
-
-      if(!this.lastMsgElement)
-        this.lastMsgElement = lmEl;
-      else {
-        observer.unobserve(this.lastMsgElement)
-        this.lastMsgElement = lmEl;
-      }
-      observer.observe(this.lastMsgElement);
+      observer.observe(indicator);
     }
 
   }
 
   async checkScroll(entires: any) {
-    let prevDayMsgs;
-    if(entires[0].intersectionRatio === 1) {
-      const currentDate = this.messages[0]?.date? this.messages[0]?.date: null;
-      if(currentDate)
-        prevDayMsgs = await this.chatService.getPrevDayMsgs(this.chatId,currentDate);
-        if (prevDayMsgs && prevDayMsgs.length) {
-          this.messages = [...this.messages,...prevDayMsgs];
-        } else {
-          await this.fixScrollOnFirstMsgOfDay();
-        }
+    const currentDate = this.messages[0]?.date? this.messages[0]?.date: null;
+    if(entires[0].intersectionRatio === 1 && currentDate) {
+      
+      const msgsContainer = document.getElementById('msgs-container');
+      const prevH = msgsContainer!.scrollHeight;
+      
+      let prevDayMsgs = await this.chatService.getPrevDayMsgs(this.selectedChat.id,currentDate);
+      if (prevDayMsgs && prevDayMsgs.length) {
+        this.messages.unshift(...prevDayMsgs);
+        setTimeout(() => {
+          const curH = msgsContainer!.scrollHeight;
+          msgsContainer!.scrollTop = curH - prevH;
+         })
+      } 
     }
   }
 
   onMessageSubmit(form: NgForm) {
     if (form.invalid) return;
-    this.messageFormat = this.createMessage(form.value.message);
-    this.socketService.sendMessage(this.messageFormat);
-    this.messages = [this.messageFormat, ...this.messages];
-    this.msgContent = '';
+    const messageFormat = this.createMessage(form.value.message);
+    this.messages.push(messageFormat);
+    this.socketService.sendMessage(messageFormat);
+    form.reset();
     setTimeout(() => {
       this.scrollToLastMsg();
-    });
+    })
   }
 
   createMessage(msg: string): Message {
-    const userId = this.userService.get().id;
-    const userName = this.userService.get().name;
     const date = new Date();
     return  {
       message: msg,
-      userId: userId,
-      chatId: this.chatId,
-      userName: userName,
+      userId: this.user.id,
+      chatId: this.selectedChat.id,
+      userName: this.user.name,
       date: date,
       fromCurrentUser: true,
     };
   }
 
   FocusOnChat() {
-    this.controllerService.onChatFocusChange(this.chatId);
+    this.controllerService.onChatFocusChange(this.selectedChat.id);
   }
 
-  async fixScrollOnFirstMsgOfDay() {
-    const chatMsgsElement = document.querySelector('#msgs-container') as HTMLElement;
-    const firstMsgContainer = (document.querySelectorAll('.single-msg') as NodeListOf<HTMLElement>)[0];
-    console.log('firstMsgContainer ==> ', firstMsgContainer.offsetTop, window.pageYOffset );
-
-  }
 
   scrollToLastMsg() {
-    const chatMsgsElement = document.querySelector('#msgs-container') as HTMLElement;
-    if(chatMsgsElement)
-      chatMsgsElement.scrollTop = 0;
+    const chatMsgsElement = document.getElementById('msgs-container') as HTMLElement;    
+    chatMsgsElement.scrollTop = chatMsgsElement.scrollHeight;
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-    this.subscriptions.unsubscribe();
+  trackMessages(index: number, msg: Message) {    
+    return msg.date!.getTime();
   }
 
 }

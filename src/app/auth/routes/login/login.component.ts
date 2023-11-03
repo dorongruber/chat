@@ -1,74 +1,58 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { takeUntil } from "rxjs/operators";
 import { AuthService } from 'src/app/services/auth.service';
-import { AuthResponseData } from '../../models/auth-response';
 import { BaseUser } from '../../models/newuser';
+import { CustomBasicControl } from '../../../shared/models/form-field';
+import { loginFormStructure } from '../../consts/auth-forms-controls';
+import { FormControlService } from '../../../services/form-control.service';
+import { SubscriptionContolService } from 'src/app/services/subscription-control.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
-  isLoading = false;
-
-  authForm: FormGroup = new FormGroup({});
+  authForm: FormGroup;
+  loginFormFields: CustomBasicControl[];
   error: string | null;
+
   constructor(
     private authService: AuthService,
+    private controlService: FormControlService,
+    private subscriptionContolService: SubscriptionContolService,
     private router: Router,
     private route: ActivatedRoute
   ) {
      this.error = null;
+     this.loginFormFields = this.controlService.GetFlattedList(loginFormStructure);
+     this.authForm = this.controlService.InstantiateForm(loginFormStructure);
    }
 
-  ngOnInit() {
-    this.InitForm();
-  }
-
-  InitForm() {
-
-    this.authForm = new FormGroup({
-      email: new FormControl('', [
-        Validators.required,
-        Validators.email
-      ]),
-      password: new FormControl('', [
-        Validators.required,
-        Validators.minLength(6),
-        Validators.maxLength(12),
-        Validators.pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,12})'))
-      ])
-    });
-  }
   onSubmit(form: FormGroup) {
-    // submit form
-    this.isLoading = true;
-    let authObs: Observable<AuthResponseData>;
+    if(form.invalid) {
+      return;
+    }
+    this.authService.loadingObs.next(true);
     const isUser = new BaseUser(form.value.email, form.value.password)
-    authObs = this.authService.onLogin(isUser);
 
-    authObs.subscribe(resData => {
+    this.authService.onLogin(isUser)
+    .pipe(takeUntil(this.subscriptionContolService.stop$))
+    .subscribe((resData) => {      
       this.error = null;
-      this.router.navigate(['../../main'], { relativeTo: this.route});
-
-      this.authService.loadingObs.next(this.isLoading);
-
-      setTimeout(() => {
-        this.isLoading = false;
-      }, 1000);
-    }, errorMessage => {
-
+    }, (errMsg) => {
       this.authService.loadingObs.next(false);
-      this.error = errorMessage;
-      setTimeout(() => {
-        this.isLoading = false;
-      }, 0);
+      this.error = errMsg;
+      form.reset();
+    }, () =>{
+      form.reset();
+      this.authService.loadingObs.next(false);
+      this.router.navigate(['../../main'], { relativeTo: this.route});
     });
-    form.reset();
+    
   }
 
 }

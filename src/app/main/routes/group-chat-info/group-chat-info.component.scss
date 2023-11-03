@@ -1,0 +1,37 @@
+.userInfo-container {
+  height: calc(100% - var(--header-height));
+  background-color: var(--prime-backgroud-color);
+}
+
+
+header {
+  background-color: var(--secondary-background-color);
+  padding-block: 2rem;
+  box-sizing: border-box;
+  margin-block-end: .1rem;
+}
+
+ul {
+  background-color: var(--secondary-background-color);
+  padding-inline: 0.2rem;
+  padding-block: .5rem;
+  box-sizing: border-box;
+}
+
+li {
+  list-style: none;
+}
+
+.spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    height: 100%;
+}
+
+:host ::ng-deep app-form-input > div.input-container {
+  padding-inline: 1.5rem;
+  box-sizing: border-box;
+}

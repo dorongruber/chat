@@ -1,0 +1,37 @@
+<ng-container [formGroup]="form">
+  <ng-container *ngIf="!subGroupName; else nested">
+    <mat-form-field  class="form-content simpaleController" appearance="outline">
+      <mat-label>{{label}} </mat-label>
+      <input
+      matInput
+      [type]="type"
+      [formControlName]="name"
+      [placeholder]="label"
+      autocomplete="off"
+      [name]="name">
+      <mat-error *ngIf="formField.control.touched && formField.control.errors">
+          {{getErrorMsg()}}
+      </mat-error>
+    </mat-form-field>
+
+  </ng-container>
+  <ng-template #nested>
+      <ng-container [formGroupName]="subGroupName!">
+        <mat-form-field class="form-content nestedController" appearance="outline">
+        <mat-label>{{label}} </mat-label>
+        <input
+        matInput
+        [type]="type"
+        [formControlName]="name"
+        [placeholder]="label"
+        autocomplete="off"
+        [name]="name">
+        <mat-error *ngIf="formField.control.touched && formField.control.errors">
+          {{getErrorMsg()}}
+      </mat-error>
+      </mat-form-field>
+      </ng-container>
+  </ng-template>
+
+</ng-container>
+<br>

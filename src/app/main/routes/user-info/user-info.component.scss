@@ -1,0 +1,30 @@
+main {
+  height: calc(100% - var(--header-height));
+  background-color: var(--prime-backgroud-color);
+}
+
+
+header {
+  padding-block-start: 2rem;
+  box-sizing: border-box;
+}
+
+ul {
+  padding-inline-start: 1.5rem;
+  padding-inline-end: 1.5rem;
+}
+
+li {
+  list-style: none;
+}
+
+.close-btn {
+  cursor: pointer;
+  margin-right: auto;
+}
+
+.btn-container {
+  text-align: center;
+  cursor: pointer;
+  border-radius: 5px;
+}

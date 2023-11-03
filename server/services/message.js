@@ -26,7 +26,6 @@ class MessageService {
   }
 
   async save(msg,id,fid,tid,cid,date,fname) {
-    console.log('save message -> ', msg,id,fid,tid,cid,date);
     try {
       const checkMsg = await Messages.findOne({id});
       if (checkMsg) return null;

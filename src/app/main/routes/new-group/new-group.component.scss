@@ -1,0 +1,61 @@
+.new-chat {
+  position: relative;
+  background-position: center;
+  background-repeat: round;
+  background-size: 11% 29%;
+  height: calc(100% - var(--header-height));
+  background-color: var(--prime-backgroud-color);
+  @media (max-width: 640px) {
+    width: 100%;
+    background-size: 70%;
+    background-position: unset;
+    background-color: var(--prime-backgroud-color);
+    z-index: 1;
+  }
+}
+
+.img-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-block-start: 2rem;
+  box-sizing: border-box;
+}
+
+.btn-container {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+button {
+  &.mdc-fab {
+    width: 45px !important;
+    height: 45px !important;
+  }
+  mat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 36px;
+  }
+  &:valid {
+    background-color: var(--marker-color);
+    mat-icon {
+      color: var(--secondary-background-color);
+    }
+  }
+}    
+
+ul {
+  background-color: var(--prime-backgroud-color);
+  height: calc(100% - var(--header-height));
+  margin: 0;
+  padding: 10px 0 0 0;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep app-list-item  li.active {
+  background-color: var(--secondary-background-color);
+}
+
+

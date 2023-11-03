@@ -80,12 +80,4 @@ export class SocketService {
     return observable;
   }
 
-  getUsersinChat() {
-    const observable = new Observable(observer => {
-      this.socket.on('inChat', (chatUserObj:[{userId: string, userName: string, chatId: string}]) => {
-        observer.next(chatUserObj);
-      })
-    })
-    return observable;
-  }
 }

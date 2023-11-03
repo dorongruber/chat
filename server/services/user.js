@@ -4,72 +4,41 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Users = require('../models/Users');
-//const { chatService } = require('./chat');
 const { userErrorOptions } = require('../utils/errormessages');
 const { formatService } = require('./format.js');
 const { makeId } = require('../utils/randomstring');
+const { Api404Error } = require('../utils/error_handlling/custom_error_handlers')
 class UserService {
 
   constructor() {}
 
   login = async function(loginUser) {
-    const user = await Users.findOne({email: loginUser._email});
-    if(!user) return new Error(userErrorOptions.LOGIN);
-    const response = await bcrypt.compare(loginUser._password, user.password);
-    if(!response) return new Error(userErrorOptions.LOGIN);
-    const currentUser = {
-      id: user.id,
-      name: user.name,
-      phone: user.phone,
-      email: user.email,
-    };
-    const accessToken = jwt.sign(currentUser,
-      process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: '1h'
-    });
-    const expirationTime = 60*60;
-    return {email: currentUser.email, id: currentUser.id , token: accessToken, expiresIn: expirationTime};
-  }
-
-  get = async function(id) {
     try{
-      const user = await Users.findOne({ id });
-      if (!user)
-        return new Error(userErrorOptions.NOTFOUND);
-      return formatService.getUserFormat(user);
-    }catch(err) {
+      const user = await this.getUserByEmailAndPassword(loginUser._email, loginUser._password);
+      const currentUser = {
+        id: user.id,
+        name: user.name,
+        phone: user.phone,
+        email: user.email,
+      };
+      const accessToken = jwt.sign(currentUser,
+        process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: '1h'
+      });
+      const expirationTime = 60*60;
+      return {email: currentUser.email, id: currentUser.id , token: accessToken, expiresIn: expirationTime};
+    } catch(err) {
       throw err;
-    }
-  }
-
-  getChats =  async function(id) {
-    try {
-      const user = await Users.findOne({id})
-      .populate('chats')
-      .exec();
-      const chats = await formatService.responseChatFormat(user?.chats? user.chats: []);
-      return chats;
-    } catch (err) {
-      throw new Error(err);
     }
   }
 
   save = async function (newUserInfo) {
     try {
-      const hash = await bcrypt.hash(newUserInfo._password,10);
-      const user = await Users.findOne({$and: [{ email: {$eq: newUserInfo._email}},{password: {$eq: hash}}]});
+      const user = await this.getUserByEmailAndPassword(newUserInfo._email,newUserInfo._password);
       if (user)
         throw new Error(userErrorOptions.ALLREADYEXISTS);
-      const newUser = new Users({
-        id: makeId(15),
-        name: newUserInfo._firstName,
-        phone: newUserInfo._phone,
-        email: newUserInfo._email,
-        chats: [],
-        img: null,
-        socketId: null,
-        password: hash,
-      });
+      const hash = await bcrypt.hash(newUserInfo._password,10);
+      const newUser = this.SerializeUser(newUserInfo,hash);
       return newUser.save();
     }catch(err) {
       throw err;
@@ -84,10 +53,8 @@ class UserService {
       user.name =  newUserInfo.name;
       user.phone =  newUserInfo.phone;
       user.email =  newUserInfo.email;
-      user.password = newUserInfo.password? newUserInfo.password: user.password,
-      user.chats = newUserInfo.chats? [... newUserInfo.chats]: [...user.chats];
+      user.chats = newUserInfo.chats? [...newUserInfo.chats]: [...user.chats];
       user.socketId = newUserInfo.socketId? newUserInfo.socketId : user.socketId;
-      console.log('newUserInfo.img => ', newUserInfo.img.filename);
       if (newUserInfo.img && Object.keys(newUserInfo.img).includes('filename') && newUserInfo.img.filename) {
         const imageFile = fs.readFileSync(path.join('./public/images/' + `${newUserInfo.img.filename}`));
         user.img = {
@@ -97,18 +64,23 @@ class UserService {
         }
       }
       user.save();
-      return await this.get(user.id);
+      return formatService.getUserFormat(user);
     }catch(err) {
       throw err;
     }
   }
 
-  find = async function(params) {
-   try{
-    return await Users.find(params).exec()
-   }catch(err) {
-     throw err;
-   }
+  SerializeUser = function(newUserInfo,hash) {
+    return new Users({
+      id: makeId(15),
+      name: newUserInfo._firstName,
+      phone: newUserInfo._phone,
+      email: newUserInfo._email,
+      chats: [],
+      img: null,
+      socketId: null,
+      password: hash,
+    });
   }
 
   async getAll() {
@@ -116,6 +88,39 @@ class UserService {
       return await Users.find({});
     } catch(err) {
       throw err;
+    }
+  }
+  
+  getByCustomId = async function(id) {
+    try{
+      const docs = await Users.aggregate().match({id: id});
+      const user = docs[0];
+      if (!user)
+        return new Error(userErrorOptions.NOTFOUND);
+      return formatService.getUserFormat(user);
+    }catch(err) {
+      throw err;
+    }
+  }
+
+  getUserByEmailAndPassword = async function(email, password) {
+    const docs = await Users.aggregate().match({email: email});
+    const user = docs[0];
+    if(!user) throw new Api404Error(userErrorOptions.LOGIN);
+    const response = await bcrypt.compare(password, user.password);
+    if(!response) throw new Api404Error(userErrorOptions.LOGIN);
+    return user;
+  }
+
+  getChats =  async function(id) {
+    try {
+      const user = await Users.findOne({id})
+      .lean()
+      .populate('chats');
+      const chats = await formatService.responseChatFormat(user?.chats? user.chats: []);
+      return chats;
+    } catch (err) {
+      throw new Error(err);
     }
   }
 

@@ -1,0 +1,17 @@
+<div tabindex="0" class="input-container">
+    <div class="input-content">
+        <label for="search">
+            <mat-icon>search</mat-icon>
+        </label>
+        <input 
+            type="text"
+            id="search" 
+            name="search" 
+            class="search" 
+            placeholder="search..."
+            autocomplete="off"
+            debounceKeyUp
+            (onEvent)="handleDebouncedKeyUp($event)">
+    </div>
+</div>
+

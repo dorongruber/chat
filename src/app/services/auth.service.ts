@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { BehaviorSubject, Subject, throwError } from "rxjs";
-import { catchError, tap } from "rxjs/operators";
+import { BehaviorSubject, Observable, Subject, of, throwError } from "rxjs";
+import { switchMap, catchError } from "rxjs/operators";
 import { AuthResponseData } from "../auth/models/auth-response";
 import { Auth } from "../auth/models/auth.model";
 import { BaseUser, RegisterUser } from "../auth/models/newuser";
@@ -30,24 +30,27 @@ export class AuthService {
       `${URI}register`, {
         newUser
       }
-    ).pipe((message) => {
+    ).pipe(switchMap(message => {
       this.loadingObs.next(false);
-      return message;
-    })
+      catchError(this.handleError);
+      return of(message);
+    }) )
   }
 
-  onLogin(isUser: BaseUser) {
+  onLogin(isUser: BaseUser): Observable<AuthResponseData> {
     this.loadingObs.next(true);
     return this.http.post<AuthResponseData>(
       `${URI}login`,
       {
         isUser
       }
-    ).pipe(catchError(this.handleError), tap(resData => {
-      this.handleAuthentication(
-        resData
-      )
-    }))
+    ).pipe(switchMap(resData => {
+      catchError(this.handleError);
+      this.handleAuthentication(resData);
+      return of(resData);
+    }));
+
+
   }
 
   private handleAuthentication(gurd: AuthResponseData) {
@@ -77,7 +80,7 @@ export class AuthService {
         id: string;
         _token: string;
         _tokenExpirationDate: string;
-      } = JSON.parse(localStorage.getItem('userData') || "{name: null,id:null,_token: null,_tokenExpirationDate:null}");
+      } = JSON.parse(localStorage.getItem('userData') || '{"name": null,"id":null,"_token": null,"_tokenExpirationDate":null}');
       if (!userData) return;
       const loadedUser = new Auth(
         userData.name,

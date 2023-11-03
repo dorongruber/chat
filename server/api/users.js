@@ -2,15 +2,16 @@ const express = require('express');
 const { userService } = require('../services/user');
 const { AuthenticationToken } = require('../middleware/jwt');
 const { upload } = require('../middleware/processimg');
+const { loginUserValidator } = require('../middleware/login-validator');
+const { updatedUserValidator } = require('../middleware/registraion-validator');
+const { userValidator } = require('../middleware/registraion-validator');
 const router = express.Router();
 
-router.post('/login', Login);
+router.post('/login',loginUserValidator, Login);
 
-router.post('/register', saveUser);
+router.post('/register', userValidator, saveUser);
 
-router.put('/', upload.single('image') ,updateUserInfo)
-
-//router.post('/update', updateUserInfo);
+router.put('/',AuthenticationToken, updatedUserValidator, upload.single('image') ,updateUserInfo)
 
 router.get('/allUsers', getAllUsers);
 
@@ -30,13 +31,13 @@ function Login(req,res,next) {
     res.status(200).json(authUser);
   })
   .catch(err => {
-    res.status(500).json(new Error(err))
+    res.status(err.statusCode).json(err.name);
   })
 }
 
 function getUserById(req,res,next) {
   const { id } = req.params;
-  userService.get(id)
+  userService.getByCustomId(id)
   .then(user => {
     res.status(200).json(user);
   })
@@ -47,7 +48,6 @@ function getUserById(req,res,next) {
 }
 
 function saveUser(req,res,next) {
-
   const {newUser } = req.body;
   userService.save(newUser)
   .then(savedUser => {
@@ -73,7 +73,6 @@ function updateUserInfo(req,res,next) {
 function getAllUsers(req,res,next) {
   userService.getAll()
   .then(users => {
-    //console.log('server all user -> ', users);
     res.status(200).json(users);
   })
   .catch(err => {

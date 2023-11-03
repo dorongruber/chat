@@ -37,8 +37,6 @@ export class Chat {
 export class ChatInMenu extends Chat {
   public lastMsg: Message;
   public newmsgscounter: number;
-  public onMsgChange: Subject<Message>;
-  public onCounterChange: Subject<number>;
   constructor(
     private CMid: string,
     private CMname: string,
@@ -47,8 +45,6 @@ export class ChatInMenu extends Chat {
       super(CMid,CMname,CMimage);
       this.lastMsg = this.resetLastMessage();
       this.newmsgscounter = 0;
-      this.onMsgChange = new Subject<Message>();
-      this.onCounterChange = new Subject<number>();
   }
 
   resetLastMessage() {

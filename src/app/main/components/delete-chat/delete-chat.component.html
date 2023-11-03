@@ -1,0 +1,39 @@
+<app-header [title]="'Delete Chat'" [componentRef]="componentRef"></app-header>
+<main class="delete-chat-container">
+
+
+
+  <form class="form-container"
+  [formGroup]="deleteForm"
+  (ngSubmit)="onSubmit(deleteForm)"
+  >
+    <mat-form-field
+    class="form-content"
+    appearance="outline">
+      <mat-label> Chat Name </mat-label>
+      <input
+      type="text"
+      matInput
+      formControlName="chatName"
+      [matAutocomplete]="auto"
+      placeholder="Enter Chat Name"
+      [value]="chatToDelete.name" >
+    </mat-form-field>
+    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+      <mat-option (click)="selectOption(chat)" *ngFor="let chat of filterOptions | async;let i=index" [value]="chat.name">
+        {{chat.name}}
+      </mat-option>
+    </mat-autocomplete>
+
+    <div class="btn-container">
+      <button
+      class="delete-btn"
+      [ngClass]="{'enable-btn': deleteForm.valid}"
+      type="submit"
+      [disabled]="!deleteForm.valid">
+        Delete
+      </button>
+    </div>
+  </form>
+
+</main>

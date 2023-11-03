@@ -8,12 +8,14 @@ import { RegisterComponent } from './routes/register/register.component';
 import { LoginComponent } from './routes/login/login.component';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
+import { DynamicauthforminputComponent } from './common/dynamicauthforminput/dynamicauthforminput.component';
 
 @NgModule({
   declarations: [
     AuthComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    DynamicauthforminputComponent,
   ],
   imports: [
     CommonModule,
