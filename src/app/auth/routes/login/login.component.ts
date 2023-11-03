@@ -49,8 +49,8 @@ export class LoginComponent {
       form.reset();
     }, () =>{
       form.reset();
-      this.authService.loadingObs.next(false);
       this.router.navigate(['../../main'], { relativeTo: this.route});
+      this.authService.loadingObs.next(false);
     });
     
   }
