@@ -11,43 +11,37 @@
   <div class="groups-content">
     <div class="group1">
       <div class="item1">
-        <span class="chat-name">
+        <span class="title">
           {{chat.name}}
-          <ng-container *ngIf="chat.newmsgscounter">
-              <span class="new-masgs-counter-badge">
-                <span class="count">
-                  {{chat.newmsgscounter}}
-                </span>
-              </span>
-          </ng-container>
+          
         </span>
       </div>
       
-      <span class="msg item2" [ngClass]="{'last-msg-color':  chat.newmsgscounter === 0}"> 
-        <ng-container *ngIf="chat.lastMsg ">
-            <span >
-              {{ chat.lastMsg.userName }}
-          </span>: 
-          <span >
-            {{ chat.lastMsg.message }}
-          </span>
-        
+      <span class="msg-container item2" [ngClass]="{'last-msg-color':  chat.newmsgscounter === 0}"> 
+        <ng-container *ngIf="chat.lastMsg && chat.lastMsg.userName?.length">
+          {{ chat.lastMsg.userName }} : {{ chat.lastMsg.message }}
         </ng-container>
     </span>
     </div>
   
     <div class="group2">
-      <h4 class="time item1 last-msg-color">
+      <div class="time item1 last-msg-color">
   
       <ng-container *ngIf="chat.lastMsg ">
           {{ chat.lastMsg.date | date: 'shortDate'}}
         
       </ng-container>
-    </h4>
+    </div>
         <div class="chatItemMenu item2" >
+          <ng-container *ngIf="chat.newmsgscounter">
+            <span class="new-masgs-counter-badge">
+              <span class="count">
+                {{chat.newmsgscounter}}
+              </span>
+            </span>
+        </ng-container>
         </div>
     </div>
     
   </div>
-  <span style="grid-row: 1/3; width: 15px;"></span>
-  </li>
+</li>
