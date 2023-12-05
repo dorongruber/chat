@@ -23,7 +23,7 @@ export class BaseService {
     return this.http.put<Type>(`${url}`,obj).toPromise();
   }
 
-  delete(url: string, args: string) {
-    return this.http.delete(`${url}${args}`).toPromise();
+  delete<Type>(url: string, args: string) {
+    return this.http.delete<Type>(`${url}${args}`).toPromise();
   }
 }

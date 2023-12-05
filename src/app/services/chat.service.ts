@@ -131,7 +131,7 @@ export class ChatService {
 
      deleteChat(chatId: string,userId: string) {
       const ids = `${chatId}/${userId}`;
-      return this.baseService.delete(URI,ids)
+      return this.baseService.delete<Chat>(URI,ids)
      }
 
     async setCurrentChat(chat: ChatInMenu) {
