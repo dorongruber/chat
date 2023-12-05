@@ -11,7 +11,7 @@ const EmptyFile = new File([],'emptyFile');
   providedIn: 'root'
 })
 export class UserService {
-  private defaultUser = new User('','','','','', EmptyFile);
+  private defaultUser = new User('','','','','','', EmptyFile);
   onUserChange = new BehaviorSubject<User>(this.defaultUser);
   constructor(
     private baseService: BaseService
@@ -20,12 +20,13 @@ export class UserService {
   getUserById(id: string) {
 
     return this.baseService.get<
-    {id: string, name: string, phone: string,
+    {_id: string, id: string, name: string, phone: string,
       password: string, email: string, img: File}
     >(URI,id)
     .then(user => {
       const img = Object.values(user.img)[0] ? user.img : EmptyFile;
       const currentUser = new User(
+        user._id,
         user.id,
         user.name,
         user.phone,
@@ -42,13 +43,13 @@ export class UserService {
   async getAllUsers() {
     const newURI = `${URI}allUsers`;
     return this.baseService
-    .get<{id: string, name: string, phone: string,
+    .get<{_id: string, id: string, name: string, phone: string,
       password: string, email: string, img: File}[]
     >(newURI,'')
     .then(users => {
       const formatUsers: User[] = [];
       users.forEach(u => {
-        formatUsers.push(new User(u.id,u.name,u.phone,u.password,u.email,u.img))
+        formatUsers.push(new User(u._id,u.id,u.name,u.phone,u.password,u.email,u.img))
       })
       return formatUsers;
     })
@@ -67,7 +68,9 @@ export class UserService {
     this.baseService.put<User>(URI,body)
     .then(resUpdatedUser => {
       const updatedUser = new User
-      (resUpdatedUser.id,
+      (
+        resUpdatedUser._id,
+        resUpdatedUser.id,
         resUpdatedUser.name,
         resUpdatedUser.phone,
         resUpdatedUser.password,

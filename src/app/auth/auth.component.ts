@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from "rxjs/operators";
 import { AuthService } from '../services/auth.service';
@@ -21,6 +21,11 @@ export class AuthComponent implements OnInit {
     private subscriptionContolService: SubscriptionContolService,
   ) {
       this.direction = window.innerWidth <= 640;
+      this.router.events.subscribe(res => {
+        if(res instanceof NavigationEnd) {
+          this.loadState = res.url.includes("login") ? true : false;
+        }
+      });
   }
 
   ngOnInit() {

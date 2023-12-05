@@ -122,6 +122,12 @@
   grid-row: 2;
 }
 
+img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+
 :host ::ng-deep .chat-img-container{
   .material-icons {
     font-size: 45px !important;

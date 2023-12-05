@@ -42,13 +42,12 @@ function getUserById(req,res,next) {
     res.status(200).json(user);
   })
   .catch(err => {
-    console.log(err)
     res.status(401).json(new Error(err));
   });
 }
 
 function saveUser(req,res,next) {
-  const {newUser } = req.body;
+  const { newUser } = req.body;
   userService.save(newUser)
   .then(savedUser => {
     res.status(200).json(savedUser);

@@ -1,11 +1,15 @@
 <header>
-    <div class="chat-img-container" (click)="onOptionSelect(menuOptions[0])">
-      <ng-container *ngIf="asImage else NotFound">
-        <img [src]="Transform(user.img)" alt="">
-      </ng-container>
-      <ng-template #NotFound>
-        <mat-icon >account_circle</mat-icon>
-      </ng-template>
+    <div class="title-container">
+      <div class="chat-img-container" (click)="onOptionSelect(menuOptions[0])">
+        <ng-container *ngIf="asImage else NotFound">
+          <img [src]="Transform(user.img)" alt="">
+        </ng-container>
+        <ng-template #NotFound>
+          <mat-icon >account_circle</mat-icon>
+        </ng-template>
+      </div>
+
+      <div>{{ title }}</div>
     </div>
       
     <div class="icons-container">

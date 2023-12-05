@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ControllerService } from 'src/app/services/base/controller.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { SocketService } from 'src/app/services/socket.service';
@@ -14,10 +14,11 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./chat-menu-item.component.scss']
 })
 export class ChatmenuitemComponent implements OnChanges {
-  @Input() chat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
+  @Input() chat: ChatInMenu = new ChatInMenu('','','',new File([],'emptyFile'));
   @Input()user!: User;
   
   asImage!: boolean;
+  safeImg?: SafeResourceUrl;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -36,13 +37,15 @@ export class ChatmenuitemComponent implements OnChanges {
 
   ngOnChanges(): void {
     this.asImage = this.checkImage(this.chat.img);
+    if(this.asImage)
+      this.safeImg = this.Transform(this.chat.img);
   }
 
   async OnChatSelect(id: string) {
     const userName = this.user.name;
     const userId = this.user.id;
     await this.resetMsgAndCount(id);
-    this.socketService.connectToChat(userId, userName, id);    
+    this.socketService.connectToChat(id);    
     this.router.navigate(['chat', this.chat.id,], {relativeTo: this.route.parent});
   }
 
@@ -58,7 +61,7 @@ export class ChatmenuitemComponent implements OnChanges {
   }
 
   Transform(img: any) {
-    const imgURL = img.data.data.includes('data:image/')? img.data.data : 'data:image/*;base64,' + img.data.data;
+    const imgURL = img.data.data.includes('data:image/')? img.data.data : `data:image/*;base64,${img.data.data}`;
     return this.sanitizer.bypassSecurityTrustResourceUrl(imgURL);
   }
 }

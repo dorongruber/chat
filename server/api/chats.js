@@ -25,7 +25,7 @@ function addChat(req,res,next) {
     res.status(200).json(newChat);
   })
   .catch(err => {
-    res.status(401).json(err);
+    res.status(400).json(err);
   })
 }
 
@@ -60,14 +60,6 @@ function getPrevDayMsgs(req,res,next) {
   .catch(err => {
     res.status(404).json(err);
   });
-}
-
-function getChatUserByChatId(req,res,next) {
-
-}
-
-function addUser(req,res,next) {
-
 }
 
 function deleteUserById(req,res,next) {

@@ -9,6 +9,10 @@
   }
 }
 
+.current-user {
+  direction: rtl;
+}
+
 .triangle {
   position: absolute;
   top: 1px;
@@ -21,6 +25,7 @@
 }
 
 .currentUser-triangle {
+  right: -10px;
   border-top: 23px solid hsl(198, 57%, 58%);
   border-bottom: 0 solid transparent;
   border-right: 30px solid transparent;

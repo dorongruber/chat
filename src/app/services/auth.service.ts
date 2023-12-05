@@ -98,8 +98,6 @@ export class AuthService {
         this.router.navigate(['/main']);
       }
     } catch(err) {
-      console.log('AutoLogin  catch err => ', err);
-
       throw err
     }
   }
@@ -112,7 +110,7 @@ export class AuthService {
 
   Logout() {
     this.authUser.next(undefined);
-    this.router.navigate(['/auth']);
+    this.router.navigate(['/auth/login']);
     localStorage.removeItem('userData');
     if ( this.tokenExpirationTimer )
       clearTimeout(this.tokenExpirationTimer);

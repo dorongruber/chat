@@ -1,7 +1,7 @@
 <li class="chat-contaienr"  (click)="OnChatSelect(chat.id)">
   <div class="chat-img-container">
     <ng-container *ngIf="asImage else NotFound">
-      <img [src]="Transform(chat.img)" alt="">
+      <img [src]="safeImg" alt="" loading="lazy">
     </ng-container>
     <ng-template #NotFound>
       <mat-icon >supervised_user_circle</mat-icon>
@@ -13,7 +13,6 @@
       <div class="item1">
         <span class="title">
           {{chat.name}}
-          
         </span>
       </div>
       

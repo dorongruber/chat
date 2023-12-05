@@ -32,7 +32,7 @@ export class Header1Component {
   onOptionSelect(value: HeaderMenuOption) {
     if(!value.componentRef) {
       localStorage.removeItem('userData');
-      this.router.navigate(['auth']);
+      this.router.navigate(['auth/login']);
     } else {
       this.controllerService.onStateChange(value);
     }

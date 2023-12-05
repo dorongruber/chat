@@ -42,7 +42,7 @@ export class NewchatComponent implements OnInit {
             this.currentUser = user;
           },
           (err) => {
-            console.log("errer NewchatComponent ==> ", err); 
+            console.log("errer New chat Component", err); 
           },
         );
    }
@@ -53,7 +53,7 @@ export class NewchatComponent implements OnInit {
 
   onSelectedUser(selected: ListItem) {
     const selectedUser = this.usersById[selected.id];
-    const res = this.chatsService.addChat('',selected.name,[selectedUser, this.currentUser],this.currentUser.id,selected.img, "private");
+    const res = this.chatsService.addChat('',selected.name,[selectedUser, this.currentUser],selected.img, "private");
     this.controllerService.onStateChange(undefined);
   }
   // smae as in group chat component

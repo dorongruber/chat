@@ -15,6 +15,9 @@ class UserService {
   login = async function(loginUser) {
     try{
       const user = await this.getUserByEmailAndPassword(loginUser._email, loginUser._password);
+      if(!user) throw new Api404Error(userErrorOptions.LOGIN);
+      const response = await bcrypt.compare(loginUser._password, user.password);
+      if(!response) throw new Api404Error(userErrorOptions.LOGIN);
       const currentUser = {
         id: user.id,
         name: user.name,
@@ -104,20 +107,21 @@ class UserService {
   }
 
   getUserByEmailAndPassword = async function(email, password) {
-    const docs = await Users.aggregate().match({email: email});
-    const user = docs[0];
-    if(!user) throw new Api404Error(userErrorOptions.LOGIN);
-    const response = await bcrypt.compare(password, user.password);
-    if(!response) throw new Api404Error(userErrorOptions.LOGIN);
-    return user;
+    const docs = await Users.aggregate().match({email: email});    
+    return docs[0];
   }
 
   getChats =  async function(id) {
     try {
-      const user = await Users.findOne({id})
-      .lean()
-      .populate('chats');
-      const chats = await formatService.responseChatFormat(user?.chats? user.chats: []);
+      const user = await Users.aggregate()
+      .match({id: id})
+      .lookup({
+        from: "chats",
+        localField: "chats",
+        foreignField: "_id",
+        as: "chats"
+      });
+      const chats = await formatService.responseChatFormat(user[0]?.chats? user[0].chats: []);
       return chats;
     } catch (err) {
       throw new Error(err);

@@ -37,7 +37,7 @@ export class ChatService {
             this.userId = user.id;
           },
           (err) => {
-            console.log("errer ChatService ==> ", err); 
+            console.log("errer ChatService", err); 
           },
         );
 
@@ -47,17 +47,17 @@ export class ChatService {
        })) as Subject<Message>
 
        this.newMenuMsg = socketService.getNewMessageToChatMenu()
-       .pipe(map(response => {
+       .pipe(map(response => {        
          return response;
        })) as Subject<Message>;
      }
 
-    newChat(id: string,name: string, users: User[], userId: string, img: File, type: string) {
+    newChat(id: string,name: string, users: User[], img: File, type: string) {
       const formData = new FormData();
       formData.append('id', id);
       formData.append('name', name);
       formData.append('users',  JSON.stringify(users.map(u => u.id)));
-      formData.append('uId', userId);
+      formData.append('uId', this.userId);
       formData.append('image', img);
       formData.append('type', type);
       try {

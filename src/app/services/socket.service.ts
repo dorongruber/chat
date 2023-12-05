@@ -21,8 +21,8 @@ export class SocketService {
     this.socket.emit('EnterPool', ({userId,userName,chatId,chatName}));
   }
 
-  connectToChat(userId: string,userName: string,chatId: string) {
-    this.socket.emit('connectToChat',({userId,userName,chatId}));
+  connectToChat(chatId: string) {
+    this.socket.emit('connectToChat',({chatId}));
   }
 
   disconnectFromChat(userId: string,chatId: string) {
@@ -64,7 +64,7 @@ export class SocketService {
 
   getNewMessageToChatMenu() {
     const observable = new Observable(observer => {
-      this.socket.on('newMessageToChatMenu',(messageObj:Message) => {
+      this.socket.on('newMessageToChatMenu',(messageObj:Message) => {        
         observer.next(messageObj);
       })
     })

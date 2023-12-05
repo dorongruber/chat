@@ -17,7 +17,6 @@ const URI = window.location.hostname === 'localhost'? DEV_URI: PROD_URI;
   providedIn: 'root'
 })
 export class ChatsService {
-  _chats: Chat[] = [];
   onNewChat = new Subject<Chat>();
   constructor(
     private baseService: BaseService,
@@ -28,28 +27,22 @@ export class ChatsService {
   {
     this.socketService.joinNewChat()
     .pipe(takeUntil(this.subscriptionContolService.stop$), tap((newChat: any) => {      
-      const chatToSend = new Chat(newChat.chatId, newChat.chatName, newChat.img);
-      this.chats.push(chatToSend);
+      const chatToSend = new Chat(newChat._id,newChat.chatId, newChat.chatName, newChat.img);
       this.onNewChat.next(chatToSend)
     })).subscribe();
   }
 
   getChats(userId: string) {
-    if(this.chats && this.chats.length) {
-      new Promise((resolve, rejects) => {
-        return resolve(this.chats)
-      })
-    }
+
     const url =`${URI}chats/`;
     return this.baseService.get<ChatInMenu[]>(url,userId)
     .then(res => {      
       const isEmpty = Object.keys(res).length == 0;
       const incomingChats = isEmpty ? [] : res.map(c => {
-        const chat = new ChatInMenu(c.id,c.name,c.img);
+        const chat = new ChatInMenu(c._id,c.id,c.name,c.img);
         chat.lastMsg = c.lastMsg;
         return chat;
       });
-      this.chats = incomingChats;
       return incomingChats;
     })
     .catch(err => {
@@ -59,12 +52,10 @@ export class ChatsService {
     })
   }
 
-  async addChat(chatId: string, name: string, users: User[], userId: string, img: File, type: string) {
+  async addChat(chatId: string, name: string, users: User[], img: File, type: string) {
     const id = chatId.length === 0? this.GenerateId(): chatId;
-    const savedChat = await this.chatService.newChat(id,name,users,userId,img, type);
+    const savedChat = await this.chatService.newChat(id,name,users,img, type);
     if(!(savedChat instanceof Error) && savedChat) {
-      this.chats.push(savedChat);
-      this.onNewChat.next(savedChat);
       return true;
     }
     return false;
@@ -75,11 +66,4 @@ export class ChatsService {
     return randomId;
   }
 
-  set chats(incomingChats: Chat[]) {
-    this._chats = incomingChats;
-  }
-
-  get chats() {
-    return this._chats;
-  }
 }

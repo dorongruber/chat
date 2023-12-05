@@ -39,11 +39,8 @@ class SocketServerService {
   //todo check if nedd to change function
   async ConnectToChat(newuser, socket) {
     try {
-      const {userId, userName, chatId } = {...newuser};
-      let user = userService.getByCustomId(userId);
-      if (!user) {
-        const savedUser = chatService.addUserToChat(user);
-      }
+      
+      const { chatId } = {...newuser};
       socket.join(chatId);
     }catch(err) {
       throw err;
@@ -65,11 +62,8 @@ class SocketServerService {
     }
   }
 
-  async sendMessageToUsersNotConnectedToSocket(chatId,newMesg) {
-    let chatUsers = await chatService.getSingalePopulatedField(chatId, this.feildToPopulate);
-    chatUsers.forEach(async (u) => {
-      io.to(u.socketId).emit('newMessageToChatMenu', (newMesg));
-    });
+  sendMessageToUsersNotConnectedToSocket(chatId,newMesg) {
+    io.to(chatId).emit('newMessageToChatMenu', (newMesg));
   }
 
 

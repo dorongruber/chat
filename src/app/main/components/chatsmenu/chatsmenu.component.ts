@@ -49,7 +49,7 @@ export class ChatsmenuComponent implements OnInit {
     this.chatsService.onNewChat
     .pipe(takeUntil(this.subscriptionContolService.stop$))
     .subscribe(res => {      
-      const newChat = new ChatInMenu(res.id,res.name, res.img);
+      const newChat = new ChatInMenu(res._id,res.id,res.name, res.img);
       this.chats.push(newChat);
     });
     
@@ -73,7 +73,7 @@ export class ChatsmenuComponent implements OnInit {
 
   async initMenu() {
     const resChat = await this.chatsService.getChats(this.user.id);
-    this.chats = this.fliteredChats = [...resChat];
+    this.chats = this.fliteredChats = resChat;
   }
 
   chatTrackBy(index: number,chat: ChatInMenu) {

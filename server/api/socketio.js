@@ -14,16 +14,15 @@ exports = module.exports = function(io){
       SocketServerService.EnterToPool(userId,userName,chatId,chatName,socket);
     })
 
-    socket.on('connectToChat',  (newUser) => {
+    socket.on('connectToChat',  (chatId) => {
       try {
-        SocketServerService.ConnectToChat(newUser,socket);
+        SocketServerService.ConnectToChat(chatId,socket);
       }catch(err) {
         throw err;
       }
     })
 
     socket.on('sendMessage', (msgObg) => {
-      //todo save mesage in db
       const {userId, chatId, message, date,userName} = msgObg;
       SocketServerService.SendMessage(userId, chatId, message,socket,date,userName);
     })

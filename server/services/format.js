@@ -6,12 +6,12 @@ class FormatService {
   async responseChatFormat(chats) {
     const formatedChats = [];
     for (const chat of chats) {
-      const asMsgs = chat.messages && chat.messages.length;
       let lmId;
-      if(asMsgs)
+      if(chat.messages && chat.messages.length)
         lmId = chat.messages[chat.messages.length -1];
-      const lastMsg = asMsgs? [await Messages.findOne({_id: lmId})] : null;
+      const lastMsg = lmId? [await Messages.findOne({_id: lmId})] : null;
       formatedChats.push({
+        _id: chat._id,
         id: chat.id,
         name: chat.name,
         type: chat.chatType,
@@ -19,7 +19,7 @@ class FormatService {
         img: {
           contentType: chat?.img && chat?.img.contentType ? chat.img.contentType : null,
           data: {
-            data: chat?.img && chat?.img.data ? chat.img.data.toString('base64') : null,
+            data: chat?.img && chat?.img.data ? chat.img.data : null,
             type: chat?.img && chat?.img.data && chat?.img.data.type ? chat.img.data.type : null,
           },
           filename: chat?.img? chat.img.filename : null,
@@ -27,6 +27,23 @@ class FormatService {
       })
     }
     return formatedChats;
+  }
+
+  responseNewChatFormat(newChat) {
+    return {
+      id: newChat.id,
+      name: newChat.name,
+      type: newChat.chatType,
+      lastMsg: null,
+      img: {
+        contentType: newChat?.img && newChat?.img.contentType ? newChat.img.contentType : null,
+        data: {
+          data: newChat?.img && newChat?.img.data ? newChat.img.data.toString('base64') : null,
+          type: newChat?.img && newChat?.img.data && newChat?.img.data.type ? newChat.img.data.type : null,
+        },
+        filename: newChat?.img? newChat.img.filename : null,
+      }
+    }
   }
 
   async singleChatResponseFormat(chat) {

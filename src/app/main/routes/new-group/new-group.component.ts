@@ -27,7 +27,7 @@ export class GroupchatComponent implements OnInit {
   chatName = '';
   filteredOptions: Observable<User[]>[] = [];
   currentUser!: User;
-  formControlUserReset: User = new User('','','','','',new File([],'emptyFile'));
+  formControlUserReset: User = new User('','','','','','',new File([],'emptyFile'));
 
   chatId$: Observable<string>= new Observable<string>();
   chatId: string = '';
@@ -59,7 +59,7 @@ export class GroupchatComponent implements OnInit {
             this.currentUser = user;
           },
           (err) => {
-            console.log("errer NewchatComponent ==> ", err); 
+            console.log("errer New group component", err); 
           },
         );
    }
@@ -104,7 +104,7 @@ export class GroupchatComponent implements OnInit {
   onSubmit(form: FormGroup) {
 
     if (!form.valid) {
-      console.log('invalide form -> ', form);
+      console.log('invalide form');
       return;
     }
     this.isLoading = true;
@@ -116,7 +116,7 @@ export class GroupchatComponent implements OnInit {
     
     let name = form.value.name;
     let img =  this.selectedFile ? this.selectedFile : new File([],'emptyFile');
-    this.chatsService.addChat(this.chatId,name,reqUsers,this.currentUser.id,img, "group");
+    this.chatsService.addChat(this.chatId,name,reqUsers,img, "group");
     form.reset();
     this.isLoading = false;
     this.controllerService.onStateChange(undefined);

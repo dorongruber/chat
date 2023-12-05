@@ -5,19 +5,25 @@ import { Message } from "./message";
 export class Chat {
   private _img: File;
   constructor(
-    private _id: string,
+    private __id: string,
+    private sid: string,
     private _name: string,
     image: File,
     private _users: User[] = [],
   ) {
-    this._id = _id;
+    this.__id = __id;
+    this.sid = sid;
     this._name = _name;
     _users = _users;
     this._img = image;
   }
 
+  get _id() {
+    return this.__id;
+  }
+
   get id() {
-    return this._id;
+    return this.sid;
   }
 
   get name() {
@@ -38,11 +44,12 @@ export class ChatInMenu extends Chat {
   public lastMsg: Message;
   public newmsgscounter: number;
   constructor(
+    private oid: string,
     private CMid: string,
     private CMname: string,
     private CMimage: File,
     ) {
-      super(CMid,CMname,CMimage);
+      super(oid,CMid,CMname,CMimage);
       this.lastMsg = this.resetLastMessage();
       this.newmsgscounter = 0;
   }

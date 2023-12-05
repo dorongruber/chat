@@ -21,14 +21,14 @@ function phoneValidator(phone) {
 }
 
 function userValidator(req,res,next) {
-    const { user } = req.body;
-    if(!nameValidator(user._firstName))
+    const { newUser } = req.body;
+    if(!nameValidator(newUser._firstName))
         return res.sendStatus(401);
-    if(!phoneValidator(user._phone))
+    if(!phoneValidator(newUser._phone))
         return res.sendStatus(401);
-    if(!validateEmail(user._email))
+    if(!validateEmail(newUser._email))
         return res.sendStatus(401);
-    if(!validatePassword(user._password))
+    if(!validatePassword(newUser._password))
         return res.sendStatus(401);
     next();
 }

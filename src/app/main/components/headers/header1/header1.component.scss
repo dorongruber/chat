@@ -19,6 +19,12 @@ h4 {
   font-weight: 500;
 }
 
+.title-container {
+  display: flex;
+  gap: var(--small-font-size);
+  align-items: flex-end;
+}
+
 .chat-img-container {
   border-radius: 50%;
   display: flex;
@@ -28,9 +34,6 @@ h4 {
   width: 36px;
   height: 36px;
   box-sizing: border-box;
-  @media screen and (max-width: 640px) {
-    margin: 14px 14px;
-  }
 }
 
 .icons-container {

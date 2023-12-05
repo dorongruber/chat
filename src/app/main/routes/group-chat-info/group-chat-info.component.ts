@@ -78,8 +78,10 @@ export class ChatInfoComponent implements OnInit {
     return this.form.get('users') as FormArray;
   }
 
-  initImg(file: File) {
+  async initImg(file: File) {
     this.selectedFile = file;
+    this.chat.image = this.selectedFile;
+    await this.chatService.newChat(this.chat.id, this.chat.name, this.chat.users,this.chat.image,this.chat.type);
   }
 
   onValueChange(fieldName: string) {

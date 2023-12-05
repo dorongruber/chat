@@ -28,7 +28,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   messages: Message[] = [];
   lastMsgElement: Element | null = null;
   isLoading = false;
-  selectedChat: ChatInMenu = new ChatInMenu('','',new File([],'emptyFile'));
+  selectedChat: ChatInMenu = new ChatInMenu('','','',new File([],'emptyFile'));
   user!: User;
   menuOptions: HeaderMenuOption[] ;
   componentRef: DynamicComponentRef;
@@ -55,7 +55,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
           this.user = user;
         },
         (err) => {
-          console.log("errer ChatComponent ==> ", err); 
+          console.log("errer Chat Component", err); 
         },
       );
 

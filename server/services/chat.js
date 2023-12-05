@@ -1,4 +1,5 @@
 const fs = require('fs');
+const sharp = require("sharp");
 const path = require('path');
 
 const Chats = require('../models/Chats');
@@ -11,11 +12,35 @@ class ChatService {
   constructor() {}
 
   getById = async function(id) {
-    const chat = await Chats.findOne({id: id})
-    .populate('users', 'id name phone email socketId img')
-    .populate('messages');
-    if (!chat) return new Error('404');
-    return formatService.singleChatResponseFormat(chat);
+    const chat = await Chats.aggregate()
+    .match({id: id})
+    .lookup({
+      from: "users",
+      localField: "users",
+      foreignField: "_id",
+      as: "users"
+    })
+    .lookup({
+      from: "messages",
+      localField: "messages",
+      foreignField: "_id",
+      as: "messages"
+    })
+    .project({
+      "id": 1,
+      "name": 1,
+      "chatType": 1,
+      "img": 1,
+      "users.id": 1,
+      "users.name": 1,
+      "users.phone": 1,
+      "users.email": 1,
+      "users.socketId": 1,
+      "users.img": 1,
+      "messages": 1,
+    });
+    if (!chat && chat.length > 0) return new Error('404');
+    return formatService.singleChatResponseFormat(chat[0]);
   }
 
   getByName = async function(chatName) {
@@ -27,8 +52,8 @@ class ChatService {
     const chat = await Chats.findOne({id: newChatInfo.id});
     let image = null;
     if (chat) return this.updateChat(newChatInfo)
-    if (newChatInfo.img && Object.keys(newChatInfo.img).includes('filename') && newChatInfo.img.filename) {
-      image = this.processImage(newChatInfo.img);
+    if (newChatInfo.img && Object.keys(newChatInfo.img).includes('originalname') && newChatInfo.img.originalname) {
+      image = await this.processImage(newChatInfo.img);
     }
     const users = await Users.find({id: {$in: [...JSON.parse(newChatInfo.users)]}}).exec();
     const newChat = new Chats({
@@ -44,7 +69,7 @@ class ChatService {
         await userService.update(user);
     }
     await newChat.save();
-    return newChat;
+    return formatService.responseNewChatFormat(newChat);
    } catch(err) {
      throw err;
    }
@@ -54,8 +79,8 @@ class ChatService {
     try{
       let image;
       const chat = await Chats.findOne({id: newChatInfo.id});
-      if (newChatInfo.img && Object.keys(newChatInfo.img).includes('filename') && newChatInfo.img.filename) {
-        image = this.processImage(newChatInfo.img);
+      if (newChatInfo.img && Object.keys(newChatInfo.img).includes('originalname') && newChatInfo.img.originalname) {
+        image = await this.processImage(newChatInfo.img);
       }
       const users = await Users.find({id: {$in: [...JSON.parse(newChatInfo.users)]}}).exec();
       chat.name = newChatInfo.name;
@@ -77,14 +102,21 @@ class ChatService {
 
   getSingalePopulatedField = async function(id, fieldToPopulate) {
     try {
-      const chat = await Chats.findOne({id: id})
-      .populate({
-        path: fieldToPopulate
-      })
+      const chat = await Chats.aggregate()
+      .match({id: id})
+      .lookup({
+        from: fieldToPopulate,
+        localField: fieldToPopulate,
+        foreignField: "_id",
+        pipeline: [
+          {$sort: {"date": 1}},
+        ],
+        as: fieldToPopulate
+      });
       if (fieldToPopulate === 'messages') {
-        return chat.messages;
+        return chat[0].messages;
       } else {
-        return chat.users;
+        return chat[0].users;
       }
     }catch(err) {
       throw new Error(err);
@@ -100,7 +132,6 @@ class ChatService {
   getSingleChatMessages = async function(chatId) {
     const FeildToPopulate = 'messages';
     let chatMsgs = await this.getSingalePopulatedField(chatId, FeildToPopulate);
-    //const lastDayMsgs;
     chatMsgs = this.getMessagesFromLastDate(chatMsgs);
     const formatedMessages = formatService.requestMsgFormat(chatMsgs);
     return formatedMessages;
@@ -108,13 +139,20 @@ class ChatService {
 
   getUserInPool = async function(chatName,userId) {
     try {
-      const chat = await Chats.findOne({name: chatName})
-      .populate({
-        path: 'users',
-        match: {id: {$eq: userId}}
+      const chat = await Chats.aggregate()
+      .match({name: chatName})
+      .lookup({
+        from: "users",
+        localField: "users",
+        foreignField: "_id",
+        as: "users",
       })
-      .exec();
-      const user = chat && chat.users ? chat.users[0] : null;
+      .unwind("users")
+      .match({"users.id": userId})
+      .project({
+        "users": 1
+      })[0];
+      const user = chat ? chat.users : null;
       return user;
     }catch(err) {
       throw err;
@@ -133,34 +171,20 @@ class ChatService {
     }
   }
 
-  updateUserInPool(userId) {
-    try {
-      this.populaueUsersInPollChat();
-        this.poolChat.users.findOne({id: userId});
-    }catch(err) {
-      throw err;
-    }
-  }
-
   async removeUserFromChat(chatId,userId) {
     try{
-      return Chats.findOne({id: chatId})
-      .populate('users')
-      .exec(function(err,chat) {
-        if(err) return err;
-        const user = chat.users.find(u => u.id === userId);
-        chat.users = chat.users.filter(u => u.id !== userId);
-        Users.findOne({id: userId}).populate('chats')
-        .exec((err, user) => {
-          if (err) return err;
-          user.chats = user.chats.filter(c => c.id !== chatId);
-          user.save();
-        })
-        if (chat.users.length < 1)
-        return this.deleteChat(chatId);
+      const chat = await Chats.findOneAndUpdate(
+        { _id: chatId }, 
+        { $pull: { "users": userId} },
+        { save: true }
+      );
+      const user = await Users.findOneAndUpdate(
+        { _id: userId },
+        { $pull: { "chats": chatId } },
+        { save: true }
+      );
+      user.save();
       return chat.save();
-      })
-
     }catch(err) {
       throw err
     }
@@ -187,12 +211,29 @@ class ChatService {
 
   ////////////////////// inner functions
 
-  processImage(img) {
-    const imageFile = fs.readFileSync(path.join('./public/images/' + `${img.filename}`));
+  async processImage(img) {
+    const { buffer, originalname } = img;
+    if(originalname == "emptyFile") {
+      return {
+        data: Buffer.from(''),
+        contentType: 'image/*',
+        filename: originalname,
+      }
+    }
+    const imagesPath = path.join(".","public","images");
+    fs.access(imagesPath, (error) => {
+      if (error) {
+        fs.mkdirSync(imagesPath);
+      }
+    });
+    
+    await sharp(buffer).resize({width: 150, height: 150}).jpeg({ quality: 85 })
+    .toFile(path.join(imagesPath, originalname));
+    const imageFile = await sharp(path.join(imagesPath, originalname)).toBuffer();
     const image = {
       data: imageFile,
       contentType: 'image/*',
-      filename: img.filename,
+      filename: originalname,
     }
     return image;
   }
@@ -217,13 +258,6 @@ class ChatService {
     }catch(err) {
       throw err;
     }
-  }
-
-
-
-  populaueUsersInPollChat() {
-    this.poolChat.populate('users')
-    .exec();
   }
 
   async getChat(filter) {

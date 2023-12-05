@@ -17,11 +17,12 @@ import { Header2Component } from '../headers/header2/header2.component';
   styleUrls: ['./delete-chat.component.scss']
 })
 export class DeletechatComponent implements OnInit {
-  userId: string | undefined;
+  fid: string | undefined;
+  sid: string | undefined;
   chats: Chat[] = [];
   filterOptions: Observable<Chat[]> = of([]);
   deleteForm: FormGroup = new FormGroup({});
-  chatToDelete: Chat = new Chat('','', new File([],'emptyFile'));
+  chatToDelete: Chat = new Chat('','','', new File([],'emptyFile'));
   resMsg = '';
   componentRef = new DynamicComponentRef(Header2Component);
   constructor(
@@ -34,13 +35,14 @@ export class DeletechatComponent implements OnInit {
       this.userService.onUserChange
       .pipe(
         takeUntil(this.subscriptionContolService.stop$), tap((user: User) => {
-          this.userId = user.id;
+          this.fid = user._id;
+          this.sid = user.id;
           this.initChats();
         }))
         .subscribe(
           () => {},
           (err) => {
-            console.log("errer delete chat component==> ", err); 
+            console.log("errer delete chat"); 
           },
         );
     }
@@ -60,7 +62,7 @@ export class DeletechatComponent implements OnInit {
   }
 
   async initChats() {
-    this.chats = await this.chatsService.getChats(this.userId!);
+    this.chats = await this.chatsService.getChats(this.sid!);
     this.filterOptions = of([...this.chats]);
   }
 
@@ -76,8 +78,8 @@ export class DeletechatComponent implements OnInit {
 
   async onSubmit(form: FormGroup) {
     if(!form.valid) return;
-    if( form.value.chatName === this.chatToDelete.name && this.userId)
-      this.resMsg = await this.chatService.deleteChat(this.chatToDelete.id,this.userId)
+    if( form.value.chatName === this.chatToDelete.name && this.fid)
+      this.resMsg = await this.chatService.deleteChat(this.chatToDelete._id,this.fid)
       .then(res => {
         if(res) return 'chat add been deleted sussesfully';
         return 'failed to delete chat';

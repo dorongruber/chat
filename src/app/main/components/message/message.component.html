@@ -1,4 +1,4 @@
-<div class="message-style-container">
+<div class="message-style-container" [ngClass]="{'current-user': msgFromat.fromCurrentUser}">
   <div [ngClass]="{'currentUser-triangle': msgFromat.fromCurrentUser}"
    class="triangle "></div>
   <div [ngClass]="{'currentUser': msgFromat.fromCurrentUser}"

@@ -18,7 +18,7 @@ import { userFormStructure } from '../../consts/user-form';
 })
 export class UserinfoComponent {
   form: FormGroup;
-  user: User = new User('','','','','',new File([],'emptyFile'));
+  user: User = new User('','','','','','',new File([],'emptyFile'));
   isLoading = false;
   selectedFile?: File;
   imgToShow: any;
@@ -45,7 +45,7 @@ export class UserinfoComponent {
             this.onLoadingChange(this.isLoading)
           },
           (err) => {
-            console.log("errer UserinfoComponent ==> ", err); 
+            console.log("errer User info Component", err); 
           }
         );
   }
@@ -90,7 +90,7 @@ export class UserinfoComponent {
     }
     this.onLoadingChange(this.isLoading);
     let img =  this.selectedFile ? this.selectedFile : new File([],'emptyFile');
-    const updatedUser = new User(this.user.id,this.form.value.name,this.form.value.phone,this.user.password,this.form.value.email,img);
+    const updatedUser = new User(this.user._id,this.user.id,this.form.value.name,this.form.value.phone,this.user.password,this.form.value.email,img);
     this.userService.updateUser(updatedUser);
     this.onLoadingChange(this.isLoading);
     
